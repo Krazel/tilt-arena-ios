@@ -1,4 +1,4 @@
-# Candidata iOS 0.2.0 · build configurada 1
+# Candidata iOS 0.2.0 · build 2
 
 SpriteKit dibuja; CoreMotion obtiene inclinación; SwiftUI presenta los menús.
 JavaScriptCore ejecuta `Resources/classic-core.js`, exactamente el motor de las
@@ -16,7 +16,13 @@ datos del sensor y la salida de la app pausan la partida. Al volver se recalibra
 
 Las nueve armas están abiertas para comparar; desbloqueos y modos secundarios
 pendientes. Valores de radios, velocidades, tiempo de combo y mezcla de sonido
-son provisionales y están declarados en `../research/REFERENCE.md`.
+son provisionales; deben contrastarse jugando en un iPhone real.
 
-**Estado:** no compilado con Xcode, no ejecutado en simulador ni iPhone.
-La validación local del motor y la sintaxis no es validación de la aplicación.
+**Estado:** compilación con Xcode 16.4 y tres XCTest de integración aprobados
+en simulador. Pendientes la inclinación física y el recorrido completo de UI
+en iPhone. Sin IPA, TestFlight ni App Store.
+
+Código y ejecuciones: https://github.com/Krazel/tilt-arena-ios .
+El artefacto de Actions conserva el `.app` de simulador en `.tar.gz` para mantener
+sus permisos. En Mac se extrae y se instala con `xcrun simctl install booted`
+seguido de la ruta de `TiltArena.app`. No se puede instalar ese paquete en iPhone.
