@@ -9,6 +9,9 @@ final class ClassicScene: SKScene {
     private let motion = CMMotionManager()
     private var bridge: ClassicBridge?
     private let world = SKNode(), effects = SKNode(), hud = SKNode()
+    private let arenaDecoration = SKNode()
+    private lazy var vfx = ClassicVFX(layer: effects)
+    private(set) var arenaBounds = CGRect(x: 24, y: 52, width: 912, height: 540)
     private var objects: [String: SKNode] = [:], textures: [String: SKTexture] = [:]
     private let arrow = SKNode()
     private var bubble = SKShapeNode(), spikes = SKShapeNode()
@@ -17,13 +20,19 @@ final class ClassicScene: SKScene {
     private let bestLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
     private let comboBar = SKSpriteNode(color: UIColor(hex: "d5f56b"), size: CGSize(width: 240, height: 3))
     private var gameFrame: ClassicFrame?, lastTime: Double?
-    private var neutral = (x: 0.0, y: 0.0)
     private var calibratedOrientation: UIInterfaceOrientation = .unknown
     private var samples: [(x: Double, y: Double)] = []
     private var calibrationStart = 0.0, motionTimestamp = -1.0
     private var restartAfterCalibration = true
     private var touchVector = (x: 0.0, y: 0.0), touchOrigin: CGPoint?
     private var calibrationFrames = 0
+    private var calibrationReturnPhase: GameSession.Phase = .menu
+    private var sensorGraceUntil = 0.0
+    private var trailTime = 0.0
+    #if DEBUG
+    private let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
+    private let visualPreview = ProcessInfo.processInfo.arguments.contains("--visual-qa")
+    #endif
 
     override init() {
         super.init(size: CGSize(width: 960, height: 640))
@@ -35,7 +44,30 @@ final class ClassicScene: SKScene {
         view.preferredFramesPerSecond = 60; isUserInteractionEnabled = true
         addChild(world); addChild(hud); addChild(effects)
         world.zPosition = 0; effects.zPosition = 5; hud.zPosition = 10
+        world.addChild(arenaDecoration)
         drawArena(); drawPlayer(); drawHUD(); startMotion()
+        configureViewport(viewSize: view.bounds.size, insets: view.window?.safeAreaInsets ?? .zero)
+    }
+    func configureViewport(viewSize: CGSize, insets: UIEdgeInsets) {
+        guard viewSize.width > 0, viewSize.height > 0 else { return }
+        let scale = 640 / viewSize.height
+        let nextSize = CGSize(width: viewSize.width * scale, height: 640)
+        let side = max(insets.left, insets.right) * scale + 20
+        let nextBounds = CGRect(x: side, y: max(52, insets.bottom * scale + 26),
+            width: nextSize.width - 2 * side, height: 0)
+        let rect = CGRect(x: nextBounds.minX, y: nextBounds.minY, width: nextBounds.width,
+                          height: 592 - nextBounds.minY)
+        guard rect.width >= 300, rect.height >= 300, size != nextSize || arenaBounds != rect else { return }
+        size = nextSize; arenaBounds = rect
+        if arenaDecoration.parent != nil { drawArena(); layoutHUD() }
+        if gameFrame != nil {
+            do { gameFrame = try resizeEngine(); if let frame = gameFrame { render(frame) } }
+            catch { session?.fail(error) }
+        } else { arrow.position = CGPoint(x: arenaBounds.midX, y: arenaBounds.midY) }
+    }
+    private func resizeEngine() throws -> ClassicFrame? {
+        try bridge?.resize(left: arenaBounds.minX, right: arenaBounds.maxX,
+                           bottom: arenaBounds.minY, top: arenaBounds.maxY)
     }
     override func willMove(from view: SKView) { motion.stopDeviceMotionUpdates(); sound.pause() }
     func startMotion() {
@@ -47,6 +79,7 @@ final class ClassicScene: SKScene {
         guard let session = session else { return }
         do { if bridge == nil { bridge = try ClassicBridge() } }
         catch { session.fail(error); return }
+        calibrationReturnPhase = session.phase
         startMotion(); restartAfterCalibration = restart
         samples = []; calibrationFrames = 0; motionTimestamp = -1
         calibrationStart = ProcessInfo.processInfo.systemUptime
@@ -63,6 +96,10 @@ final class ClassicScene: SKScene {
         session.phase = .calibrating
     }
     private func sampleCalibration() {
+        let orientation = view?.window?.windowScene?.interfaceOrientation ?? calibratedOrientation
+        if orientation != calibratedOrientation {
+            calibratedOrientation = orientation; samples = []; calibrationFrames = 0
+        }
         #if targetEnvironment(simulator)
         calibrationFrames += 1
         if calibrationFrames > 45 { beginAfterCalibration() }
@@ -74,7 +111,10 @@ final class ClassicScene: SKScene {
             if samples.count == 45 {
                 let nx = samples.map(\.x).reduce(0, +) / 45, ny = samples.map(\.y).reduce(0, +) / 45
                 let spread = samples.map { hypot($0.x - nx, $0.y - ny) }.max() ?? 1
-                if spread < 0.025 { neutral = (nx, ny); beginAfterCalibration(); return }
+                if spread < 0.025 {
+                    session?.saveCustom(TiltProfile.sampled(x: nx, y: ny, landscapeRight: calibratedOrientation == .landscapeRight))
+                    beginAfterCalibration(); return
+                }
             }
         }
         if now - calibrationStart > 12 {
@@ -86,16 +126,41 @@ final class ClassicScene: SKScene {
         #endif
     }
     private func beginAfterCalibration() {
+        #if targetEnvironment(simulator)
+        session?.saveCustom(.preset(.normal))
+        #endif
+        play(restart: restartAfterCalibration)
+    }
+    func cancelCalibration() {
+        session?.phase = calibrationReturnPhase == .paused ? .paused : .menu
+        session?.message = ""
+    }
+    func play(restart: Bool) {
+        guard let session = session else { return }
+        if session.posture == .custom && !session.hasCustom { calibrate(restart: restart); return }
+        startMotion()
+        calibratedOrientation = view?.window?.windowScene?.interfaceOrientation ?? .landscapeLeft
+        sensorGraceUntil = ProcessInfo.processInfo.systemUptime + 1
         do {
-            if restartAfterCalibration {
+            if bridge == nil { bridge = try ClassicBridge() }
+            if restart {
                 for node in objects.values { node.removeFromParent() }; objects.removeAll()
-                effects.removeAllChildren(); gameFrame = try bridge?.create()
+                effects.removeAllChildren()
+                #if DEBUG
+                gameFrame = try bridge?.create(spawning: !uiTesting)
+                #else
+                gameFrame = try bridge?.create()
+                #endif
+                gameFrame = try resizeEngine()
+                #if DEBUG
+                if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
             lastTime = nil; touchOrigin = nil; touchVector = (0, 0)
             world.isPaused = false; effects.isPaused = false
-            session?.message = ""; session?.phase = .running
+            session.message = ""; session.phase = .running
             if let frame = gameFrame { render(frame) }; sound.playMusic()
-        } catch { session?.fail(error) }
+        } catch { session.fail(error) }
     }
     func pauseRun(message: String = "") {
         guard session?.phase == .running else { return }
@@ -108,7 +173,7 @@ final class ClassicScene: SKScene {
     }
     func suspend() {
         if session?.phase == .running { pauseRun() }
-        else if session?.phase == .calibrating { menu() }
+        else if session?.phase == .calibrating { cancelCalibration() }
         motion.stopDeviceMotionUpdates()
     }
     func menu() { halt(); session?.phase = .menu; session?.message = ""; startMotion() }
@@ -120,9 +185,21 @@ final class ClassicScene: SKScene {
         guard let session = session else { return }
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
+        #if DEBUG
+        if visualPreview, let frame = gameFrame {
+            render(frame)
+            if currentTime - trailTime > 0.65 {
+                trailTime = currentTime
+                vfx.show(ClassicFrame.Event(kind: "blast", x: arenaBounds.minX + 150, y: 200, radius: 90, angle: nil, toX: nil, toY: nil, color: "ffb52a", power: nil, value: nil, bonus: nil), reduced: reduceEffects)
+                vfx.show(ClassicFrame.Event(kind: "lightning", x: arenaBounds.midX - 70, y: 160, radius: nil, angle: nil, toX: arenaBounds.midX + 70, toY: 260, color: "eeefff", power: nil, value: nil, bonus: nil), reduced: reduceEffects)
+            }
+            return
+        }
+        #endif
         let orientation = view?.window?.windowScene?.interfaceOrientation ?? calibratedOrientation
         if orientation != calibratedOrientation {
-            pauseRun(message: "Has girado el iPhone. Ajustemos de nuevo la postura."); return
+            calibratedOrientation = orientation
+            pauseRun(message: "Has girado el iPhone. Pulsa Reanudar cuando estés cómodo."); return
         }
         let dt = lastTime.map { currentTime - $0 } ?? 0; lastTime = currentTime
         do {
@@ -131,15 +208,18 @@ final class ClassicScene: SKScene {
             input = touchVector
             #else
             guard let m = motion.deviceMotion, ProcessInfo.processInfo.systemUptime - m.timestamp < 0.5 else {
-                pauseRun(message: "Se ha interrumpido el sensor. Calibra para continuar."); return
+                if ProcessInfo.processInfo.systemUptime < sensorGraceUntil { lastTime = nil; return }
+                pauseRun(message: "Esperando al sensor. Pulsa Reanudar para volver a intentarlo."); return
             }
-            input = try bridge?.tilt(gx: m.gravity.x, gy: m.gravity.y, nx: neutral.x, ny: neutral.y,
+            let delta = session.activeProfile.motionDelta(x: m.gravity.x, y: m.gravity.y, z: m.gravity.z,
+                                                         landscapeRight: orientation == .landscapeRight)
+            input = try bridge?.tilt(gx: delta.x, gy: delta.y, nx: 0, ny: 0,
                 orientation: orientation == .landscapeRight ? "landscapeRight" : "landscapeLeft",
                 sensitivity: session.sensitivity) ?? (0,0)
             #endif
             if let next = try bridge?.tick(dt: dt, x: input.0, y: input.1) {
                 gameFrame = next; render(next)
-                if next.state == "gameOver" { halt(); session.finish(next); sound.play("death") }
+                if next.state == "gameOver" { halt(); effects.isPaused = false; session.finish(next); sound.play("death") }
             }
         } catch { session.fail(error) }
     }
@@ -157,11 +237,12 @@ final class ClassicScene: SKScene {
     #endif
 
     private func drawArena() {
+        arenaDecoration.removeAllChildren()
         let background = SKSpriteNode(texture: ClassicArt.background(size: size))
-        background.position = CGPoint(x:480,y:320);background.zPosition = -10;world.addChild(background)
-        let border = SKShapeNode(rect: CGRect(x:24,y:52,width:912,height:540),cornerRadius:16)
+        background.position = CGPoint(x:size.width/2,y:size.height/2);background.zPosition = -10;arenaDecoration.addChild(background)
+        let border = SKShapeNode(rect: arenaBounds,cornerRadius:16)
         border.strokeColor = UIColor(hex:"e3efc9").withAlphaComponent(0.65);border.lineWidth=2
-        border.fillColor = .clear;world.addChild(border)
+        border.fillColor = .clear;arenaDecoration.addChild(border)
     }
     private func drawPlayer() {
         arrow.addChild(ClassicArt.node(style:"arrow"));arrow.zPosition=4
@@ -183,6 +264,13 @@ final class ClassicScene: SKScene {
         comboLabel.position=CGPoint(x:30,y:28);comboLabel.horizontalAlignmentMode = .left;comboLabel.fontSize=18
         comboLabel.text="ENLAZA LAS ARMAS"
         comboBar.anchorPoint=CGPoint(x:0,y:0.5);comboBar.position=CGPoint(x:30,y:12);hud.addChild(comboBar)
+        layoutHUD()
+    }
+    private func layoutHUD() {
+        scoreLabel.position = CGPoint(x: arenaBounds.minX + 6, y: 615)
+        bestLabel.position = CGPoint(x: arenaBounds.maxX - 72, y: 615)
+        comboLabel.position = CGPoint(x: arenaBounds.minX + 6, y: arenaBounds.minY - 23)
+        comboBar.position = CGPoint(x: arenaBounds.minX + 6, y: arenaBounds.minY - 39)
     }
     private func sprite(key: String, style: String) -> SKNode {
         if let node = objects[key] { return node }
@@ -193,7 +281,9 @@ final class ClassicScene: SKScene {
             if let rendered=view?.texture(from:shape) { textures[style]=rendered;node=SKSpriteNode(texture:rendered) }
             else { node=shape }
         }
-        node.name=style;world.addChild(node);objects[key]=node;return node
+        node.name=style;world.addChild(node);objects[key]=node
+        if style == "missileShot" { vfx.attachMissileTrail(to: node, reduced: reduceEffects) }
+        return node
     }
     private func render(_ frame: ClassicFrame) {
         var alive=Set<String>()
@@ -237,23 +327,5 @@ final class ClassicScene: SKScene {
         if frame.events.contains(where:{$0.kind=="pickup"}) { sound.play("pickup") }
         else if frame.events.contains(where:{$0.kind=="kill"}) { sound.play("hit") }
     }
-    private func showEffect(_ event: ClassicFrame.Event) {
-        guard let x=event.x,let y=event.y else { return };let color=UIColor(hex:event.color ?? "f3ffcd")
-        if event.kind=="combo",let bonus=event.bonus {
-            let label=SKLabelNode(fontNamed:"AvenirNext-Bold");label.fontSize=24
-            label.text="+\(bonus.formatted())";label.fontColor=UIColor(hex:"e1ff85")
-            label.position=CGPoint(x:x,y:y+15);effects.addChild(label)
-            label.run(.sequence([.group([.moveBy(x:0,y:25,duration:0.65),.fadeOut(withDuration:0.65)]),.removeFromParent()]))
-        } else if event.kind=="lightning",let tx=event.toX,let ty=event.toY {
-            let path=CGMutablePath();path.move(to:CGPoint(x:x,y:y));path.addLine(to:CGPoint(x:tx,y:ty))
-            let node=SKShapeNode(path:path);node.strokeColor=color;node.lineWidth=3;effects.addChild(node)
-            node.run(.sequence([.fadeOut(withDuration:0.18),.removeFromParent()]))
-        } else {
-            let radius=event.radius ?? (event.kind=="kill" ? 10 : 24)
-            let ring=SKShapeNode(circleOfRadius:radius);ring.position=CGPoint(x:x,y:y)
-            ring.strokeColor=color;ring.fillColor=color.withAlphaComponent(reduceEffects ? 0 : 0.1)
-            ring.lineWidth=event.kind=="kill" ? 2 : 4;effects.addChild(ring)
-            ring.run(.sequence([.group([.fadeOut(withDuration:0.4),.scale(to:reduceEffects ? 1 : 1.15,duration:0.4)]),.removeFromParent()]))
-        }
-    }
+    private func showEffect(_ event: ClassicFrame.Event) { vfx.show(event, reduced: reduceEffects) }
 }

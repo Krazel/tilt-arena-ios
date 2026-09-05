@@ -62,6 +62,9 @@ final class ClassicBridge {
             throw Failure.missingEngine
         }
         self.context = context
+        #if DEBUG
+        context.setObject(true, forKeyedSubscript: "CLASSIC_DIAGNOSTICS" as NSString)
+        #endif
         context.evaluateScript(try String(contentsOf: url, encoding: .utf8), withSourceURL: url)
         if let exception = context.exception { throw Failure.script(exception.toString()) }
         guard let value = context.objectForKeyedSubscript("ClassicAPI"), !value.isUndefined else {
@@ -69,14 +72,33 @@ final class ClassicBridge {
         }
         api = value
     }
-    func create(seed: UInt32 = UInt32.random(in: 1...UInt32.max)) throws -> ClassicFrame {
-        try decode(call("create", [seed]))
+    func create(seed: UInt32 = UInt32.random(in: 1...UInt32.max), spawning: Bool = true) throws -> ClassicFrame {
+        try decode(call("create", [seed, spawning]))
     }
     func tick(dt: Double, x: Double, y: Double) throws -> ClassicFrame {
         try decode(call("tick", [dt, x, y]))
     }
     func pause() throws { _ = try call("pause", []) }
     func resume() throws { _ = try call("resume", []) }
+    func resize(left: Double, right: Double, bottom: Double, top: Double) throws -> ClassicFrame {
+        try decode(call("resize", [left, right, bottom, top]))
+    }
+    #if DEBUG
+    func visualFrame(left: Double, right: Double) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.player.x=(\(left)+\(right))/2;g.player.y=240;g.player.bubble=true;
+          const colors=ClassicDiagnostics.POWERS;
+          colors.forEach((p,i)=>g.addPickup(p,\(left)+70+i*(\(right)-\(left)-140)/8,450));
+          for(let i=0;i<18;i++)g.addEnemy(\(left)+45+i*(\(right)-\(left)-90)/17,350,{activeAt:0,speed:0});
+          g.enemies.slice(12).forEach(e=>e.frozenUntil=4);
+          g.fields.push({id:90,kind:'vortex',x:\(right)-140,y:210,until:4});
+          return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
+    #endif
     func finish() throws -> ClassicFrame { try decode(call("finish", [])) }
     func tilt(gx: Double, gy: Double, nx: Double, ny: Double,
               orientation: String, sensitivity: Double) throws -> (Double, Double) {

@@ -5,7 +5,7 @@ const {Parser,Language}=require('web-tree-sitter');
   await Parser.init();const parser=new Parser();
   parser.setLanguage(await Language.load(require.resolve('tree-sitter-wasms/out/tree-sitter-swift.wasm')));
   let failures=0;
-  for(const subfolder of ['Sources','Tests']) {
+  for(const subfolder of ['Sources','Tests','UITests']) {
   const folder=path.join(__dirname,'../native-ios',subfolder);
   for(const file of fs.readdirSync(folder).filter(f=>f.endsWith('.swift'))){
     const tree=parser.parse(fs.readFileSync(path.join(folder,file),'utf8'));
