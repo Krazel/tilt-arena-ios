@@ -56,3 +56,8 @@ Comparar las capturas con la composición anterior antes de dar la entrega por l
 La prueba física del nuevo control y rendimiento corresponde a la nueva IPA.
 
 Historial de la dirección previa: DIRECTION-v02.md.
+
+QA de cierre: los puntos congelados usan capa nativa cian con faceta blanca sobre
+la textura generada. Multiplicar el tinte cian por el punto rojo lo oscurecía,
+detectado en la captura de build 1; corregido para build 2. La textura original
+permanece intacta y se comparte entre puntos.

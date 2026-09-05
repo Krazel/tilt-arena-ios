@@ -33,14 +33,24 @@ with zipfile.ZipFile(ipa) as bundle:
         offset += size
     assert platforms == [2], platforms  # PLATFORM_IOS, not IOSSIMULATOR
     assert not any(encrypted)
-    resources = {}
+    resources = {}; optimizedImages = {}
     for name in ['classic-core.js', 'classic-loop.wav', 'death.wav', 'hit.wav', 'pickup.wav', 'orb-glass-v03.png', 'enemy-dot-v03.png', 'energy-spark-v03.png']:
         data = bundle.read(prefix + name)
-        assert data == (root / 'native-ios' / 'Resources' / name).read_bytes(), name
+        original = (root / 'native-ios' / 'Resources' / name).read_bytes()
+        if name.endswith('.png') and b'CgBI' in data[:24]:
+            def dimensions(png):
+                at = png.index(b'IHDR') + 4
+                return struct.unpack_from('>II', png, at)
+            assert dimensions(data) == dimensions(original)
+            optimizedImages[name] = {'format':'Apple CgBI PNG', 'dimensions':dimensions(data),
+                                     'sourceSHA256':hashlib.sha256(original).hexdigest(),
+                                     'verification':'Dimensions and ZIP CRC; rendered appearance checked separately in native QA'}
+        else:
+            assert data == original, name
         resources[name] = hashlib.sha256(data).hexdigest()
     result = dict(manifest, zipCRCValid=True, verifiedMachOPlatform='iOS',
                   verifiedArchitecture='arm64', encrypted=False,
-                  resourcesMatchCanonicalSource=True, resourceSHA256=resources,
+                  engineAndAudioMatchCanonicalSource=True, resourceSHA256=resources, optimizedImages=optimizedImages,
                   embeddedProvisioningProfile=(prefix + 'embedded.mobileprovision') in bundle.namelist(),
                   executablePermission=oct(bundle.getinfo(prefix + info['CFBundleExecutable']).external_attr >> 16))
 (root / 'verification' / ('ipa-v03-build' + sys.argv[2] + '.json')).write_text(json.dumps(result, indent=2) + '\n')

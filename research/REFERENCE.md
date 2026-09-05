@@ -62,16 +62,19 @@ en el campo. Un punto sin protección termina Classic. Los desafíos desbloquean
 armas; no es una progresión de experiencia con vida y niveles.
 
 La guía iPhone AC diferencia Regular, Top-Down y Custom. La versión 1.3 añadió
-sensibilidad según el historial oficial. En esta candidata se ofrece calibración
-de una postura cómoda y tres sensibilidades. No se afirma haber reproducido las
-curvas internas del original. Mantener el teléfono casi vertical necesita pruebas
-específicas, porque restar gravedad puede reducir la respuesta en un eje.
+sensibilidad según el historial oficial. En 0.3 el usuario confirma los nombres
+Normal, Inclinado y Personalizado para las posturas. Los neutros propios de 45° y
+70° y la postura guardada son decisiones de implementación, no ángulos medidos
+del original. Se conservan tres sensibilidades. El puente usa diferencias angulares
+con gravedad Z para evitar la pérdida de respuesta de la resta simple en un eje.
+No se afirma reproducir las curvas internas; casi vertical requiere ensayo físico.
 
 Apple define `UIInterfaceOrientation.landscapeLeft` con el antiguo botón Home a
 la izquierda. Es diferente de nombrar la orientación física con UIDeviceOrientation.
 Por ello el motor transforma gravedad a `(gy, -gx)` en horizontal izquierda y
-`(-gy, gx)` en derecha, y resta la postura neutral. Pruebas sintéticas verifican
-signo, zona muerta y saturación; el ensayo físico sigue pendiente.
+`(-gy, gx)` en derecha. En 0.3 TiltProfile guarda el neutral en ejes de pantalla y
+entrega el delta angular al motor. XCTest verifica neutral, giro de 180° y respuesta
+equivalente a 45°/70°; Node verifica zona muerta y saturación. Ensayo físico pendiente.
 
 ## Enemigos y dificultad
 
