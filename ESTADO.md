@@ -12,8 +12,9 @@ el cerebro central organiza. Objetivo inicial: Classic con inclinación en iOS.
 
 ## Entrega local
 
-Candidata **0.2.0, build 2**, compilada para simulador con Xcode 16.4. No hay versión
-pública en tienda ni binario de iPhone. SpriteKit/CoreMotion, menú nativo, nueve armas,
+Candidata **0.2.0, build 3**, IPA Local-QA de iPhone ARM64 compilada con Xcode 16.4.
+Pendiente de firma e instalación con Sideloadly; sin publicación en tienda.
+SpriteKit/CoreMotion, menú nativo, nueve armas,
 perseguidores y tres formaciones, puntuación por bajas y combos. Recursos propios.
 Motor compartido probado con Node; laboratorio local jugable para diagnóstico.
 **No se presenta el laboratorio como la app de iPhone.**
@@ -43,17 +44,26 @@ Artefacto en `artifacts/build2/`; manifiesto `verification/simulator-artifact.js
 La build 1 pasó Xcode y XCTest pero falló al preparar la captura; build 2 corrige
 ese paso de CI sin cambiar el juego. Se mantiene la versión 0.2.0.
 
-Siguiente resultado: validar inclinación, latencia, dificultad y mezcla en iPhone.
-La firma y entrega a dispositivo se prepararán al acordar esa distribución.
-No se ha generado IPA ni subido nada a TestFlight o App Store.
+El usuario pidió crear la IPA para probarla. Build 3 correcta:
+https://github.com/Krazel/tilt-arena-ios/actions/runs/33979490999 .
+Commit público `fdd73e72d5c0cc371069c8addb594a4dc362aa66`, canónico
+`05ead179c8c906b41b15488b368455fa26dadaff`. Mismo juego; se incrementa build
+por recompilación Release para dispositivo. Archivo entregable:
+`artifacts/TiltArena-0.2.0-build3-Local-QA-fdd73e7.ipa`.
+CRC, SHA256, Mach-O iOS ARM64, metadatos y recursos comprobados:
+`verification/ipa-build3.json`. No lleva firma ni perfil: Sideloadly los aporta
+al instalar. No se han transferido certificados ni credenciales a GitHub.
+
+Siguiente resultado: instalar y validar inclinación, latencia, dificultad y mezcla
+en iPhone. Sin prueba física ni envío a TestFlight o App Store.
 
 Después: contrastar tiempos de combo, densidad y formaciones (Pong pendiente),
 desbloqueos, VFX y mezcla de sonido. Los otros modos no forman parte de este corte.
 
 ## Biblioteca
 
-Sincronización comprobada en D1 y en la interfaz: **PR-031, revisión 5**, guardada
-el 05/09/2026 a las 16:20:20 UTC. En producción, candidata de simulador 0.2.0 build 2,
+Sincronización comprobada en D1: **PR-031, revisión 6**, guardada
+el 05/09/2026 a las 17:01:03 UTC. En producción, candidata IPA Local-QA 0.2.0 build 3,
 repositorio, pruebas, evidencia y siguiente paso actualizados. Se conservaron el
 nombre «Tilt Arena — Tilt to Live» y las notas previas. Evidencia independiente:
 `verification/library-sync.json`. No se editaron la semilla ni el Excel.

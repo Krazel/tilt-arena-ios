@@ -1,0 +1,33 @@
+{
+  "app": "TiltArena",
+  "version": "0.2.0",
+  "build": "3",
+  "purpose": "Local-QA",
+  "sourceCommit": "fdd73e72d5c0cc371069c8addb594a4dc362aa66",
+  "runID": "33979490999",
+  "ipa": "TiltArena-0.2.0-build3-Local-QA-fdd73e7.ipa",
+  "sha256": "3aaffc3ccb5057e1d300489fefa9e11f1b1245d656f1512a6b64eef3529b164a",
+  "platforms": [
+    "iPhoneOS"
+  ],
+  "architecture": "arm64",
+  "bundleIdentifier": "com.dmkr.tiltarena",
+  "minimumOS": "16.0",
+  "signing": "Unsigned device IPA; requires signing during Sideloadly installation",
+  "physicalDeviceTested": false,
+  "testFlightUploaded": false,
+  "zipCRCValid": true,
+  "verifiedMachOPlatform": "iOS",
+  "verifiedArchitecture": "arm64",
+  "encrypted": false,
+  "resourcesMatchCanonicalSource": true,
+  "resourceSHA256": {
+    "classic-core.js": "31eddfd522c1b9cf27ef617bb761b0fe1f068a71a11216aab6fd88101b078084",
+    "classic-loop.wav": "207fcf403b3f7038be23ce18d730fc838535d59ae7328421f7dc01702d1e43ed",
+    "death.wav": "f4b0efe694255297fbb554d171288d67d9bde699799774aef44ce3b140b44988",
+    "hit.wav": "9d72ca5560742d29d2d648185d6f8f4a0cd4305432bf22e15b530a2f06e3b6e2",
+    "pickup.wav": "ab41f87aa2927894f8bf3ee23f6992dfd8f0eabaf2cf652fe4cce53b48d6cb9c"
+  },
+  "embeddedProvisioningProfile": false,
+  "executablePermission": "0o100755"
+}

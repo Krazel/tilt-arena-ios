@@ -4,6 +4,15 @@
 
 ## Resultado comprobado
 
+- **IPA Local-QA 0.2.0 build 3**: archive Release de iPhoneOS correcto en
+  `33979490999`, commit `fdd73e72d5c0cc371069c8addb594a4dc362aa66`.
+  23 pruebas Node aprobadas. Descarga comprobada: SHA256 coincide con CI, CRC
+  íntegro, `Payload/TiltArena.app`, metadatos 0.2.0/3, CPU ARM64 y plataforma
+  Mach-O IOS (2), ejecutable sin cifrar y con permiso 755. Los cinco recursos
+  coinciden byte a byte con fuente canónica. `verification/ipa-build3.json`.
+  IPA sin firma y sin perfil, preparada para firmar al instalar con Sideloadly.
+  No se acredita instalación o ejecución física. El motor conserva los 3 XCTest
+  aprobados en build 2; no se han vuelto a ejecutar XCTest en esta build de dispositivo.
 - Build final **0.2.0 (2)**: ejecución `33977023251` completada correctamente.
   Commit público `bf55e83612df722d54f79bde78758cf0a6388b71`.
   Archivo de simulador descargado e inspeccionado sin ejecutarlo en Windows:
@@ -49,7 +58,7 @@ reproducibilidad por semilla; límites de entidades; JSON y recursos de audio.
 
 ## No ejecutado / no acreditado
 
-- Firma para dispositivo, IPA, TestFlight o App Store.
+- Firma e instalación en dispositivo, TestFlight o App Store.
 - Recorrido completo de UI nativa, safe areas, tamaños de texto y accesibilidad.
 - Inclinación en dispositivo, precisión física, consumo, calentamiento y fps.
 - Comparación temporal exhaustiva de partidas originales: ventana de combo,

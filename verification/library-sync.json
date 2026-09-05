@@ -1,15 +1,15 @@
 {
   "id": "PR-031",
-  "revision": 5,
-  "updated_at": "2026-09-05T16:20:20.432Z",
+  "revision": 6,
+  "updated_at": "2026-09-05T17:01:03.921Z",
   "verifiedBy": [
-    "D1 read_database_table_rows",
-    "Saved project UI"
+    "D1 read_database_table_rows"
   ],
-  "version": "0.2.0 (candidata de simulador)",
-  "build": 2,
+  "version": "0.2.0 (candidata IPA Local-QA)",
+  "build": 3,
   "repo": "https://github.com/Krazel/tilt-arena-ios",
   "published": "No",
   "notesPreserved": true,
-  "physicalTestPending": true
+  "physicalTestPending": true,
+  "signing": "Pending Sideloadly installation"
 }
