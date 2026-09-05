@@ -1,0 +1,15 @@
+{
+  "name": "Tilt Arena",
+  "short_name": "Tilt Arena",
+  "start_url": ".",
+  "display": "fullscreen",
+  "background_color": "#08090d",
+  "theme_color": "#08090d",
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
