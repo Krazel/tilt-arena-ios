@@ -275,7 +275,8 @@ final class ClassicScene: SKScene {
     private func sprite(key: String, style: String) -> SKNode {
         if let node = objects[key] { return node }
         let node: SKNode
-        if let cached = textures[style] { node=SKSpriteNode(texture:cached) }
+        if style == "dot" { node = ClassicArt.node(style: style) }
+        else if let cached = textures[style] { node=SKSpriteNode(texture:cached) }
         else {
             let shape=ClassicArt.node(style:style)
             if let rendered=view?.texture(from:shape) { textures[style]=rendered;node=SKSpriteNode(texture:rendered) }
@@ -290,9 +291,7 @@ final class ClassicScene: SKScene {
         for dot in frame.enemies {
             let key="d\(dot.id)";alive.insert(key)
             let node=sprite(key:key,style:"dot");node.position=CGPoint(x:dot.x,y:dot.y)
-            if let node=node as? SKSpriteNode {
-                node.color=dot.frozen ? UIColor(hex:"70dce9") : .white;node.colorBlendFactor=dot.frozen ? 0.85 : 0
-            }
+            node.childNode(withName: "ice-coating")?.isHidden = !dot.frozen
             node.alpha=dot.telegraph ? 0.22+0.12*sin(frame.time*18) : (dot.thawing ? 0.65+0.35*sin(frame.time*22) : 1)
             node.setScale(dot.telegraph ? 1.45 : 1);node.zPosition=2
         }
