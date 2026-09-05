@@ -16,7 +16,8 @@ device_id=$(xcrun simctl list devices available -j | python3 -c 'import sys,json
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \
   -derivedDataPath DerivedData -resultBundlePath ../artifacts/ios-verification/TiltArena-tests.xcresult \
-  CODE_SIGNING_ALLOWED=NO test
+  -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO test
+xcrun xcresulttool export attachments --path ../artifacts/ios-verification/TiltArena-tests.xcresult --output-path ../artifacts/ios-verification/screenshots
 xcrun simctl bootstatus "$device_id" -b
 xcrun simctl install "$device_id" DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app
 xcrun simctl launch "$device_id" com.dmkr.tiltarena

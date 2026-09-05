@@ -1,5 +1,6 @@
 import SpriteKit
 import UIKit
+import ImageIO
 
 extension UIColor {
     convenience init(hex: String) {
@@ -9,8 +10,21 @@ extension UIColor {
     }
 }
 
-/// Original vector geometry. Cached as textures by the scene; no imported game art.
+/// ChatGPT Images sprite bases with native glyphs and animation geometry.
 enum ClassicArt {
+    private static func imageTexture(_ name: String, maximum: Int) -> SKTexture {
+        guard let url = Bundle.main.url(forResource: name, withExtension: "png"),
+              let source = CGImageSourceCreateWithURL(url as CFURL, nil),
+              let image = CGImageSourceCreateThumbnailAtIndex(source, 0,
+                [kCGImageSourceCreateThumbnailFromImageAlways: true, kCGImageSourceThumbnailMaxPixelSize: maximum,
+                 kCGImageSourceCreateThumbnailWithTransform: true] as CFDictionary) else {
+            preconditionFailure("Missing generated sprite: \(name)")
+        }
+        return SKTexture(cgImage: image)
+    }
+    static let orb = imageTexture("orb-glass-v03", maximum: 192)
+    static let dot = imageTexture("enemy-dot-v03", maximum: 64)
+    static let spark = imageTexture("energy-spark-v03", maximum: 128)
     static let colors = ["nuke":"ffb52a","wave":"ba71ee","missiles":"f7e36b","frost":"70dce9",
         "bubble":"7bde83","spikes":"6c9ce8","vortex":"ee77bc","lightning":"eeefff","burn":"ff784c"]
     static func star(radius: CGFloat, inner: CGFloat, points: Int) -> CGPath {
@@ -32,7 +46,7 @@ enum ClassicArt {
         let n=SKShapeNode(circleOfRadius:radius);n.fillColor=fill;n.strokeColor=stroke;n.lineWidth=width;return n
     }
     static func node(style: String) -> SKNode {
-        if style == "dot" { return circle(7,fill:UIColor(hex:"ff5658"),stroke:UIColor(hex:"fff5d7"),width:2) }
+        if style == "dot" { let node = SKSpriteNode(texture: dot); node.size = CGSize(width: 17, height: 17); return node }
         if style == "arrow" || style == "missileShot" {
             let path=CGMutablePath();path.move(to:CGPoint(x:16,y:0));path.addLine(to:CGPoint(x:-12,y:11))
             path.addLine(to:CGPoint(x:-6,y:0));path.addLine(to:CGPoint(x:-12,y:-11));path.closeSubpath()
@@ -45,7 +59,10 @@ enum ClassicArt {
             path.addQuadCurve(to:CGPoint(x:-10,y:48),control:CGPoint(x:24,y:0))
             let n=SKShapeNode(path:path);n.strokeColor=UIColor(hex:"e6b6ff");n.lineWidth=9;n.glowWidth=3;return n
         }
-        if style == "fire" { return circle(22,fill:UIColor(hex:"ff953d").withAlphaComponent(0.65),stroke:UIColor(hex:"ffd87a")) }
+        if style == "fire" {
+            let node = SKSpriteNode(texture: spark); node.size = CGSize(width: 58, height: 58)
+            node.color = UIColor(hex: "ff963d"); node.colorBlendFactor = 1; node.blendMode = .add; return node
+        }
         let root=SKNode(),color=UIColor(hex:colors[style] ?? "ee77bc")
         if style == "vortexField" {
             for i in 0..<4 {
@@ -54,8 +71,9 @@ enum ClassicArt {
             }
             root.addChild(circle(14,fill:UIColor(hex:"261c31"),stroke:color));return root
         }
-        root.addChild(circle(18,fill:color.withAlphaComponent(0.28),stroke:UIColor(hex:"f2ffe0")))
-        root.addChild(circle(14.5,fill:color.withAlphaComponent(0.65),stroke:color,width:1))
+        let housing = SKSpriteNode(texture: orb); housing.size = CGSize(width: 42, height: 42)
+        housing.color = color; housing.colorBlendFactor = 0.72; root.addChild(housing)
+        root.addChild(circle(12,fill:UIColor(hex: "11200b").withAlphaComponent(0.65),stroke:.clear,width:0))
         switch style {
         case "nuke":
             root.addChild(circle(6,fill:color,stroke:.white))
@@ -89,12 +107,12 @@ enum ClassicArt {
             let ctx=context.cgContext
             let colors=[UIColor(hex:"354e17").cgColor,UIColor(hex:"77942c").cgColor] as CFArray
             if let gradient=CGGradient(colorsSpace:CGColorSpaceCreateDeviceRGB(),colors:colors,locations:[0,1]) {
-                ctx.drawLinearGradient(gradient,start:.zero,end:CGPoint(x:340,y:640),options:[])
+                ctx.drawLinearGradient(gradient,start:.zero,end:CGPoint(x:size.width * 0.7,y:size.height),options:[.drawsBeforeStartLocation,.drawsAfterEndLocation])
             }
             ctx.setStrokeColor(UIColor(hex:"d1ee80").withAlphaComponent(0.07).cgColor);ctx.setLineWidth(3)
-            for i in 0..<9 {let r=CGFloat(40+i*37);ctx.strokeEllipse(in:CGRect(x:610-r,y:250-r,width:r*2,height:r*2))}
+            for i in 0..<9 {let r=CGFloat(40+i*37);ctx.strokeEllipse(in:CGRect(x:size.width * 0.67-r,y:250-r,width:r*2,height:r*2))}
             ctx.setLineWidth(1)
-            for i in 0..<16 {ctx.move(to:CGPoint(x:0,y:640));ctx.addLine(to:CGPoint(x:CGFloat(i)*100,y:0));ctx.strokePath()}
+            for i in 0..<20 {ctx.move(to:CGPoint(x:0,y:640));ctx.addLine(to:CGPoint(x:CGFloat(i)*size.width/16,y:0));ctx.strokePath()}
         }
         return SKTexture(image:image)
     }

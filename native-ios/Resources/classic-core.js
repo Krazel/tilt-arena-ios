@@ -1,6 +1,6 @@
 /* Krazel Games. Original simulation, shared by JavaScriptCore and Node tests.
  * The calibration/radii/timings are tuning values, not extracted original code.
- * World: 960 x 640, Y up. Fixed camera. See research/REFERENCE.md.
+ * World: Y up, responsive arena; default 960 x 640 for reproducible tests. See research/REFERENCE.md.
  */
 (function (root) {
   'use strict';
@@ -49,6 +49,7 @@
     constructor(seed, options) {
       this.rng = new RNG(seed);
       this.options = options || {};
+      this.bounds = Object.assign({}, BOUNDS);
       this.powers = this.options.powers || POWERS;
       if (!this.powers.length || this.powers.some(p=>!POWERS.includes(p))) throw Error('Invalid arsenal');
       this.id = 0; this.time = 0; this.accumulator = 0;
@@ -62,6 +63,16 @@
         this.addPickup('nuke', 260, 310);
         this.addPickup('missiles', 700, 330);
       }
+    }
+    resize(left, right, bottom, top) {
+      if (![left,right,bottom,top].every(Number.isFinite) || right-left<300 || top-bottom<300) throw Error('Invalid arena');
+      const before=this.bounds, next={left,right,bottom,top};
+      for (const p of [this.player,...this.enemies,...this.pickups,...this.projectiles,...this.fields]) {
+        p.x=clamp(left+(p.x-before.left)/(before.right-before.left)*(right-left),left+7,right-7);
+        p.y=clamp(bottom+(p.y-before.bottom)/(before.top-before.bottom)*(top-bottom),bottom+7,top-7);
+      }
+      this.bounds=next;
+      return this.snapshot();
     }
     event(kind, data) { this.events.push(Object.assign({kind}, data)); }
     pause() { if(this.state === 'running') { this.state='paused'; this.accumulator=0; } }
@@ -87,8 +98,8 @@
       const boost = p.burnUntil>this.time ? 1.5 : 1;
       p.vx += (ix*TUNING.speed*boost-p.vx)*response;
       p.vy += (iy*TUNING.speed*boost-p.vy)*response;
-      p.x = clamp(p.x+p.vx*dt,BOUNDS.left+7,BOUNDS.right-7);
-      p.y = clamp(p.y+p.vy*dt,BOUNDS.bottom+7,BOUNDS.top-7);
+      p.x = clamp(p.x+p.vx*dt,this.bounds.left+7,this.bounds.right-7);
+      p.y = clamp(p.y+p.vy*dt,this.bounds.bottom+7,this.bounds.top-7);
       if (length(p.vx,p.vy)>8) p.angle = Math.atan2(p.vy,p.vx);
       if (this.options.spawning !== false) this.spawnDirector();
       for(const orb of this.pickups) {
@@ -115,8 +126,8 @@
             const d=Math.max(1,distance(e,p));
             e.x+=(p.x-e.x)/d*e.speed*dt;e.y+=(p.y-e.y)/d*e.speed*dt;
           }
-          e.x=clamp(e.x,BOUNDS.left+7,BOUNDS.right-7);
-          e.y=clamp(e.y,BOUNDS.bottom+7,BOUNDS.top-7);
+          e.x=clamp(e.x,this.bounds.left+7,this.bounds.right-7);
+          e.y=clamp(e.y,this.bounds.bottom+7,this.bounds.top-7);
         }
         // Relative swept collision includes the dot's movement as well as the arrow's.
         const relativeEnd={x:p.x-(e.x-old.x),y:p.y-(e.y-old.y)};
@@ -138,7 +149,7 @@
       if(!this.combo) return;
       const bonus=6*this.combo*this.combo;
       this.score+=bonus;
-      this.event('combo',{value:this.combo,bonus,x:480,y:70});
+      this.event('combo',{value:this.combo,bonus,x:(this.bounds.left+this.bounds.right)/2,y:this.bounds.bottom+18});
       this.combo=0;this.comboUntil=0;
     }
     kill(e,style) {
@@ -168,9 +179,10 @@
         const n=2+Math.floor(Math.min(12,this.time/12));
         for(let i=0;i<n && this.enemies.length<TUNING.maxEnemies;i++) {
           const edge=Math.floor(this.rng.next()*4);
-          let x=this.rng.range(40,920),y=this.rng.range(68,576);
+          const b=this.bounds;
+          let x=this.rng.range(b.left+16,b.right-16),y=this.rng.range(b.bottom+16,b.top-16);
           if(this.rng.next()<0.8) {
-            if(edge===0)x=40;if(edge===1)x=920;if(edge===2)y=68;if(edge===3)y=576;
+            if(edge===0)x=b.left+16;if(edge===1)x=b.right-16;if(edge===2)y=b.bottom+16;if(edge===3)y=b.top-16;
           }
           if(distance({x,y},this.player)>TUNING.spawnClearance) this.addEnemy(x,y);
         }
@@ -183,7 +195,7 @@
       if(this.time>=this.pickupAt) {
         if(this.pickups.length<TUNING.maxPickups) {
           for(let attempt=0;attempt<20;attempt++) {
-            const x=this.rng.range(90,870),y=this.rng.range(110,534);
+            const b=this.bounds, x=this.rng.range(b.left+66,b.right-66),y=this.rng.range(b.bottom+58,b.top-58);
             if(distance({x,y},this.player)>85 && this.pickups.every(o=>distance({x,y},o)>65)) {
               this.addPickup(this.rng.pick(this.powers),x,y);break;
             }
@@ -194,11 +206,12 @@
     }
     spawnPattern(kind) {
       const right=this.rng.next()<0.5;
-      const cx=right?850:110,cy=this.rng.range(210,430);
+      const b=this.bounds;
+      const cx=right?b.right-86:b.left+86,cy=this.rng.range(b.bottom+158,b.top-162);
       const a=Math.atan2(this.player.y-cy,this.player.x-cx);
       const points=[];
       if(kind==='line') {
-        for(let i=0;i<19;i++)points.push({x:right?902:58,y:96+i*25});
+        for(let i=0;i<19;i++)points.push({x:right?b.right-34:b.left+34,y:b.bottom+44+i*(b.top-b.bottom-88)/18});
       } else if(kind==='arrow') {
         for(let i=0;i<7;i++)for(const side of (i===0?[1]:[-1,1])) {
           const dx=-i*18,dy=i*side*12;
@@ -210,7 +223,7 @@
       for(const point of points) {
         if(this.enemies.length>=TUNING.maxEnemies)break;
         if(distance(point,this.player)<TUNING.spawnClearance)continue;
-        this.addEnemy(clamp(point.x,40,920),clamp(point.y,68,576),{
+        this.addEnemy(clamp(point.x,b.left+16,b.right-16),clamp(point.y,b.bottom+16,b.top-16),{
           formationUntil:this.time+TUNING.telegraph+2.6,
           vx:kind==='line'?(right?-68:68):Math.cos(a)*90,
           vy:kind==='line'?0:Math.sin(a)*90});
@@ -337,9 +350,10 @@
     }
   }
   let game=null;
-  const API={create(seed){game=new ClassicGame(seed);return JSON.stringify(game.snapshot());},
+  const API={create(seed,spawning=true){game=new ClassicGame(seed,{spawning});return JSON.stringify(game.snapshot());},
     tick(dt,x,y){return JSON.stringify(game.advance(dt,{x,y}));},
     pause(){game.pause();},resume(){game.resume();},
+    resize(l,r,b,t){return JSON.stringify(game.resize(l,r,b,t));},
     finish(){game.resume();game.die();return JSON.stringify(game.snapshot());},
     tilt(gx,gy,nx,ny,orientation,sensitivity){return tiltInput({x:gx,y:gy},{x:nx,y:ny},orientation,sensitivity);}};
   root.ClassicAPI=API;

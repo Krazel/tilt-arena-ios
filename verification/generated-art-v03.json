@@ -1,0 +1,38 @@
+{
+  "enemy-dot-v03.png": {
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "sha256": "7d7c3e7965531a3336376617dbc2a4f129a4d82f44742b21e2879a58f64ada32"
+  },
+  "energy-spark-v03.png": {
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      254
+    ],
+    "sha256": "4a57c519df6ae4f7b4e8dc2d4befe2bccfb989dbfce1c521ef4782fe3de7d6ad"
+  },
+  "orb-glass-v03.png": {
+    "size": [
+      1254,
+      1254
+    ],
+    "mode": "RGBA",
+    "alphaRange": [
+      0,
+      255
+    ],
+    "sha256": "e28e80738d2117e35432a4f9835438e85a699e2ebd131f3d7db1090be9afa961"
+  }
+}

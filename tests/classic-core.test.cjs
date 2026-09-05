@@ -8,6 +8,27 @@ const run=(g,seconds,input={x:0,y:0},fps=60)=>{
   for(let i=0;i<Math.round(seconds*fps);i++)g.advance(1/fps,input);
 };
 const dot=(g,x,y)=>g.addEnemy(x,y,{activeAt:0,speed:0});
+
+test('wide arenas use their full bounds without stretching speeds or sharing state',()=>{
+  const wide=fresh(), legacy=fresh();
+  wide.resize(100,1300,65,592);
+  run(wide,4,{x:1,y:0});
+  assert.equal(wide.player.x,1293);
+  assert.deepEqual(legacy.bounds,BOUNDS);
+  assert.ok(Math.abs(wide.player.vx-TUNING.speed)<1);
+  wide.patternAt=0;wide.spawnPattern('line');
+  assert.ok(wide.enemies.every(e=>e.x>=116&&e.x<=1284&&e.y>=81&&e.y<=576));
+});
+test('resize during pause preserves progress, identity and relative positions',()=>{
+  const g=fresh();g.addPickup('frost',300,250);dot(g,800,400);g.score=321;g.pause();
+  const id=g.pickups[0].id;
+  const relative=(g.player.x-BOUNDS.left)/(BOUNDS.right-BOUNDS.left);
+  g.resize(80,1250,70,590);
+  assert.equal(g.state,'paused');assert.equal(g.score,321);assert.equal(g.pickups[0].id,id);
+  assert.ok(Math.abs((g.player.x-80)/1170-relative)<1e-10);
+  g.resume();run(g,0.1,{x:1,y:0});assert.ok(g.player.vx>0);
+  assert.throws(()=>g.resize(NaN,1200,50,590));
+});
 test('neutral calibration suppresses drift and landscape orientations mirror correctly',()=>{
   const n={x:-0.5,y:0.1};
   assert.deepEqual(tiltInput(n,n,'landscapeLeft',1),{x:0,y:0});

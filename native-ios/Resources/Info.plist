@@ -21,7 +21,7 @@
   <key>UILaunchScreen</key>
   <dict/>
   <key>NSMotionUsageDescription</key>
-  <string>La inclinación del iPhone mueve la flecha durante la partida. Los datos de movimiento no se guardan ni se envían.</string>
+  <string>La inclinación del iPhone mueve la flecha. La postura personalizada se guarda solo en este dispositivo; no se envían datos de movimiento.</string>
   <key>UIRequiresFullScreen</key>
   <true/>
   <key>UISupportedInterfaceOrientations</key>
