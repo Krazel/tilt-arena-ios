@@ -1,9 +1,15 @@
 {
-  "verified": true,
   "id": "PR-031",
-  "revision": 4,
-  "updatedAt": "2026-09-05T15:24:40.617Z",
-  "name": "Tilt Arena — Tilt to Live",
-  "method": "Private library UI PUT, independently read back from D1 connector",
-  "concurrency": "Stale revision 2 rejected; reloaded revision 3 and preserved central changes; saved revision 4."
+  "revision": 5,
+  "updated_at": "2026-09-05T16:20:20.432Z",
+  "verifiedBy": [
+    "D1 read_database_table_rows",
+    "Saved project UI"
+  ],
+  "version": "0.2.0 (candidata de simulador)",
+  "build": 2,
+  "repo": "https://github.com/Krazel/tilt-arena-ios",
+  "published": "No",
+  "notesPreserved": true,
+  "physicalTestPending": true
 }

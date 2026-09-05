@@ -1,0 +1,14 @@
+{
+  "run": 33976739671,
+  "url": "https://github.com/Krazel/tilt-arena-ios/actions/runs/33976739671",
+  "nodePassed": 23,
+  "publicCommit": "15696c03dda4b3ac3533e1f891dd7700bc09ed38",
+  "failureStage": "Post-test screenshot setup: simulator Shutdown",
+  "version": "0.2.0",
+  "xcode": "16.4",
+  "workflowResult": "failure",
+  "buildResult": "success",
+  "xctestFailed": 0,
+  "xctestPassed": 3,
+  "build": 1
+}
