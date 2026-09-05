@@ -2,7 +2,8 @@ import XCTest
 
 final class ClassicFlowTests: XCTestCase {
     private func capture(_ name: String, app: XCUIApplication) {
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+        // Capture the display: app-window screenshots crop landscape on this simulator.
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
     func testPosturesPlayPauseAndResumeWithoutCalibration() {
