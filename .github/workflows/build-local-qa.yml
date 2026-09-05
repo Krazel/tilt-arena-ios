@@ -1,9 +1,9 @@
-name: Verify classic iOS candidate
+name: Build iPhone Local-QA IPA
 on: workflow_dispatch
 permissions:
   contents: read
 jobs:
-  verify:
+  build:
     runs-on: macos-15
     timeout-minutes: 20
     steps:
@@ -14,10 +14,10 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: brew install xcodegen
-      - run: bash scripts/verify-ios.sh
+      - run: bash scripts/build-local-qa.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: TiltArena-simulator-${{ github.sha }}
-          path: artifacts/ios-verification/
-          retention-days: 7
+          name: TiltArena-Local-QA-${{ github.sha }}
+          path: artifacts/local-qa/
+          retention-days: 14
