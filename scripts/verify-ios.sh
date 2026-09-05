@@ -8,7 +8,10 @@ xcodegen generate
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
   -derivedDataPath DerivedData CODE_SIGNING_ALLOWED=NO build
-tar -czf ../artifacts/ios-verification/TiltArena-0.2.0-build2-simulator.tar.gz -C DerivedData/Build/Products/Debug-iphonesimulator TiltArena.app
+app_plist='DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app/Info.plist'
+version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_plist")
+build=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_plist")
+tar -czf "../artifacts/ios-verification/TiltArena-${version}-build${build}-simulator.tar.gz" -C DerivedData/Build/Products/Debug-iphonesimulator TiltArena.app
 device_id=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; d=json.load(sys.stdin); print(next(x["udid"] for group in d["devices"].values() for x in group if x["name"].startswith("iPhone")))')
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \
