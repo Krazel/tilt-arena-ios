@@ -16,7 +16,7 @@ final class ClassicScene: SKScene {
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     private let bestLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
     private let comboBar = SKSpriteNode(color: UIColor(hex: "d5f56b"), size: CGSize(width: 240, height: 3))
-    private var frame: ClassicFrame?, lastTime: Double?
+    private var gameFrame: ClassicFrame?, lastTime: Double?
     private var neutral = (x: 0.0, y: 0.0)
     private var calibratedOrientation: UIInterfaceOrientation = .unknown
     private var samples: [(x: Double, y: Double)] = []
@@ -25,7 +25,7 @@ final class ClassicScene: SKScene {
     private var touchVector = (x: 0.0, y: 0.0), touchOrigin: CGPoint?
     private var calibrationFrames = 0
 
-    init() {
+    override init() {
         super.init(size: CGSize(width: 960, height: 640))
         scaleMode = .aspectFit; backgroundColor = UIColor(hex: "16260f")
     }
@@ -89,12 +89,12 @@ final class ClassicScene: SKScene {
         do {
             if restartAfterCalibration {
                 for node in objects.values { node.removeFromParent() }; objects.removeAll()
-                effects.removeAllChildren(); frame = try bridge?.create()
-            } else { try bridge?.resume(); frame = try bridge?.tick(dt: 0, x: 0, y: 0) }
+                effects.removeAllChildren(); gameFrame = try bridge?.create()
+            } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
             lastTime = nil; touchOrigin = nil; touchVector = (0, 0)
             world.isPaused = false; effects.isPaused = false
             session?.message = ""; session?.phase = .running
-            if let frame = frame { render(frame) }; sound.playMusic()
+            if let frame = gameFrame { render(frame) }; sound.playMusic()
         } catch { session?.fail(error) }
     }
     func pauseRun(message: String = "") {
@@ -113,7 +113,7 @@ final class ClassicScene: SKScene {
     }
     func menu() { halt(); session?.phase = .menu; session?.message = ""; startMotion() }
     func finishPausedRun() {
-        do { if let result = try bridge?.finish() { frame = result; session?.finish(result) } }
+        do { if let result = try bridge?.finish() { gameFrame = result; session?.finish(result) } }
         catch { session?.fail(error) }
     }
     override func update(_ currentTime: TimeInterval) {
@@ -138,7 +138,7 @@ final class ClassicScene: SKScene {
                 sensitivity: session.sensitivity) ?? (0,0)
             #endif
             if let next = try bridge?.tick(dt: dt, x: input.0, y: input.1) {
-                frame = next; render(next)
+                gameFrame = next; render(next)
                 if next.state == "gameOver" { halt(); session.finish(next); sound.play("death") }
             }
         } catch { session.fail(error) }
