@@ -1,4 +1,4 @@
-# Candidata iOS 0.3 · build 1
+# Candidata iOS 0.3 · build 2
 
 SpriteKit dibuja; CoreMotion obtiene inclinación; SwiftUI presenta los menús.
 JavaScriptCore ejecuta `Resources/classic-core.js`, el mismo motor de las pruebas
@@ -19,8 +19,8 @@ Genera el proyecto, compila y ejecuta 7 XCTest y 2 XCUITest; exporta capturas na
 `npm test`: 25 pruebas del motor y recursos. Las tres suites pasan en CI.
 El fixture `--visual-qa` existe solo en Debug para revisar arte, no en el IPA Release.
 
-IPA Local-QA Release iPhoneOS ARM64 0.3 build 1 compilada y verificada:
-https://github.com/Krazel/tilt-arena-ios/actions/runs/33981933018 .
+IPA Local-QA Release iPhoneOS ARM64 0.3 build 2 compilada y verificada:
+https://github.com/Krazel/tilt-arena-ios/actions/runs/33983076969 .
 No está subida a TestFlight ni App Store. Sin firma: cargar en Sideloadly para
 firmar e instalar con la cuenta del usuario. Bundle ID: `com.dmkr.tiltarena`.
 
