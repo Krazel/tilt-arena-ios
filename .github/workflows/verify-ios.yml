@@ -16,8 +16,8 @@ jobs:
       - run: brew install xcodegen
       - run: bash scripts/verify-ios.sh
       - uses: actions/upload-artifact@v4
-        if: success()
+        if: always()
         with:
           name: TiltArena-0.2.0-build1-simulator-${{ github.sha }}
-          path: native-ios/DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app
+          path: artifacts/ios-verification/
           retention-days: 7
