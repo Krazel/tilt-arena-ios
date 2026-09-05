@@ -1,0 +1,23 @@
+name: Verify classic iOS candidate
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm ci
+      - run: npm test
+      - run: brew install xcodegen
+      - run: bash scripts/verify-ios.sh
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: TiltArena-0.2.0-build1-simulator-${{ github.sha }}
+          path: native-ios/DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app
+          retention-days: 7

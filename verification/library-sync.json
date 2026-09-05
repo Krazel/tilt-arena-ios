@@ -1,0 +1,9 @@
+{
+  "verified": true,
+  "id": "PR-031",
+  "revision": 4,
+  "updatedAt": "2026-09-05T15:24:40.617Z",
+  "name": "Tilt Arena — Tilt to Live",
+  "method": "Private library UI PUT, independently read back from D1 connector",
+  "concurrency": "Stale revision 2 rejected; reloaded revision 3 and preserved central changes; saved revision 4."
+}

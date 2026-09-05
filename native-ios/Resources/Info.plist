@@ -20,6 +20,8 @@
   <string>Tilt Arena</string>
   <key>UILaunchScreen</key>
   <dict/>
+  <key>NSMotionUsageDescription</key>
+  <string>La inclinación del iPhone mueve la flecha durante la partida. Los datos de movimiento no se guardan ni se envían.</string>
   <key>UIRequiresFullScreen</key>
   <true/>
   <key>UISupportedInterfaceOrientations</key>

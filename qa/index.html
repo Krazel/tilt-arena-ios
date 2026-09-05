@@ -1,0 +1,72 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tilt Arena · Laboratorio clásico</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#10190c;color:#edf4dd;font:15px system-ui}main{max-width:1120px;margin:auto;padding:24px}header{display:flex;justify-content:space-between;align-items:center;gap:18px}h1{font-size:25px;margin:5px 0}small{color:#cfe67e;letter-spacing:2px}p{color:#b8c5a6;line-height:1.5}button,select{font:inherit;border:1px solid #53643f;color:#edf4dd;border-radius:9px;background:#25341a;padding:10px 15px;cursor:pointer}button.primary{background:#d1f563;color:#19260d;border:0;font-weight:700}nav{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}canvas{display:block;width:100%;aspect-ratio:1.5;background:#354e17;border-radius:14px;outline:none;touch-action:none}footer{display:flex;justify-content:space-between;gap:16px;margin-top:10px;font-size:13px;color:#a7b598}#status{font-variant-numeric:tabular-nums}.legend{display:flex;gap:14px;flex-wrap:wrap;padding-top:12px;font-size:12px}.legend span{display:inline-flex;gap:6px;align-items:center}.legend i{width:9px;height:9px;border-radius:50%}button:focus-visible,canvas:focus-visible{outline:2px solid #d1f563;outline-offset:4px}@media(max-width:620px){main{padding:12px}header{display:block}h1{font-size:21px}footer{display:block}}
+</style><main><header><div><small>KRAZEL GAMES · PR-031</small><h1>Laboratorio clásico</h1></div><p>Motor compartido con iOS · Vista de diagnóstico<br>Esta pantalla no acredita una build nativa.</p></header>
+<nav><button class="primary" id="start">Jugar con teclado</button><button id="pause">Pausar</button><button id="reference">Escena de referencia</button><select id="power" aria-label="Arma para comprobar"></select><button id="activate">Probar arma</button><button id="sound">Activar sonido</button></nav>
+<canvas id="arena" width="960" height="640" tabindex="0" aria-label="Arena de pruebas. Usa flechas o WASD; espacio para pausar."></canvas>
+<footer><span>Flechas / WASD · Arrastra · Espacio: pausa · R: reiniciar</span><output id="status" aria-live="polite">Referencia visual estática</output></footer><div id="legend" class="legend"></div>
+</main><script>var CLASSIC_DIAGNOSTICS=true;</script><script src="/core.js"></script><script>
+const {ClassicGame,POWERS,COLORS}=ClassicDiagnostics;
+const names={nuke:'Explosión',wave:'Onda',missiles:'Misiles',frost:'Hielo',bubble:'Burbuja',spikes:'Púas',vortex:'Vórtice',lightning:'Rayo',burn:'Estela'};
+const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d'),status=document.querySelector('#status'),selector=document.querySelector('#power');
+for(const p of POWERS){selector.add(new Option(names[p],p));document.querySelector('#legend').insertAdjacentHTML('beforeend',`<span><i style="background:${COLORS[p]}"></i>${names[p]}</span>`);}
+let game,last=0,keys=new Set(),drag=null,input={x:0,y:0},reference=true,soundEnabled=false,best=0;
+try{best=Number(localStorage.getItem('classic.qa.best'))||0}catch{}
+const sounds=Object.fromEntries(['classic-loop','pickup','hit','death'].map(n=>[n,new Audio('/'+n+'.wav')]));
+sounds['classic-loop'].loop=true;sounds['classic-loop'].volume=0.2;let hitAt=0;
+function play(n){if(!soundEnabled)return;if(n==='hit'&&performance.now()-hitAt<60)return;hitAt=performance.now();sounds[n].currentTime=0;sounds[n].play().catch(()=>{});}
+function start(){game=new ClassicGame(Date.now());reference=false;last=0;keys.clear();input={x:0,y:0};canvas.focus();if(soundEnabled)sounds['classic-loop'].play().catch(()=>{});}
+function fixture(){game=new ClassicGame(1702,{spawning:false});game.player.x=446;game.player.y=295;game.player.angle=0.55;game.score=38570;game.combo=42;game.comboUntil=2.5;game.bestCombo=42;
+ for(let i=0;i<65;i++){const a=i*2.39996,r=150+(i%7)*21;game.addEnemy(480+Math.cos(a)*r*1.3,320+Math.sin(a)*r*.75,{activeAt:0});}
+ POWERS.forEach((p,i)=>game.addPickup(p,130+(i%5)*170,135+Math.floor(i/5)*350));
+ game.spawnPattern('arrow');reference=true;game.pause();sounds['classic-loop'].pause();keys.clear();input={x:0,y:0};render(game.snapshot());status.textContent='Referencia visual estática · 9 armas';}
+function pause(){if(!game||reference)return;if(game.state==='running'){game.pause();sounds['classic-loop'].pause()}else if(game.state==='paused'){game.resume();last=0;if(soundEnabled)sounds['classic-loop'].play().catch(()=>{})}keys.clear();input={x:0,y:0};canvas.focus();}
+document.querySelector('#start').onclick=start;document.querySelector('#pause').onclick=pause;document.querySelector('#reference').onclick=fixture;
+document.querySelector('#activate').onclick=()=>{if(reference){reference=false;game.resume();last=0;}game.activate(selector.value);canvas.focus()};
+document.querySelector('#sound').onclick=()=>{soundEnabled=!soundEnabled;document.querySelector('#sound').textContent=soundEnabled?'Silenciar sonido':'Activar sonido';if(soundEnabled&&!reference&&game.state==='running')sounds['classic-loop'].play().catch(()=>{});else sounds['classic-loop'].pause()};
+canvas.onkeydown=e=>{if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight',' '].includes(e.key))e.preventDefault();keys.add(e.key.toLowerCase());if(e.code==='Space'&&!e.repeat)pause();if(e.key.toLowerCase()==='r')start();};
+canvas.onkeyup=e=>keys.delete(e.key.toLowerCase());
+canvas.onpointerdown=e=>{canvas.setPointerCapture(e.pointerId);canvas.focus();drag={x:e.clientX,y:e.clientY};};
+canvas.onpointermove=e=>{if(!drag)return;const scale=960/canvas.clientWidth;input={x:(e.clientX-drag.x)*scale/70,y:-(e.clientY-drag.y)*scale/70};};
+canvas.onpointerup=canvas.onpointercancel=()=>{drag=null;input={x:0,y:0}};
+window.addEventListener('blur',()=>{if(game?.state==='running')pause();});
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&game?.state==='running')pause();});
+function circle(x,y,r,fill,stroke,width=2){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.stroke()}}
+function line(points,color,width=2){ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke()}
+function star(r,inner,n,color){const ps=[];for(let i=0;i<n*2;i++){const a=i*Math.PI/n,d=i%2?inner:r;ps.push([Math.cos(a)*d,Math.sin(a)*d])}ps.push(ps[0]);line(ps,color)}
+function icon(power){const c=COLORS[power];circle(0,0,18,c+'66','#f2ffe0');circle(0,0,14.5,c+'a8',c,1);ctx.strokeStyle='#fff';
+switch(power){case'nuke':circle(0,0,6,c,'#fff');for(let i=0;i<8;i++){const a=i*Math.PI/4;line([[9*Math.cos(a),9*Math.sin(a)],[12*Math.cos(a),12*Math.sin(a)]],'#fff')}break;
+case'wave':for(const x of [-6,2])line([[x-2,-9],[x+5,0],[x-2,9]],'#fff');break;
+case'missiles':for(const x of [-8,0,8])line([[x-3,7],[x+2,-7],[x+4,-2]],'#fff');break;
+case'frost':for(let i=0;i<3;i++){const a=i*Math.PI/3;line([[-11*Math.cos(a),-11*Math.sin(a)],[11*Math.cos(a),11*Math.sin(a)]],'#fff')}break;
+case'bubble':circle(0,0,10,null,'#fff');break;case'spikes':star(12,6,8,'#fff');break;
+case'vortex':{const p=[];for(let i=0;i<60;i++)p.push([Math.cos(i*.17)*i*.18,Math.sin(i*.17)*i*.18]);line(p,'#fff');break;}
+case'lightning':line([[6,-12],[-5,0],[4,0],[-6,12]],'#fff',3);break;
+case'burn':line([[-8,7],[-7,-2],[-2,0],[2,-12],[8,7],[-8,7]],'#fff');break;}}
+function arrow(x,y,a,scale=1,color='#f7ffe5'){ctx.save();ctx.translate(x,640-y);ctx.rotate(-a);ctx.scale(scale,scale);ctx.beginPath();[[16,0],[-12,-11],[-6,0],[-12,11]].forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.closePath();ctx.fillStyle=color;ctx.fill();ctx.strokeStyle='#243815';ctx.lineWidth=2;ctx.stroke();ctx.restore()}
+let flashes=[];
+function render(f){const bg=ctx.createLinearGradient(0,0,340,640);bg.addColorStop(0,'#354e17');bg.addColorStop(1,'#77942c');ctx.fillStyle=bg;ctx.fillRect(0,0,960,640);
+for(let i=0;i<9;i++)circle(610,250,40+i*37,null,'#d1ee8012',3);for(let i=0;i<16;i++)line([[0,640],[i*100,0]],'#d1ee8012',1);
+ctx.beginPath();ctx.roundRect(24,48,912,540,16);ctx.strokeStyle='#e3efc9a6';ctx.lineWidth=2;ctx.stroke();
+for(const v of f.fields){if(v.kind==='vortex'){for(let i=0;i<4;i++)circle(v.x,640-v.y,16+i*14,null,'#ee77bc66',3);circle(v.x,640-v.y,14,'#261c31','#ee77bc')}else circle(v.x,640-v.y,22,'#ff953da6','#ffd87a')}
+for(const e of f.enemies){ctx.globalAlpha=e.telegraph?.25:1;circle(e.x,640-e.y,e.telegraph?10:7,e.frozen?'#70dce9':'#ff5658','#fff5d7');}ctx.globalAlpha=1;
+for(const o of f.pickups){ctx.save();ctx.translate(o.x,640-o.y);icon(o.power);ctx.restore()}
+for(const p of f.projectiles){if(p.kind==='missile')arrow(p.x,p.y,p.angle,.4,'#ffe57a');else{ctx.save();ctx.translate(p.x,640-p.y);ctx.rotate(-p.angle);ctx.beginPath();ctx.moveTo(-10,-48);ctx.quadraticCurveTo(24,0,-10,48);ctx.strokeStyle='#e6b6ff';ctx.lineWidth=9;ctx.stroke();ctx.restore()}}
+arrow(f.player.x,f.player.y,f.player.angle);if(f.player.bubble)circle(f.player.x,640-f.player.y,26,'#7bde8320','#7bde83',3);
+if(f.player.spikesUntil>f.time){ctx.save();ctx.translate(f.player.x,640-f.player.y);star(35,24,12,'#b5d8ff');ctx.restore()}
+for(const e of f.events){if(e.radius)flashes.push({x:e.x,y:e.y,r:e.radius,color:e.color,until:performance.now()+350})}
+flashes=flashes.filter(e=>e.until>performance.now());for(const e of flashes){ctx.globalAlpha=(e.until-performance.now())/350;circle(e.x,640-e.y,e.r,e.color+'22',e.color,4)}ctx.globalAlpha=1;
+ctx.fillStyle='#f0f5d9';ctx.textAlign='left';ctx.font='800 22px system-ui';ctx.fillText(f.score.toLocaleString('es'),30,34);
+ctx.textAlign='right';ctx.font='600 16px system-ui';ctx.fillText('RÉCORD  '+Math.max(best,f.score).toLocaleString('es'),930,32);
+ctx.textAlign='left';ctx.font='700 18px system-ui';ctx.fillText(f.combo?`COMBO  ${f.comboBase} × ${f.combo}`:'ENLAZA LAS ARMAS',30,619);
+ctx.fillStyle='#d5f56b';ctx.fillRect(30,626,240*f.comboRemaining,3);
+if(!reference&&f.state!=='running'){ctx.fillStyle='#10190cbf';ctx.fillRect(0,0,960,640);ctx.textAlign='center';ctx.fillStyle='#f0f5d9';ctx.font='800 46px system-ui';ctx.fillText(f.state==='paused'?'PAUSA':'Por un punto…',480,285);ctx.font='600 25px system-ui';ctx.fillText(f.state==='paused'?'Espacio para continuar':`${f.score.toLocaleString('es')} puntos · R para otra partida`,480,337)}
+}
+function tick(time){if(game&&!reference){const dt=last?(time-last)/1000:0;last=time;
+const x=input.x+(keys.has('arrowright')||keys.has('d')?1:0)-(keys.has('arrowleft')||keys.has('a')?1:0),y=input.y+(keys.has('arrowup')||keys.has('w')?1:0)-(keys.has('arrowdown')||keys.has('s')?1:0);
+const f=game.advance(dt,{x,y});render(f);status.textContent=`${f.state} · ${f.time.toFixed(1)} s · ${f.enemies.length} puntos · ${f.score} puntos de marcador`;
+if(f.events.some(e=>e.kind==='pickup'))play('pickup');else if(f.events.some(e=>e.kind==='kill'))play('hit');
+if(f.events.some(e=>e.kind==='death')){play('death');sounds['classic-loop'].pause();best=Math.max(best,f.score);try{localStorage.setItem('classic.qa.best',best)}catch{}}
+}requestAnimationFrame(tick)}fixture();requestAnimationFrame(tick);
+</script></html>

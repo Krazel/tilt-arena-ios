@@ -1,0 +1,10 @@
+{
+  "date": "2026-09-05T15:15:36.126Z",
+  "environment": "win32 x64 Node v24.14.0",
+  "scenario": "550 stationary active dots, 60 simulated seconds after warm-up, simulation + JSON round trip",
+  "samples": 3600,
+  "meanMs": 0.8585130555555548,
+  "p95Ms": 1.3706999999999425,
+  "maxMs": 14.741599999999835,
+  "limitations": "Node/V8 on Windows only. No SpriteKit, JavaScriptCore, Swift decoding, sensor, GPU or native frame rate measured."
+}
