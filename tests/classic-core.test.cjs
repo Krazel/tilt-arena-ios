@@ -13,7 +13,7 @@ test('wide arenas use their full bounds without stretching speeds or sharing sta
   const wide=fresh(), legacy=fresh();
   wide.resize(100,1300,65,592);
   run(wide,4,{x:1,y:0});
-  assert.equal(wide.player.x,1293);
+  assert.equal(wide.player.x,1300-TUNING.playerExtent);
   assert.deepEqual(legacy.bounds,BOUNDS);
   assert.ok(Math.abs(wide.player.vx-TUNING.speed)<1);
   wide.patternAt=0;wide.spawnPattern('line');
@@ -46,7 +46,7 @@ test('same input produces same motion at 30/60/120 Hz; speed stays isotropic',()
 });
 test('motion brakes quickly and player stays in bounds',()=>{
   const g=fresh();run(g,4,{x:1,y:1});
-  assert.equal(g.player.x,BOUNDS.right-7);assert.equal(g.player.y,BOUNDS.top-7);
+  assert.equal(g.player.x,BOUNDS.right-TUNING.playerExtent);assert.equal(g.player.y,BOUNDS.top-TUNING.playerExtent);
   run(g,0.25);assert.ok(Math.hypot(g.player.vx,g.player.vy)<2);
 });
 test('a red-dot collision ends the run once; no health or revival',()=>{
@@ -120,6 +120,40 @@ test('pause freezes score, durations, projectiles and spawns; resume has no catc
 test('a pickup can trigger only once even with multiple substeps',()=>{
   const g=fresh();g.addPickup('bubble',480,320);g.advance(0.1);
   assert.equal(g.score,10);assert.equal(g.pickups.length,0);
+});
+test('collecting the last power repeatedly always refills in the same step without chaining',()=>{
+  const g=new ClassicGame(91,{powers:['bubble']});
+  g.spawnAt=g.patternAt=g.pickupAt=Infinity;
+  g.pickups=[]; g.addPickup('bubble',g.player.x,g.player.y);
+  for(let i=0;i<100;i++) {
+    const previous=g.pickups[0]; g.player.x=previous.x; g.player.y=previous.y;
+    const score=g.score;
+    const frame=g.advance(TUNING.step);
+    assert.equal(frame.pickups.length,1);
+    assert.equal(g.score,score+10);
+    const next=g.pickups[0]; assert.notEqual(next.id,previous.id);
+    assert.ok(Math.hypot(next.x-g.player.x,next.y-g.player.y)>85);
+    assert.equal(frame.events.filter(e=>e.kind==='pickup').length,1);
+    assert.equal(frame.events.filter(e=>e.kind==='spawnPickup').length,1);
+  }
+});
+test('expiry refills immediately and a blocked random sampler has a bounded fallback',()=>{
+  const g=new ClassicGame(92);
+  g.resize(0,300,0,300); g.player.x=150; g.player.y=150;
+  g.spawnAt=g.patternAt=g.pickupAt=Infinity;
+  g.pickups=[g.addPickup('bubble',150,150)]; g.pickups[0].until=0;
+  g.rng.range=(a,b)=>(a+b)/2;
+  g.advance(TUNING.step);
+  assert.equal(g.score,0); assert.equal(g.pickups.length,1);
+  const p=g.pickups[0]; assert.ok(POWERS.includes(p.power));
+  assert.ok(Math.hypot(p.x-150,p.y-150)>85);
+  assert.ok(p.x>=28&&p.x<=272&&p.y>=28&&p.y<=272);
+});
+test('refill does not advance paused or finished runs',()=>{
+  for(const state of ['paused','gameOver']) {
+    const g=new ClassicGame(93); g.pickups=[]; g.state=state;
+    g.advance(0.1); assert.equal(g.pickups.length,0); assert.equal(g.time,0);
+  }
 });
 test('expired pickups cannot be collected and ending a paused run settles only once',()=>{
   const g=fresh();g.addPickup('bubble',480,320).until=0;g.advance(1/60);

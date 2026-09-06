@@ -18,13 +18,25 @@ final class GameSession: ObservableObject {
     @Published var best = UserDefaults.standard.integer(forKey: "classic.v02.best")
     @Published var sensitivity = UserDefaults.standard.object(forKey: "classic.sensitivity") as? Double ?? 1
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
-    @Published var posture = TiltPosture(rawValue: UserDefaults.standard.string(forKey: "classic.posture") ?? "normal") ?? .normal
+    @Published var posture = TiltProfile.initialPosture(defaults: .standard)
     @Published var hasCustom = UserDefaults.standard.object(forKey: "classic.neutralY") != nil
     private var custom = TiltProfile(screenX: UserDefaults.standard.double(forKey: "classic.neutralX"),
                                      screenY: UserDefaults.standard.double(forKey: "classic.neutralY"))
     var activeProfile: TiltProfile { posture == .custom ? custom : .preset(posture) }
     let scene = ClassicScene()
-    init() { scene.session = self }
+    init() {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--fresh-controls-qa") {
+            for key in ["classic.posture", "classic.postureRevision", "classic.neutralX", "classic.neutralY"] {
+                UserDefaults.standard.removeObject(forKey: key)
+            }
+            posture = .custom; hasCustom = false
+        }
+        #endif
+        scene.session = self
+        UserDefaults.standard.set(posture.rawValue, forKey: "classic.posture")
+        UserDefaults.standard.set(2, forKey: "classic.postureRevision")
+    }
     func saveCustom(_ profile: TiltProfile) {
         custom = profile; hasCustom = true; posture = .custom
         UserDefaults.standard.set(profile.screenX, forKey: "classic.neutralX")
@@ -109,8 +121,10 @@ struct GameView: View {
                 Text("CLÁSICO").font(.system(size: 38, weight: .black, design: .rounded))
                 Text("Esquiva. Recoge. Encadena.").font(.subheadline).foregroundColor(.white.opacity(0.7))
                 Text("RÉCORD  \(game.best.formatted())").font(.system(.callout, design: .monospaced))
-                primary("Jugar", id: "play") { game.scene.play(restart: true) }
-                secondary("Calibrar postura") { game.scene.calibrate(restart: true) }
+                primary(game.posture == .custom && !game.hasCustom ? "Calibrar y jugar" : "Jugar", id: "play") { game.scene.play(restart: true) }
+                if game.hasCustom || game.posture != .custom {
+                    secondary("Calibrar postura") { game.scene.calibrate(restart: true) }
+                }
             case .calibrating:
                 Image(systemName: "scope").font(.system(size: 38)).foregroundColor(accent)
                 Text("Tu postura").font(.title.bold())
@@ -146,7 +160,7 @@ struct GameView: View {
                     Button { game.posture = posture } label: {
                         VStack(spacing: 6) {
                             Image(systemName: posture.symbol).font(.system(size: 23))
-                                .rotationEffect(.degrees(posture == .inclined ? 32 : 0))
+                                .rotation3DEffect(.degrees(posture == .inclined ? 65 : 0), axis: (x: 1, y: 0, z: 0))
                             Text(posture.title).font(.system(size: 10, weight: .semibold)).minimumScaleFactor(0.8).lineLimit(1)
                         }.frame(maxWidth: .infinity, minHeight: 67)
                         .foregroundColor(game.posture == posture ? .black : .white.opacity(0.75))

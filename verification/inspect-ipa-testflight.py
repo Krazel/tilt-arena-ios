@@ -10,6 +10,7 @@ from pathlib import Path
 ipa = Path(sys.argv[1])
 root = Path(__file__).resolve().parents[1]
 manifest = json.loads((ipa.parent / 'build.json').read_text())
+config = json.loads((root / 'store/testflight.json').read_text())
 assert hashlib.sha256(ipa.read_bytes()).hexdigest() == manifest['sha256']
 with zipfile.ZipFile(ipa) as bundle:
     assert bundle.testzip() is None
@@ -17,7 +18,7 @@ with zipfile.ZipFile(ipa) as bundle:
     info = plistlib.loads(bundle.read(prefix + 'Info.plist'))
     assert info['CFBundleSupportedPlatforms'] == ['iPhoneOS']
     assert info['CFBundleIdentifier'] == 'com.dmkr.tiltarena'
-    assert info['CFBundleShortVersionString'] == manifest['version'] == '0.3.1'
+    assert info['CFBundleShortVersionString'] == manifest['version'] == config['marketingVersion']
     assert info['CFBundleVersion'] == manifest['build'] == sys.argv[2]
     assert info['DTSDKName'].startswith('iphoneos26')
     assert info['ITSAppUsesNonExemptEncryption'] is False
@@ -64,5 +65,5 @@ with zipfile.ZipFile(ipa) as bundle:
                   engineAndAudioMatchCanonicalSource=True, resourceSHA256=resources, optimizedImages=optimizedImages,
                   embeddedProvisioningProfile=(prefix + 'embedded.mobileprovision') in bundle.namelist(),
                   executablePermission=oct(bundle.getinfo(prefix + info['CFBundleExecutable']).external_attr >> 16))
-(root / 'verification' / ('ipa-v031-testflight-build' + sys.argv[2] + '.json')).write_text(json.dumps(result, indent=2) + '\n')
+(root / 'verification' / ('ipa-v' + manifest['version'].replace('.', '') + '-testflight-build' + sys.argv[2] + '.json')).write_text(json.dumps(result, indent=2) + '\n')
 print(json.dumps(result, indent=2))

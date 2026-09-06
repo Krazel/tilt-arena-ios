@@ -45,10 +45,10 @@ enum ClassicArt {
         let n=SKShapeNode(circleOfRadius:radius);n.fillColor=fill;n.strokeColor=stroke;n.lineWidth=width;return n
     }
     static func node(style: String) -> SKNode {
-        if style == "dot" { return circle(7, fill: UIColor(hex: "ff5658"), stroke: UIColor(hex: "fff5d7"), width: 2) }
+        if style == "dot" { return circle(10, fill: UIColor(hex: "ff5658"), stroke: UIColor(hex: "fff5d7"), width: 2) }
         if style == "arrow" || style == "missileShot" {
-            let path=CGMutablePath();path.move(to:CGPoint(x:16,y:0));path.addLine(to:CGPoint(x:-12,y:11))
-            path.addLine(to:CGPoint(x:-6,y:0));path.addLine(to:CGPoint(x:-12,y:-11));path.closeSubpath()
+            let path=CGMutablePath();path.move(to:CGPoint(x:20,y:0));path.addLine(to:CGPoint(x:-16,y:14))
+            path.addLine(to:CGPoint(x:-8,y:0));path.addLine(to:CGPoint(x:-16,y:-14));path.closeSubpath()
             let shape=SKShapeNode(path:path);shape.fillColor=UIColor(hex:style == "arrow" ? "f7ffe5" : "ffe57a")
             shape.strokeColor=UIColor(hex:"243815");shape.lineWidth=2
             if style == "missileShot" { shape.setScale(0.4) };return shape
@@ -56,7 +56,11 @@ enum ClassicArt {
         if style == "waveShot" {
             let path=CGMutablePath();path.move(to:CGPoint(x:-10,y:-48))
             path.addQuadCurve(to:CGPoint(x:-10,y:48),control:CGPoint(x:24,y:0))
-            let n=SKShapeNode(path:path);n.strokeColor=UIColor(hex:"e6b6ff");n.lineWidth=9;n.glowWidth=3;return n
+            let root = SKNode()
+            for (width, color) in [(CGFloat(17), UIColor(hex: "a557f0").withAlphaComponent(0.5)), (CGFloat(7), UIColor(hex: "f1dfff"))] {
+                let n=SKShapeNode(path:path);n.strokeColor=color;n.lineWidth=width;n.glowWidth=2;root.addChild(n)
+            }
+            return root
         }
         if style == "fire" {
             let node = SKSpriteNode(texture: spark); node.size = CGSize(width: 58, height: 58)
@@ -64,11 +68,17 @@ enum ClassicArt {
         }
         let root=SKNode(),color=UIColor(hex:colors[style] ?? "ee77bc")
         if style == "vortexField" {
-            for i in 0..<4 {
-                let ring=circle(CGFloat(16+i*14),fill:.clear,stroke:color.withAlphaComponent(CGFloat(0.8-Double(i)*0.16)),width:3)
-                ring.xScale=1-0.12*CGFloat(i);root.addChild(ring)
+            for arm in 0..<3 {
+                let path = CGMutablePath()
+                for i in 0...45 {
+                    let t = CGFloat(i) / 45, a = t * .pi * 1.5 + CGFloat(arm) * .pi * 2 / 3
+                    let r = 22 + t * 168, p = CGPoint(x: cos(a) * r, y: sin(a) * r)
+                    if i == 0 { path.move(to: p) } else { path.addLine(to: p) }
+                }
+                let spiral = SKShapeNode(path: path); spiral.strokeColor = color.withAlphaComponent(0.35)
+                spiral.lineWidth = 4; spiral.glowWidth = 2; root.addChild(spiral)
             }
-            root.addChild(circle(14,fill:UIColor(hex:"261c31"),stroke:color));return root
+            root.addChild(circle(24,fill:UIColor(hex:"261c31"),stroke:color,width:4));return root
         }
         let housing = SKSpriteNode(texture: orb); housing.size = CGSize(width: 42, height: 42)
         housing.color = color; housing.colorBlendFactor = 0.72; root.addChild(housing)
