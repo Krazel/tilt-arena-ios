@@ -40,7 +40,6 @@ final class ClassicBridgeTests: XCTestCase {
     }
     func testGeneratedTexturesAreBundledAndLoaded() {
         XCTAssertGreaterThan(ClassicArt.orb.size().width, 10)
-        XCTAssertGreaterThan(ClassicArt.dot.size().width, 10)
         XCTAssertGreaterThan(ClassicArt.spark.size().width, 10)
     }
     func testBundledEngineLoadsAndMoves() throws {

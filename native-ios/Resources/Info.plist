@@ -18,6 +18,8 @@
   <string>$(CURRENT_PROJECT_VERSION)</string>
   <key>CFBundleDisplayName</key>
   <string>Tilt Arena</string>
+  <key>ITSAppUsesNonExemptEncryption</key>
+  <false/>
   <key>UILaunchScreen</key>
   <dict/>
   <key>NSMotionUsageDescription</key>
