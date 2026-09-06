@@ -14,13 +14,37 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertNotEqual(TiltProfile.preset(.normal).screenY, TiltProfile.preset(.inclined).screenY)
     }
     func testPostureAnglesHaveEquivalentResponse() {
-        for angle in [45.0, 70.0] {
+        for angle in [45.0, 0.0] {
             let profile = TiltProfile.preset(angle == 45 ? .normal : .inclined)
             let radians = (angle + 8) * Double.pi / 180
             let delta = profile.motionDelta(x: sin(radians), y: 0, z: -cos(radians), landscapeRight: false)
             XCTAssertEqual(delta.x, sin(8 * Double.pi / 180), accuracy: 0.00001)
             XCTAssertEqual(delta.y, 0, accuracy: 0.00001)
         }
+    }
+    func testFlatPresetIsNeutralFaceUpInBothLandscapeOrientations() {
+        for right in [false, true] {
+            let profile = TiltProfile.preset(.inclined)
+            let neutral = profile.motionDelta(x: 0, y: 0, z: -1, landscapeRight: right)
+            XCTAssertEqual(neutral.x, 0, accuracy: 0.00001)
+            XCTAssertEqual(neutral.y, 0, accuracy: 0.00001)
+            let tilted = profile.motionDelta(x: 0.1, y: 0.2, z: -sqrt(0.95), landscapeRight: right)
+            XCTAssertGreaterThan(tilted.x, 0)
+            XCTAssertGreaterThan(tilted.y, 0)
+        }
+    }
+    func testCalibrationDefaultsAndMigrationPreserveSavedNeutral() {
+        let suite = "TiltArenaTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        XCTAssertEqual(TiltProfile.initialPosture(defaults: defaults), .custom)
+        defaults.set("inclined", forKey: "classic.posture")
+        defaults.set(-0.35, forKey: "classic.neutralY")
+        XCTAssertEqual(TiltProfile.initialPosture(defaults: defaults), .custom)
+        XCTAssertEqual(defaults.double(forKey: "classic.neutralY"), -0.35)
+        defaults.set(2, forKey: "classic.postureRevision")
+        XCTAssertEqual(TiltProfile.initialPosture(defaults: defaults), .inclined)
+        XCTAssertEqual(TiltPosture.allCases.map(\.title), ["Calibrar", "Normal", "Inclinado"])
     }
     @MainActor func testSceneFillsWideDisplayAndResumeDoesNotCalibrate() {
         let session = GameSession()

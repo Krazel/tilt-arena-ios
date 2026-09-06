@@ -10,7 +10,7 @@
   const distance = (a, b) => length(a.x - b.x, a.y - b.y);
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
   const TUNING = Object.freeze({step: 1 / 120, speed: 440, response: 22,
-    playerRadius: 7, dotRadius: 7, comboWindow: 2.5, telegraph: 0.8,
+    playerRadius: 9, playerExtent: 23, dotRadius: 10, pickupRadius: 24, comboWindow: 2.5, telegraph: 0.8,
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn'];
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
@@ -68,8 +68,9 @@
       if (![left,right,bottom,top].every(Number.isFinite) || right-left<300 || top-bottom<300) throw Error('Invalid arena');
       const before=this.bounds, next={left,right,bottom,top};
       for (const p of [this.player,...this.enemies,...this.pickups,...this.projectiles,...this.fields]) {
-        p.x=clamp(left+(p.x-before.left)/(before.right-before.left)*(right-left),left+7,right-7);
-        p.y=clamp(bottom+(p.y-before.bottom)/(before.top-before.bottom)*(top-bottom),bottom+7,top-7);
+        const margin=p===this.player?TUNING.playerExtent:this.pickups.includes(p)?28:TUNING.dotRadius;
+        p.x=clamp(left+(p.x-before.left)/(before.right-before.left)*(right-left),left+margin,right-margin);
+        p.y=clamp(bottom+(p.y-before.bottom)/(before.top-before.bottom)*(top-bottom),bottom+margin,top-margin);
       }
       this.bounds=next;
       return this.snapshot();
@@ -98,12 +99,12 @@
       const boost = p.burnUntil>this.time ? 1.5 : 1;
       p.vx += (ix*TUNING.speed*boost-p.vx)*response;
       p.vy += (iy*TUNING.speed*boost-p.vy)*response;
-      p.x = clamp(p.x+p.vx*dt,this.bounds.left+7,this.bounds.right-7);
-      p.y = clamp(p.y+p.vy*dt,this.bounds.bottom+7,this.bounds.top-7);
+      p.x = clamp(p.x+p.vx*dt,this.bounds.left+TUNING.playerExtent,this.bounds.right-TUNING.playerExtent);
+      p.y = clamp(p.y+p.vy*dt,this.bounds.bottom+TUNING.playerExtent,this.bounds.top-TUNING.playerExtent);
       if (length(p.vx,p.vy)>8) p.angle = Math.atan2(p.vy,p.vx);
       if (this.options.spawning !== false) this.spawnDirector();
       for(const orb of this.pickups) {
-        if(!orb.dead && orb.until>this.time && swept(before,p,orb,23)) {
+        if(!orb.dead && orb.until>this.time && swept(before,p,orb,TUNING.playerRadius+TUNING.pickupRadius)) {
           orb.dead = true;
           this.activate(orb.power,{x:orb.x,y:orb.y});
         }
@@ -126,13 +127,13 @@
             const d=Math.max(1,distance(e,p));
             e.x+=(p.x-e.x)/d*e.speed*dt;e.y+=(p.y-e.y)/d*e.speed*dt;
           }
-          e.x=clamp(e.x,this.bounds.left+7,this.bounds.right-7);
-          e.y=clamp(e.y,this.bounds.bottom+7,this.bounds.top-7);
+          e.x=clamp(e.x,this.bounds.left+TUNING.dotRadius,this.bounds.right-TUNING.dotRadius);
+          e.y=clamp(e.y,this.bounds.bottom+TUNING.dotRadius,this.bounds.top-TUNING.dotRadius);
         }
         // Relative swept collision includes the dot's movement as well as the arrow's.
         const relativeEnd={x:p.x-(e.x-old.x),y:p.y-(e.y-old.y)};
         const armored = p.spikesUntil>this.time || p.burnUntil>this.time;
-        if(swept(before,relativeEnd,old,armored?35:14)) {
+        if(swept(before,relativeEnd,old,armored?35:TUNING.playerRadius+TUNING.dotRadius)) {
           if(frozen || armored) this.kill(e, frozen?'ice':'dot');
           else if(p.bubble) {
             p.bubble=false;
@@ -142,6 +143,9 @@
       }
       this.enemies=this.enemies.filter(e=>!e.dead);
       this.pickups=this.pickups.filter(o=>!o.dead && o.until>this.time);
+      // Refill after collection/expiry, before exposing the next frame. Do not
+      // iterate over the replacement this step or spawn on the player's path.
+      if(this.state==='running' && this.options.spawning!==false && this.pickups.length===0) this.spawnPickup(true);
       this.projectiles=this.projectiles.filter(o=>!o.dead && o.until>this.time);
       this.fields=this.fields.filter(o=>o.until>this.time);
     }
@@ -174,6 +178,27 @@
       const o={id:++this.id,power,x,y,until:this.time+TUNING.pickupLife,dead:false};
       this.pickups.push(o);return o;
     }
+    spawnPickup(required=false) {
+      const b=this.bounds, live=this.pickups.filter(o=>!o.dead && o.until>this.time);
+      this.pickups=live;
+      if(live.length>=TUNING.maxPickups)return;
+      let best=null, bestClearance=-Infinity;
+      const consider=(x,y)=>{
+        const point={x,y};
+        if(distance(point,this.player)<=85 || live.some(o=>distance(point,o)<=65))return;
+        const danger=this.enemies.filter(e=>!e.dead).reduce((d,e)=>Math.min(d,distance(point,e)),150);
+        if(danger>bestClearance){best=point;bestClearance=danger;}
+      };
+      for(let attempt=0;attempt<20;attempt++)consider(this.rng.range(b.left+66,b.right-66),this.rng.range(b.bottom+58,b.top-58));
+      // Bounded deterministic fallback: even an unlucky RNG cannot leave an
+      // empty arena after the last pickup. Supported arenas are at least 300².
+      if(required && !best)for(let row=0;row<3;row++)for(let col=0;col<3;col++)
+        consider(b.left+40+col*(b.right-b.left-80)/2,b.bottom+40+row*(b.top-b.bottom-80)/2);
+      if(best){
+        this.addPickup(this.rng.pick(this.powers),best.x,best.y);
+        this.event('spawnPickup',{x:best.x,y:best.y,color:COLORS[this.pickups[this.pickups.length-1].power]});
+      }
+    }
     spawnDirector() {
       if(this.time>=this.spawnAt) {
         const n=2+Math.floor(Math.min(12,this.time/12));
@@ -193,14 +218,7 @@
         this.patternAt=this.time+Math.max(5,12-this.time*0.025);
       }
       if(this.time>=this.pickupAt) {
-        if(this.pickups.length<TUNING.maxPickups) {
-          for(let attempt=0;attempt<20;attempt++) {
-            const b=this.bounds, x=this.rng.range(b.left+66,b.right-66),y=this.rng.range(b.bottom+58,b.top-58);
-            if(distance({x,y},this.player)>85 && this.pickups.every(o=>distance({x,y},o)>65)) {
-              this.addPickup(this.rng.pick(this.powers),x,y);break;
-            }
-          }
-        }
+        this.spawnPickup();
         this.pickupAt=this.time+this.rng.range(2.2,3.4);
       }
     }
@@ -277,7 +295,7 @@
       }
       for(const f of this.fields)if(f.until>this.time) {
         if(f.kind==='fire') {
-          for(const e of this.enemies)if(!e.dead&&distance(e,f)<f.radius+7)this.kill(e,'dot');
+          for(const e of this.enemies)if(!e.dead&&distance(e,f)<f.radius+TUNING.dotRadius)this.kill(e,'dot');
         } else {
           for(const e of this.enemies)if(!e.dead&&this.time>=e.activeAt) {
             const d=Math.max(1,distance(e,f));
@@ -327,8 +345,8 @@
             const dx=e.x-m.x,dy=e.y-m.y;
             const along=dx*Math.cos(m.angle)+dy*Math.sin(m.angle);
             const across=-dx*Math.sin(m.angle)+dy*Math.cos(m.angle);
-            hit=Math.abs(along)<16 && Math.abs(across)<m.radius+7;
-          } else hit=swept(before,m,e,12);
+            hit=Math.abs(along)<16 && Math.abs(across)<m.radius+TUNING.dotRadius;
+          } else hit=swept(before,m,e,m.radius+TUNING.dotRadius);
           if(hit) {
             if(m.kind==='missile') {this.blast(e,32,'missiles');m.dead=true;break;}
             this.kill(e,'dot');

@@ -32,6 +32,8 @@ final class ClassicScene: SKScene {
     #if DEBUG
     private let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
     private let visualPreview = ProcessInfo.processInfo.arguments.contains("--visual-qa")
+    private let freezeVFXPreview = ProcessInfo.processInfo.arguments.contains("--freeze-vfx-qa")
+    private var previewStarted: Double?
     #endif
 
     override init() {
@@ -188,6 +190,15 @@ final class ClassicScene: SKScene {
         #if DEBUG
         if visualPreview, let frame = gameFrame {
             render(frame)
+            if freezeVFXPreview {
+                if previewStarted == nil {
+                    previewStarted = currentTime
+                    vfx.show(ClassicFrame.Event(kind: "freeze", x: arenaBounds.minX + 230, y: 300, radius: 205, angle: nil, toX: nil, toY: nil, color: "72ddff", power: nil, value: nil, bonus: nil), reduced: reduceEffects)
+                    vfx.show(ClassicFrame.Event(kind: "blast", x: arenaBounds.maxX - 220, y: 300, radius: 155, angle: nil, toX: nil, toY: nil, color: "ffb52a", power: nil, value: nil, bonus: nil), reduced: reduceEffects)
+                }
+                if currentTime - (previewStarted ?? currentTime) >= 0.22 { effects.isPaused = true }
+                return
+            }
             if currentTime - trailTime > 0.65 {
                 trailTime = currentTime
                 vfx.show(ClassicFrame.Event(kind: "blast", x: arenaBounds.minX + 150, y: 200, radius: 90, angle: nil, toX: nil, toY: nil, color: "ffb52a", power: nil, value: nil, bonus: nil), reduced: reduceEffects)
@@ -247,8 +258,9 @@ final class ClassicScene: SKScene {
     private func drawPlayer() {
         arrow.addChild(ClassicArt.node(style:"arrow"));arrow.zPosition=4
         arrow.position=CGPoint(x:480,y:320);world.addChild(arrow)
-        bubble = SKShapeNode(circleOfRadius:26);bubble.strokeColor=UIColor(hex:"7bde83")
+        bubble = SKShapeNode(circleOfRadius:32);bubble.strokeColor=UIColor(hex:"7bde83")
         bubble.lineWidth=3;bubble.fillColor=UIColor(hex:"7bde83").withAlphaComponent(0.12);arrow.addChild(bubble)
+        bubble.glowWidth = 2
         spikes = SKShapeNode(path:ClassicArt.star(radius:35,inner:24,points:12))
         spikes.strokeColor=UIColor(hex:"b5d8ff");spikes.lineWidth=2;spikes.fillColor = .clear;arrow.addChild(spikes)
         bubble.isHidden=true;spikes.isHidden=true
@@ -298,7 +310,7 @@ final class ClassicScene: SKScene {
         for orb in frame.pickups {
             let key="o\(orb.id)";alive.insert(key)
             let node=sprite(key:key,style:orb.power);node.position=CGPoint(x:orb.x,y:orb.y);node.zPosition=3
-            node.setScale(reduceEffects ? 1 : 1+0.04*sin(frame.time*4+Double(orb.id)))
+            node.setScale((56.0 / 42.0) * (reduceEffects ? 1 : 1+0.04*sin(frame.time*4+Double(orb.id))))
             node.alpha=orb.remaining<2 ? 0.55+0.45*sin(frame.time*10) : 1
         }
         for shot in frame.projectiles {
@@ -315,6 +327,7 @@ final class ClassicScene: SKScene {
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
         bubble.isHidden = !frame.player.bubble;spikes.isHidden=frame.player.spikesUntil<=frame.time
+        bubble.glowWidth = reduceEffects ? 0 : 2
         scoreLabel.text="\(frame.score.formatted())"
         comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : "ENLAZA LAS ARMAS"
         comboBar.xScale=frame.comboRemaining;bestLabel.text="RÉCORD  \(max(session?.best ?? 0,frame.score).formatted())"
