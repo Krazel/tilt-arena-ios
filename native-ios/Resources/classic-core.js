@@ -9,8 +9,8 @@
   const length = (x, y) => Math.hypot(x, y);
   const distance = (a, b) => length(a.x - b.x, a.y - b.y);
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
-  const TUNING = Object.freeze({step: 1 / 120, speed: 440, response: 22,
-    playerRadius: 9, playerExtent: 23, dotRadius: 10, pickupRadius: 24, comboWindow: 2.5, telegraph: 0.8,
+  const TUNING = Object.freeze({step: 1 / 120, speed: 470, response: 22,
+    playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn'];
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
@@ -104,7 +104,7 @@
       if (length(p.vx,p.vy)>8) p.angle = Math.atan2(p.vy,p.vx);
       if (this.options.spawning !== false) this.spawnDirector();
       for(const orb of this.pickups) {
-        if(!orb.dead && orb.until>this.time && swept(before,p,orb,TUNING.playerRadius+TUNING.pickupRadius)) {
+        if(!orb.dead && orb.until>this.time && swept(before,p,orb,TUNING.pickupReach)) {
           orb.dead = true;
           this.activate(orb.power,{x:orb.x,y:orb.y});
         }

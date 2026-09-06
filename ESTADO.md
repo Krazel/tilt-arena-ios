@@ -13,6 +13,8 @@ Se recuerdan elecciones posteriores y calibraciones guardadas. Se conservan los
 enemigos vectoriales, orbes y partículas aprobados. Modos y progresión aplazados.
 Selector Suave/Normal/Rápida eliminado por petición del usuario; sensibilidad fija
 en 1 para todas las posturas, sin usar preferencias antiguas de sensibilidad.
+Último ajuste pedido: velocidad máxima 470 (+6,8 %); radio del protagonista frente
+a enemigos 8 en vez de 9. Contacto total 18; recogida de orbes conservada en 33.
 
 28 pruebas Node y sintaxis de diez archivos Swift aprobadas. Los radios de contacto
 acompañan el nuevo tamaño: no se afirma dificultad percibida idéntica. Ensayo físico
@@ -43,7 +45,7 @@ verification/VERIFICACION-v031.md y verification/testflight-v031.json.
 Ruta efectiva: C:\Users\dmkra\Documents\Codex Apps\TiltArena. Sin traslado.
 Git independiente; base heredada preservada. Espejo público saneado, sin historial
 privado ni claves. Las credenciales siguen fuera del producto, protegidas.
-Biblioteca PR-031 actualizada y verificada por GET, revisión 12, 2026-09-06
-21:14:31 UTC. Candidata local 0.3.2 separada de entrega interna 0.3.1, bloqueo y
+Biblioteca PR-031 actualizada y verificada por GET, revisión 13, 2026-09-06
+21:16:43 UTC. Candidata local 0.3.2 separada de entrega interna 0.3.1, bloqueo y
 siguiente paso registrados. Notas, releases y tracking conservados.
 Evidencia: verification/library-sync.json.

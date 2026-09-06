@@ -1,7 +1,7 @@
 {
   "id": "PR-031",
-  "revision": 12,
-  "updatedAt": "2026-09-06T21:14:31.817Z",
+  "revision": 13,
+  "updatedAt": "2026-09-06T21:16:43.876Z",
   "version": "0.3.1 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
@@ -11,7 +11,7 @@
     "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
     "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
   },
-  "candidate": "0.3.2 (1) local; sensitivity selector removed; native QA pending",
+  "candidate": "0.3.2 (1) local; speed 470 and player radius 8; native QA pending",
   "notesPreserved": true,
   "verifiedBy": "Authorized GET after revision-checked PUT"
 }

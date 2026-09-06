@@ -11,11 +11,15 @@ puntos de radio 7 a 10 (borde claro) y orbes de 42 a 56. El halo y las pulsacion
 pueden ampliar ligeramente su apariencia. Se conserva la forma vectorial de los
 enemigos solicitada por el usuario. Los congelados siguen siendo cian.
 
-La flecha mantiene una zona central de colisión indulgente: radio 9. El contacto
-con puntos pasa de 14 a 19 unidades; recogida de orbes, de 23 a 33. Margen de la
+La flecha mantiene una zona central de colisión indulgente: radio 8, reducido desde
+9 por petición posterior del usuario. El contacto con puntos queda en 18 unidades
+(antes 19 en esta candidata); recogida de orbes, 33. Margen de la
 flecha 23 para alojar las esquinas al girar. Estas envolventes afectan a los huecos
 transitables: no se afirma que la dificultad percibida sea idéntica. No se añaden
-modos ni se retoca la programación de oleadas y velocidad.
+modos ni se retoca la programación de oleadas. Por petición del usuario, velocidad
+máxima de la flecha 440 → 470 unidades/s (+6,8 %). Respuesta y frenado conservan
+su constante; el impulso de fuego mantiene su multiplicador 1,5. Recogida de orbes
+y contacto ofensivo con protecciones conservan sus alcances independientes.
 
 Siempre queda un orbe durante la partida: tras recoger o caducar el último, se
 crea otro en ese mismo paso, a más de 85 unidades de la flecha. Veinte candidatos
