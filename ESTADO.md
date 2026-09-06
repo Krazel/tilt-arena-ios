@@ -1,55 +1,47 @@
 # Tilt Arena — estado de producto
 
 Actualizado 2026-09-06. Krazel Games. Registro PR-031.
-Responsable: tarea de producto `01a071f1-2875-7bc1-a4bd-9d9e38c35718`.
-Nombre comercial provisional. Referencia: Tilt to Live, Classic para iPhone.
+Responsable: tarea 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Entrega actual
+## Candidata en desarrollo
 
-**0.3.1, build 1**, activa en TestFlight interno para la cuenta del titular.
-Apple ha procesado la build como VALID y su estado interno es IN_BETA_TESTING.
-Grupo «Pruebas internas»: un tester, una build, distribución futura manual.
-Sin pruebas externas ni enlace público de invitación.
+0.3.2 (1), código local preparado. Flecha, puntos y orbes mayores; última magia
+repuesta al recogerla o caducar en el mismo paso; VFX con hielo facetado, explosiones
+con más cuerpo y estelas. Menú Calibrar/Normal/Inclinado, calibración como valor
+inicial y migración única; Inclinado para iPhone plano sobre la mesa (0°).
+Se recuerdan elecciones posteriores y calibraciones guardadas. Se conservan los
+enemigos vectoriales, orbes y partículas aprobados. Modos y progresión aplazados.
 
-Ficha creada en App Store Connect: https://appstoreconnect.apple.com/apps/6809193185/distribution .
-TestFlight: https://appstoreconnect.apple.com/apps/6809193185/testflight .
-Apple ID 6809193185; bundle com.dmkr.tiltarena. La ficha pública 1.0 está en
-preparación, sin envío a revisión ni publicación visible en la tienda.
+28 pruebas Node y sintaxis de diez archivos Swift aprobadas. Los radios de contacto
+acompañan el nuevo tamaño: no se afirma dificultad percibida idéntica. Ensayo físico
+pendiente. Faltan Xcode, XCTest, XCUITest y revisión de las nuevas capturas nativas.
 
-Los enemigos vuelven al círculo vectorial original: rojo, borde claro y radio 7.
-El PNG enemy-dot-v03 queda conservado como asset histórico, excluido del bundle.
-Los congelados son cian. Se conservan los orbes y destellos de ChatGPT Images,
-los VFX y las mejoras 0.3 de pantalla, posturas y reanudación.
-No se han añadido modos fácil/difícil ni cambiado la curva de dificultad:
-el usuario aplazó expresamente ese trabajo.
+Espejo público local preparado en 87d060a, todavía sin subir. Auto-review rechazó
+la subida de los 11 archivos a Krazel/tilt-arena-ios y ejecución de CI: no considera
+suficiente la autorización anterior ni el registro del repositorio autorizado.
+Se ha pedido confirmación explícita. No eludir el rechazo con otro canal.
+Siguiente paso: con esa autorización, subir el commit, verificar nativo, compilar
+IPA 0.3.2 y actualizar el mismo grupo TestFlight interno de la cuenta del titular.
 
-IPA firmada: `artifacts/TiltArena-0.3.1-build1-TestFlight.ipa`.
-SHA256: `5ad6b885ad77e9249a1b3ec48f56b8282b8890a38040de5d92237e887a1bdf92`.
-Xcode 26.3, SDK iOS 26.2, Release iPhoneOS ARM64, iOS 16+, español.
-Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34043750047 .
-Fuente pública compilada: `f25fa839a558d2f352b3d2d26b9e19c2d8a1ed6c`.
-Fuente canónica equivalente: `7e6cb19`.
+## Distribución comprobada anterior
 
-25 Node, 7 XCTest y 2 XCUITest aprobados. Capturas nativas revisadas, firma
-verificada en CI y contenido de la IPA comprobado localmente. No equivale a
-prueba física: el último ensayo comunicado por el usuario fue 0.2.0 build 3.
-Detalles: `VERIFICACION.md`, `verification/testflight-v031.json`.
+0.3.1 (1) continúa activa en TestFlight interno; procesada VALID e IN_BETA_TESTING.
+No se ha creado ni subido una IPA 0.3.2. Sin pruebas externas ni publicación visible
+en App Store. La ficha 1.0 está en preparación, sin envío a revisión.
+App ID 6809193185; bundle com.dmkr.tiltarena. Anuncios: No.
+https://appstoreconnect.apple.com/apps/6809193185/testflight
+https://appstoreconnect.apple.com/apps/6809193185/distribution
 
-## Siguiente prueba
+IPA anterior: artifacts/TiltArena-0.3.1-build1-TestFlight.ipa.
+Firma, hashes y pruebas anteriores: verification/ESTADO-v031.md,
+verification/VERIFICACION-v031.md y verification/testflight-v031.json.
 
-Instalar 0.3.1 (1) desde TestFlight. Probar pantalla completa en ambas orientaciones,
-Normal/Inclinado/Personalizado, calibración guardada, pausa/reanudar, salir/volver,
-sonido y efectos durante 10 minutos. Medir control, fps y temperatura en iPhone.
+## Conservación
 
-## Conservación y biblioteca
-
-Ruta efectiva: `C:\Users\dmkra\Documents\Codex Apps\TiltArena`. Sin traslado.
-Git independiente; base heredada 2c505de preservada. El espejo público contiene
-solo fuente saneada. Firma privada fuera del repositorio; secretos cifrados del
-entorno app-store-production restringido a main. Certificado existente reutilizado
-con un perfil exclusivo de Tilt Arena; no se han cambiado perfiles de otros juegos.
-
-PR-031 actualizado y verificado en la API autorizada de D1, revisión 10,
-2026-09-06 16:01:20 UTC. Nombre, notas y releases anteriores conservados.
-Seguimiento: TestFlight Interno; Creada en App Store Connect; anuncios No.
-Evidencia: `verification/library-sync.json`. Historial 0.3: `verification/ESTADO-v03-build2.md`.
+Ruta efectiva: C:\Users\dmkra\Documents\Codex Apps\TiltArena. Sin traslado.
+Git independiente; base heredada preservada. Espejo público saneado, sin historial
+privado ni claves. Las credenciales siguen fuera del producto, protegidas.
+Biblioteca PR-031 actualizada y verificada por GET, revisión 11, 2026-09-06
+21:08:54 UTC. Candidata local 0.3.2 separada de entrega interna 0.3.1, bloqueo y
+siguiente paso registrados. Notas, releases y tracking conservados.
+Evidencia: verification/library-sync.json.

@@ -164,3 +164,25 @@ WebView, descargas de lógica, servicios ni SDKs externos dentro de la app.
 Se asume un coste de serializar el estado cada frame; perfilado nativo pendiente.
 La web anterior se conserva íntegra como historial; el laboratorio nuevo es una
 herramienta de diagnóstico y no sustituye la entrega de iOS.
+
+## Revisión de escala — 6 de septiembre de 2026
+
+Se volvió a ver en Chrome el tráiler del estudio OneManLeft:
+https://www.youtube.com/watch?v=vr03CIfjK4I . Se contrastaron además las capturas
+ya conservadas official-trailer-11s.png y official-trailer-60s.png. En el campo de
+juego de un fotograma (aprox. 1170 × 698 px), puntos con borde de unos 32 px,
+orbe de unos 60 px y flecha de unos 50 px. Son estimaciones visuales a partir de
+vídeo comprimido, no medidas del código original ni escala física del iPhone.
+
+Respecto a la altura del campo, el original muestra objetos mayores que 0.3.1.
+Se adoptan flecha 36, punto diámetro 22 con borde y orbe 56 en arena lógica de
+540 de alto: aproximadamente 6,7 %, 4,1 % y 10,4 %. Son decisiones de lectura
+propias, no una afirmación de identidad exacta con el original. El hielo del
+fotograma de referencia tiene volumen relleno y facetas; se implementa ese tipo
+de lectura con geometría original. Alcances físicos de hielo y bomba se conservan.
+
+La garantía de al menos un orbe, y la postura Inclinado con neutral plano a 0°,
+proceden del encargo expreso del usuario. No se atribuyen a reglas verificadas del
+original. La nueva envolvente de colisión necesita evaluación en iPhone antes de
+concluir que los huecos y la presión sean adecuados. Los modos fácil/difícil y el
+rediseño de progresión siguen aplazados.
