@@ -34,6 +34,12 @@ Normal: unos 45° sobre la mesa. Inclinado: iPhone horizontal, pantalla hacia ar
 como apoyado en una mesa, neutral 0°. Los dos sentidos de paisaje conservan la
 transformación del sensor. Recalibrar sigue siendo una acción independiente.
 
+Por petición posterior del usuario se elimina el selector Suave/Normal/Rápida.
+La sensibilidad queda fija en 1 (la anterior Normal) para todas las posturas.
+No se lee ni se escribe classic.sensitivity; valores antiguos dejan de influir.
+El selector modificaba la inclinación necesaria para alcanzar la velocidad máxima,
+no dicha velocidad: al saturar la entrada, las tres opciones se comportaban igual.
+
 ## Efectos nativos
 
 Hielo con silueta rellena, doce facetas, expansión breve y partículas. Explosiones

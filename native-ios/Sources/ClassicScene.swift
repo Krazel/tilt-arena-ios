@@ -226,7 +226,7 @@ final class ClassicScene: SKScene {
                                                          landscapeRight: orientation == .landscapeRight)
             input = try bridge?.tilt(gx: delta.x, gy: delta.y, nx: 0, ny: 0,
                 orientation: orientation == .landscapeRight ? "landscapeRight" : "landscapeLeft",
-                sensitivity: session.sensitivity) ?? (0,0)
+                sensitivity: 1) ?? (0,0)
             #endif
             if let next = try bridge?.tick(dt: dt, x: input.0, y: input.1) {
                 gameFrame = next; render(next)

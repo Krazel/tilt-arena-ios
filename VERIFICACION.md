@@ -1,11 +1,15 @@
 # Verificación — candidata 0.3.2 (1)
 
-6 de septiembre de 2026. Código preparado en espejo local: 87d060a.
+6 de septiembre de 2026. Código preparado en espejo local, todavía sin publicar.
 
 28 pruebas Node aprobadas, incluidos 100 reemplazos sucesivos de la última magia,
 caducidad, colocación alternativa cuando falla el muestreo y pausa/final.
 Diez archivos Swift pasan el analizador de sintaxis. Esto no resuelve tipos del SDK
 ni sustituye la compilación con Xcode y las pruebas nativas.
+
+Retirado el selector de sensibilidad y su persistencia; ClassicScene entrega
+siempre sensibilidad 1 al puente. Las preferencias antiguas no se consultan.
+Análisis sintáctico repetido tras este cambio: diez archivos Swift correctos.
 
 Pendientes: compilación y XCTest/XCUITest en Mac, revisión de las capturas nativas,
 IPA firmada, procesamiento Apple y asignación al grupo interno. Las acciones de

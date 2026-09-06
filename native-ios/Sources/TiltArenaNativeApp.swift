@@ -16,7 +16,6 @@ final class GameSession: ObservableObject {
     @Published var resultCombo = 0
     @Published var resultTime = 0
     @Published var best = UserDefaults.standard.integer(forKey: "classic.v02.best")
-    @Published var sensitivity = UserDefaults.standard.object(forKey: "classic.sensitivity") as? Double ?? 1
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
     @Published var hasCustom = UserDefaults.standard.object(forKey: "classic.neutralY") != nil
@@ -108,7 +107,6 @@ struct GameView: View {
         }
         .onChange(of: reduceMotion) { game.scene.reduceEffects = $0 }
         .onChange(of: game.posture) { UserDefaults.standard.set($0.rawValue, forKey: "classic.posture") }
-        .onChange(of: game.sensitivity) { UserDefaults.standard.set($0, forKey: "classic.sensitivity") }
         .onChange(of: game.muted) {
             UserDefaults.standard.set($0, forKey: "classic.muted"); game.scene.sound.setMuted($0)
         }
@@ -173,13 +171,6 @@ struct GameView: View {
             if game.posture == .custom {
                 Text(game.hasCustom ? "Postura guardada · lista para jugar" : "Pulsa Calibrar para guardar tu postura")
                     .font(.system(size: 11, weight: .semibold)).foregroundColor(accent)
-            }
-            HStack {
-                Text("Sensibilidad").font(.system(size: 12)).foregroundColor(.white.opacity(0.65))
-                Spacer()
-                Picker("Sensibilidad", selection: $game.sensitivity) {
-                    Text("Suave").tag(0.7); Text("Normal").tag(1.0); Text("Rápida").tag(1.4)
-                }.pickerStyle(.menu).accessibilityLabel("Sensibilidad de inclinación")
             }
             HStack {
                 Text("Sonido").font(.system(size: 12)).foregroundColor(.white.opacity(0.65))
