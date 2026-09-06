@@ -1,77 +1,45 @@
-# Verificación — candidata 0.3, build 2
+# Verificación — 0.3.1, build 1
 
-5 de septiembre de 2026. Desarrollo local Windows; compilación nativa Xcode 16.4
-mediante GitHub Actions macos-15. Historial 0.2: `verification/VERIFICACION-v02.md`.
+6 de septiembre de 2026. Corrección visual y primera distribución TestFlight.
+Fuente pública f25fa839a558d2f352b3d2d26b9e19c2d8a1ed6c; canónica 7e6cb19.
 
-## Binario de dispositivo final
+## Pruebas nativas
 
-IPA Release correcta: https://github.com/Krazel/tilt-arena-ios/actions/runs/33983076969 .
-Commit compilado `cbb96fa4890960284f2a0737a902b44390a04acf`, canónico `c0f3724`.
-Descarga `artifacts/TiltArena-0.3-build2-Local-QA-cbb96fa.ipa`.
-SHA256 `0b5b3dc13e39ec788ecc94082b57ee3d673979a7a8adbfb1f5248b6f3ca7d49a`.
-CRC íntegro, versión 0.3, build 2, bundle com.dmkr.tiltarena, iPhoneOS ARM64,
-Mach-O IOS (2), ejecutable sin cifrar y con permiso 755. Sin firma ni perfil;
-Sideloadly aporta la firma al instalar. Sin envío a TestFlight ni App Store.
+CI: https://github.com/Krazel/tilt-arena-ios/actions/runs/34043377249 .
+Xcode 26.3 (17C529), SDK 26.2. BUILD SUCCEEDED y TEST SUCCEEDED.
+25 Node, 7 XCTest y 2 XCUITest sin fallos; diez archivos Swift sin errores sintácticos.
+Capturas de iPhone 16 Pro en `verification/native-v031/`: menú, pausa,
+Personalizado guardado y fixture de arte. Revisadas menú y escena: fondo completo,
+controles legibles, enemigos rojos vectoriales, congelados cian, orbes conservados.
+El fixture es exclusivo de Debug; no demuestra rendimiento de una partida física.
 
-Motor JS y WAV coinciden byte a byte con la fuente. Xcode optimiza los tres PNG
-al formato Apple CgBI: CRC, presencia y dimensiones 1254×1254 comprobadas; no se
-presentan como idénticos byte a byte. XCTest carga las tres texturas desde el bundle.
-Manifiesto y comprobador: `verification/ipa-v03-build2.json`, `inspect-ipa-v03.py`.
-Procedencia de imágenes: `design/imagegen-v03-prompts.json` y `verification/generated-art-v03.json`.
+## Firma y envío
 
-## Pruebas automatizadas
+CI: https://github.com/Krazel/tilt-arena-ios/actions/runs/34043750047 .
+Archive y exportación App Store correctos, codesign --verify --deep --strict
+aprobado, validación altool correcta y UPLOAD SUCCEEDED sin errores.
+IPA 4.731.674 bytes, SHA256 5ad6b885ad77e9249a1b3ec48f56b8282b8890a38040de5d92237e887a1bdf92.
+Verificador `verification/inspect-ipa-testflight.py`: CRC, versión 0.3.1 (1),
+bundle, iPhoneOS ARM64, perfil, firma incluida, icono compilado, manifest de
+privacidad, ausencia de enemy-dot-v03 y motor/WAV idénticos a la fuente.
+Los dos PNG conservados usan optimización CgBI; se verifican dimensiones y CRC.
+Resultado: `verification/ipa-v031-testflight-build1.json`.
 
-CI nativa: https://github.com/Krazel/tilt-arena-ios/actions/runs/33981931289 .
-- Node: 25/25. Incluye resize de arena, independencia de instancias y preservación
-  de progreso y posiciones relativas al redimensionar estando en pausa.
-- XCTest: 7/7. JavaScriptCore real, perfiles y ejes en ambas orientaciones,
-  deltas angulares equivalentes en Normal/Inclinado, resolución adaptable,
-  reanudar/cancelar calibración y carga de arte del bundle.
-- XCUITest: 2/2. Selección de postura, Jugar, Pausa, Reanudar sin calibración,
-  guardado de Personalizado y fixture visual nativo.
-- Analizador sintáctico: diez archivos Swift sin errores; esto solo complementa
-  la compilación real de Xcode, no la sustituye.
+El manifiesto declara UserDefaults CA92.1 (preferencias locales) y SystemBootTime
+35F9.1 (intervalos y temporizadores). Sin datos recogidos, seguimiento ni cifrado
+no exento. El icono es el SVG propio preexistente rasterizado a 1024, opaco.
+Requisito de SDK: https://developer.apple.com/news/?id=ueeok6yw .
+Razones: https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacyaccessedapitypes/nsprivacyaccessedapitype .
 
-Las capturas iniciales de XCUIApplication recortaban la ventana en paisaje. La
-captura simctl del menú llena correctamente la pantalla. Se cambió únicamente
-el capturador del test a XCUIScreen, commit público `86f1407`, y se repite la
-verificación: https://github.com/Krazel/tilt-arena-ios/actions/runs/33982436995 .
-No cambia el código del IPA ni su versión/build: esta repetición es evidencia visual.
+## Estado comprobado en Apple
 
-## Límites y siguiente ensayo físico
+App ID 6809193185. Build 410710dc-eb9b-4736-b869-453236cfd1b8.
+Procesamiento VALID; IN_BETA_TESTING interno. Grupo f188cdd9-6415-456e-8054-9925c02bead5,
+«Pruebas internas», con solo la cuenta del titular y esta build. Caduca 05/12/2026.
+Descripción e instrucciones en español guardadas. Sin revisión beta externa.
+La ficha App Store 1.0 permanece PREPARE_FOR_SUBMISSION; no está publicada.
+Evidencia API: `verification/testflight-v031.json`; Chrome confirma la asignación.
 
-El usuario probó 0.2.0 build 3, informó bordes negros y pidió las mejoras incluidas.
-Ese ensayo no valida la nueva 0.3. La escena de arte es un fixture Debug sin
-apariciones aleatorias; permite ver las nueve armas y efectos, no medir una partida
-ni fps. El IPA Release no activa ese fixture ni los argumentos de prueba.
-
-Pendiente en iPhone: pantalla y zonas seguras en el modelo del usuario; precisión
-angular, neutral y deriva; ambas orientaciones; pausa/salir/volver y recuperación
-del sensor; sonido, radios visuales de impactos y 10 minutos de fps/temperatura.
-Comparación cuantitativa de combos, densidad, Pong, desbloqueos y mezcla pendiente.
-
-## Revisión visual 0.3 build 1 y corrección de cierre
-
-La repetición 33982436995 terminó correctamente: 7 XCTest y 2 XCUITest sin fallos.
-Capturas originales de pantalla completa guardadas en `verification/native-v03/`:
-menú Inclinado, pausa, Personalizado guardado y escena de nueve orbes/VFX.
-Inspección: fondo hasta todos los bordes, menú y botones legibles, orbes completos,
-rayos y partículas presentes. Detectado un problema: el tinte de hielo multiplicado
-por la nueva textura roja daba puntos oscuros. No se dio por cerrado el arte así.
-
-Build 2 corrige ese problema con una capa nativa de hielo cian y faceta blanca,
-sin modificar la imagen generada. Conserva el estado visible de deshielo y el tamaño
-físico del punto. La capa se oculta al descongelar; se evita aplanarla en la caché.
-Commit público `cbb96fa4890960284f2a0737a902b44390a04acf`, canónico
-`c0f37244d9118dea26a267f63c4841e44da1637b`. Se mantiene 0.3 como candidata aún no
-entregada y aumenta build a 2 por la recompilación de la corrección visual.
-
-## Resultado final build 2
-
-CI https://github.com/Krazel/tilt-arena-ios/actions/runs/33983075349 completada
-con éxito sobre el mismo commit que la IPA final: 25 Node, 7 XCTest y 2 XCUITest,
-cero fallos. Capturas completas en `verification/native-v03-build2/`.
-La escena final confirma hielo cian con borde claro, puntos rojos, nueve orbes
-completos y arena de borde a borde. Los destellos transitorios aparecen según
-el instante de captura; el rayo y explosión se revisaron también en build 1.
-No hay cambios posteriores en el código de producción compilado.
+Pendiente: instalación y ensayo del usuario en iPhone, precisión del sensor,
+ambas orientaciones, fps/temperatura, sonido y VFX. Dificultad sin cambios.
+Historial anterior: `verification/VERIFICACION-v03-build2.md`.

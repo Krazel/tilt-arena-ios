@@ -1,17 +1,22 @@
 {
   "id": "PR-031",
-  "revision": 8,
-  "updated_at": "2026-09-05T18:16:28.467Z",
+  "revision": 10,
+  "updated_at": "2026-09-06T16:01:20.678Z",
   "verifiedBy": [
-    "D1 read_database_table_rows",
-    "private library UI"
+    "Authorized library GET after PATCH/PUT",
+    "Apple App Store Connect API",
+    "Chrome TestFlight UI"
   ],
-  "version": "0.3 (candidata IPA Local-QA)",
-  "build": 2,
-  "repo": "https://github.com/Krazel/tilt-arena-ios",
+  "version": "0.3.1 (candidata TestFlight interno)",
+  "build": 1,
+  "tracking": {
+    "testflight": "Interno",
+    "appStore": "Creada en App Store Connect",
+    "ads": "No",
+    "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+    "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
+  },
   "published": "No",
   "notesPreserved": true,
-  "physicalTestPending": true,
-  "previousVersionUserTested": "0.2.0 build 3",
-  "signing": "IPA unsigned for Sideloadly"
+  "physicalTestPending": true
 }

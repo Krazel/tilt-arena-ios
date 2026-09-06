@@ -1,0 +1,50 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "DF24883C-910C-42D6-A87A-531F98C777E2",
+        "deviceName" : "iPhone 16 Pro",
+        "exportedFileName" : "6BC73EEE-E9D5-474B-9695-4B5379F28D20.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "04-native-art-and-vfx-fixture_0_F72E58C7-8ACD-45CF-9682-278DDC18FC02.png",
+        "timestamp" : 1788709880.113
+      }
+    ],
+    "testIdentifier" : "ClassicFlowTests/testNativeGeneratedOrbsAndEffectsFixture()",
+    "testIdentifierURL" : "test://com.apple.xcode/TiltArena/TiltArenaUITests/ClassicFlowTests/testNativeGeneratedOrbsAndEffectsFixture"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "DF24883C-910C-42D6-A87A-531F98C777E2",
+        "deviceName" : "iPhone 16 Pro",
+        "exportedFileName" : "E054BB73-B945-4502-9095-D3439919462C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03-custom-saved_0_1DC4AE5B-A2C2-49D8-BE67-A476AFD2E9A6.png",
+        "timestamp" : 1788709897.772
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "DF24883C-910C-42D6-A87A-531F98C777E2",
+        "deviceName" : "iPhone 16 Pro",
+        "exportedFileName" : "775CEB70-F6D5-4C82-A5BF-E4BB263C4F45.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02-pause_0_61CA5254-624E-4E35-8857-34DFC3A2B00A.png",
+        "timestamp" : 1788709893.927
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "DF24883C-910C-42D6-A87A-531F98C777E2",
+        "deviceName" : "iPhone 16 Pro",
+        "exportedFileName" : "A7E39484-514A-485F-950D-31457D170CA8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "01-menu-wide_0_ACFE7A6A-77B9-4340-9EFC-7257962FFED6.png",
+        "timestamp" : 1788709890.527
+      }
+    ],
+    "testIdentifier" : "ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration()",
+    "testIdentifierURL" : "test://com.apple.xcode/TiltArena/TiltArenaUITests/ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration"
+  }
+]
