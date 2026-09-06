@@ -23,7 +23,6 @@ enum ClassicArt {
         return SKTexture(cgImage: image)
     }
     static let orb = imageTexture("orb-glass-v03", maximum: 192)
-    static let dot = imageTexture("enemy-dot-v03", maximum: 64)
     static let spark = imageTexture("energy-spark-v03", maximum: 128)
     static let colors = ["nuke":"ffb52a","wave":"ba71ee","missiles":"f7e36b","frost":"70dce9",
         "bubble":"7bde83","spikes":"6c9ce8","vortex":"ee77bc","lightning":"eeefff","burn":"ff784c"]
@@ -46,14 +45,7 @@ enum ClassicArt {
         let n=SKShapeNode(circleOfRadius:radius);n.fillColor=fill;n.strokeColor=stroke;n.lineWidth=width;return n
     }
     static func node(style: String) -> SKNode {
-        if style == "dot" {
-            let node = SKSpriteNode(texture: dot); node.size = CGSize(width: 17, height: 17)
-            let ice = circle(6.8, fill: UIColor(hex: "70dce9").withAlphaComponent(0.85),
-                             stroke: UIColor(hex: "e8ffff"), width: 0.8)
-            ice.name = "ice-coating"; ice.zPosition = 1; ice.isHidden = true
-            let facet = line([CGPoint(x: -3, y: 2), CGPoint(x: 0, y: 4), CGPoint(x: 3, y: 1)], width: 0.7)
-            ice.addChild(facet); node.addChild(ice); return node
-        }
+        if style == "dot" { return circle(7, fill: UIColor(hex: "ff5658"), stroke: UIColor(hex: "fff5d7"), width: 2) }
         if style == "arrow" || style == "missileShot" {
             let path=CGMutablePath();path.move(to:CGPoint(x:16,y:0));path.addLine(to:CGPoint(x:-12,y:11))
             path.addLine(to:CGPoint(x:-6,y:0));path.addLine(to:CGPoint(x:-12,y:-11));path.closeSubpath()

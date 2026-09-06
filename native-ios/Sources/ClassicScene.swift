@@ -291,7 +291,7 @@ final class ClassicScene: SKScene {
         for dot in frame.enemies {
             let key="d\(dot.id)";alive.insert(key)
             let node=sprite(key:key,style:"dot");node.position=CGPoint(x:dot.x,y:dot.y)
-            node.childNode(withName: "ice-coating")?.isHidden = !dot.frozen
+            (node as? SKShapeNode)?.fillColor = UIColor(hex: dot.frozen ? "70dce9" : "ff5658")
             node.alpha=dot.telegraph ? 0.22+0.12*sin(frame.time*18) : (dot.thawing ? 0.65+0.35*sin(frame.time*22) : 1)
             node.setScale(dot.telegraph ? 1.45 : 1);node.zPosition=2
         }
