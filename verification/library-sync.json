@@ -1,8 +1,12 @@
 {
   "id": "PR-031",
-  "revision": 13,
-  "updatedAt": "2026-09-06T21:16:43.876Z",
-  "version": "0.3.1 (candidata TestFlight interno)",
+  "revision": 15,
+  "updatedAt": "2026-09-07T09:38:54.035Z",
+  "verifiedBy": [
+    "Authorized library GET after revision-checked PUT",
+    "Apple App Store Connect API"
+  ],
+  "version": "0.3.2 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
     "testflight": "Interno",
@@ -11,7 +15,7 @@
     "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
     "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
   },
-  "candidate": "0.3.2 (1) local; speed 470 and player radius 8; native QA pending",
+  "published": "No",
   "notesPreserved": true,
-  "verifiedBy": "Authorized GET after revision-checked PUT"
+  "physicalTestPending": true
 }

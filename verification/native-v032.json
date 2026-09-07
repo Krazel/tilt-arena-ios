@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-09-07",
+  "version": "0.3.2",
+  "build": "1",
+  "sourceCommit": "5a832ec1906091583383c09c629ae79351717b70",
+  "canonicalCodeCommit": "5f78fa1",
+  "run": "34105589370",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34105589370",
+  "xcode": "26.3 (17C529)",
+  "nodeTests": 28,
+  "unitTests": 9,
+  "uiTests": 4,
+  "failures": 0,
+  "screenshots": "native-v032/",
+  "reviewed": ["00-default-calibration.png", "01-menu-wide.png", "04-native-art-and-vfx-fixture.png", "05-native-ice-and-blast.png"],
+  "findings": ["Calibrar selected on clean launch", "Inclinado description specifies flat face-up phone", "Sensitivity selector absent", "Larger vector dots and arrow, nine readable orbs", "Filled faceted ice and layered blast", "Landscape display filled with uniform scale"],
+  "physicalDeviceTest": "Pending"
+}

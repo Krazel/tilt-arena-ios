@@ -1,51 +1,60 @@
 # Tilt Arena — estado de producto
 
-Actualizado 2026-09-06. Krazel Games. Registro PR-031.
-Responsable: tarea 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
+Actualizado 2026-09-07. Krazel Games. Registro PR-031.
+Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Candidata en desarrollo
+## Entrega actual
 
-0.3.2 (1), código local preparado. Flecha, puntos y orbes mayores; última magia
-repuesta al recogerla o caducar en el mismo paso; VFX con hielo facetado, explosiones
-con más cuerpo y estelas. Menú Calibrar/Normal/Inclinado, calibración como valor
-inicial y migración única; Inclinado para iPhone plano sobre la mesa (0°).
-Se recuerdan elecciones posteriores y calibraciones guardadas. Se conservan los
-enemigos vectoriales, orbes y partículas aprobados. Modos y progresión aplazados.
-Selector Suave/Normal/Rápida eliminado por petición del usuario; sensibilidad fija
-en 1 para todas las posturas, sin usar preferencias antiguas de sensibilidad.
-Último ajuste pedido: velocidad máxima 470 (+6,8 %); radio del protagonista frente
-a enemigos 8 en vez de 9. Contacto total 18; recogida de orbes conservada en 33.
+0.3.2 (1) activa en TestFlight interno para la cuenta del titular. Apple confirma
+VALID e IN_BETA_TESTING. Grupo Pruebas internas: solo el titular; la nueva build
+se añade a la anterior. Notas en español guardadas y verificadas por API oficial.
+Sin pruebas externas ni enlace público. Ficha App Store 1.0 en
+PREPARE_FOR_SUBMISSION, sin publicación visible. Anuncios: No.
 
-28 pruebas Node y sintaxis de diez archivos Swift aprobadas. Los radios de contacto
-acompañan el nuevo tamaño: no se afirma dificultad percibida idéntica. Ensayo físico
-pendiente. Faltan Xcode, XCTest, XCUITest y revisión de las nuevas capturas nativas.
-
-Espejo público local preparado, todavía sin subir. Auto-review rechazó
-la subida de los 11 archivos a Krazel/tilt-arena-ios y ejecución de CI: no considera
-suficiente la autorización anterior ni el registro del repositorio autorizado.
-Se ha pedido confirmación explícita. No eludir el rechazo con otro canal.
-Siguiente paso: con esa autorización, subir el commit, verificar nativo, compilar
-IPA 0.3.2 y actualizar el mismo grupo TestFlight interno de la cuenta del titular.
-
-## Distribución comprobada anterior
-
-0.3.1 (1) continúa activa en TestFlight interno; procesada VALID e IN_BETA_TESTING.
-No se ha creado ni subido una IPA 0.3.2. Sin pruebas externas ni publicación visible
-en App Store. La ficha 1.0 está en preparación, sin envío a revisión.
-App ID 6809193185; bundle com.dmkr.tiltarena. Anuncios: No.
 https://appstoreconnect.apple.com/apps/6809193185/testflight
 https://appstoreconnect.apple.com/apps/6809193185/distribution
+App ID 6809193185; bundle com.dmkr.tiltarena.
+Build ID ceadfcad-99d6-4684-b820-2462d19b322a.
 
-IPA anterior: artifacts/TiltArena-0.3.1-build1-TestFlight.ipa.
-Firma, hashes y pruebas anteriores: verification/ESTADO-v031.md,
-verification/VERIFICACION-v031.md y verification/testflight-v031.json.
+## Cambios entregados
 
-## Conservación
+Flecha, puntos vectoriales y orbes mayores. Reposición inmediata del último orbe
+al recogerlo o caducar. Hielo facetado, explosiones con cuerpo, ondas, rayos y
+estelas mejorados. Calibrar inicial; Normal a 45° e Inclinado plano, pantalla
+hacia arriba como sobre una mesa. Se conservan calibraciones guardadas y las
+nuevas elecciones de postura. Reanudar no obliga a volver a calibrar.
+
+Selector de sensibilidad retirado; valor fijo 1. Velocidad máxima 470 (+6,8 %);
+radio del protagonista contra puntos 8 en vez de 9 en la candidata anterior.
+Contacto total 18; recogida de orbes conservada en 33. Enemigos vectoriales, con
+congelados cian; PNG de enemigo histórico excluido. Orbes y partículas aprobados
+conservados. Modos fácil/difícil y rediseño de progresión siguen aplazados.
+
+## Evidencia y siguiente prueba
+
+41 pruebas aprobadas: 28 Node, 9 XCTest, 4 XCUITest. Capturas de iPhone 16 Pro
+revisadas; firma, subida y contenido final de la IPA verificados.
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34105589370
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34106646635
+Fuente pública compilada: 5a832ec1906091583383c09c629ae79351717b70.
+Código canónico equivalente: 5f78fa1. Xcode 26.3, SDK iOS 26.2, ARM64 Release.
+IPA: artifacts/TiltArena-0.3.2-build1-TestFlight.ipa (4.733.087 bytes).
+SHA256: e742cc968358c601287ddf6ad5b91b7fbf7818efeddf435b78c3bff732acf5e7.
+
+Pendiente instalar desde TestFlight y probar 10 minutos: velocidad, huecos entre
+puntos, orbes, posturas, sensor en ambas orientaciones, pausa/reanudar, sonido,
+VFX, fps y temperatura. Las fixtures de simulador no demuestran ensayo físico.
+Detalles: VERIFICACION.md, verification/native-v032.json,
+verification/ipa-v032-testflight-build1.json, verification/testflight-v032.json.
+
+## Conservación y biblioteca
 
 Ruta efectiva: C:\Users\dmkra\Documents\Codex Apps\TiltArena. Sin traslado.
-Git independiente; base heredada preservada. Espejo público saneado, sin historial
-privado ni claves. Las credenciales siguen fuera del producto, protegidas.
-Biblioteca PR-031 actualizada y verificada por GET, revisión 13, 2026-09-06
-21:16:43 UTC. Candidata local 0.3.2 separada de entrega interna 0.3.1, bloqueo y
-siguiente paso registrados. Notas, releases y tracking conservados.
-Evidencia: verification/library-sync.json.
+Git independiente e historial preservado. Espejo público saneado; firma y claves
+fuera del repo, en entorno protegido. Usuario autorizó compilar y subir el 07/09;
+el bloqueo de aprobación anterior quedó resuelto. App Store Connect por API.
+
+PR-031 sincronizada y verificada por GET, revisión 15, 2026-09-07 09:38:54 UTC.
+Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
+Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.
+Historial: verification/ESTADO-v031.md y verification/VERIFICACION-v031.md.

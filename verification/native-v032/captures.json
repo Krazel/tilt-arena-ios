@@ -1,0 +1,38 @@
+[
+  {
+    "file": "verification\\native-v032\\00-default-calibration.png",
+    "test": "ClassicFlowTests/testDefaultCalibrationAndSavedResume()",
+    "device": "iPhone 16 Pro",
+    "failure": false
+  },
+  {
+    "file": "verification\\native-v032\\04-native-art-and-vfx-fixture.png",
+    "test": "ClassicFlowTests/testNativeGeneratedOrbsAndEffectsFixture()",
+    "device": "iPhone 16 Pro",
+    "failure": false
+  },
+  {
+    "file": "verification\\native-v032\\05-native-ice-and-blast.png",
+    "test": "ClassicFlowTests/testNativeIceAndBlastAtPeak()",
+    "device": "iPhone 16 Pro",
+    "failure": false
+  },
+  {
+    "file": "verification\\native-v032\\03-custom-saved.png",
+    "test": "ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration()",
+    "device": "iPhone 16 Pro",
+    "failure": false
+  },
+  {
+    "file": "verification\\native-v032\\02-pause.png",
+    "test": "ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration()",
+    "device": "iPhone 16 Pro",
+    "failure": false
+  },
+  {
+    "file": "verification\\native-v032\\01-menu-wide.png",
+    "test": "ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration()",
+    "device": "iPhone 16 Pro",
+    "failure": false
+  }
+]

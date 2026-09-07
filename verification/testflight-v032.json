@@ -1,0 +1,47 @@
+{
+  "checkedAt": "2026-09-07T09:38:17.444Z",
+  "appId": "6809193185",
+  "version": "0.3.2",
+  "build": "1",
+  "buildId": "ceadfcad-99d6-4684-b820-2462d19b322a",
+  "processingState": "VALID",
+  "expires": "2026-12-06T01:36:08-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "publicLinkLimit": null,
+    "iosBuildsAvailableForAppleSiliconMac": true,
+    "createdDate": "2026-09-06T15:48:07.477Z",
+    "publicLinkEnabled": null,
+    "publicLink": null,
+    "hasAccessToAllBuilds": false,
+    "publicLinkId": null,
+    "isInternalGroup": true,
+    "name": "Pruebas internas",
+    "feedbackEnabled": true,
+    "publicLinkLimitEnabled": null,
+    "iosBuildsAvailableForAppleVision": true
+  },
+  "assigned": true,
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API",
+  "internalTesterCount": 1,
+  "ownerOnlyVerified": true,
+  "storeVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "betaNotes": [
+    {
+      "whatsNew": "0.3.2 (1)\nFlecha, enemigos y magias más grandes. Siempre aparece otra magia al recoger o caducar la última. Hielo, explosiones, rayos, ondas y estelas mejorados. Calibrar es la postura inicial; Normal usa unos 45° e Inclinado permite sostener el iPhone plano como sobre una mesa. Sensibilidad fija, velocidad máxima un 6,8 % mayor y zona de choque del protagonista ligeramente menor.\n\nPrueba ambas orientaciones, calibración guardada, pausa y reanudación, recogidas rápidas de la última magia, legibilidad de los efectos y control con el iPhone plano. Comprueba rendimiento y temperatura durante 10 minutos.",
+      "locale": "es-ES"
+    }
+  ]
+}

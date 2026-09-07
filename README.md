@@ -3,17 +3,20 @@
 Juego iOS inspirado en la sensación de Tilt to Live Classic, con código, arte y
 sonido propios. Nombre provisional; biblioteca PR-031.
 
-- [Estado actual](ESTADO.md), [investigación](research/REFERENCE.md),
-  [dirección visual](design/DIRECTION.md), [verificación](VERIFICACION.md).
-- Candidata local 0.3.2 (1); última entrega activa: TestFlight interno 0.3.1 (1).
-- native-ios/: SwiftUI, SpriteKit, CoreMotion y motor JavaScriptCore único.
-- npm test: pruebas del motor de producción. npm run check:swift-syntax:
-  análisis sintáctico sin SDK. bash scripts/verify-ios.sh: compilación y pruebas
-  nativas con Xcode en Mac; no sustituibles por la demo web.
-- qa/: laboratorio del motor (npm run qa). Web y assets anteriores preservados
-  como historial; no representan ni validan la candidata iPhone.
+- Entrega actual: 0.3.2 (1), activa en TestFlight interno.
+- Objetos mayores, última magia repuesta inmediatamente y VFX mejorados.
+- Calibrar inicial, Normal e Inclinado plano; sensibilidad fija sin selector.
+- Velocidad máxima +6,8 % y hitbox del protagonista ligeramente menor.
+- 28 Node, 9 XCTest y 4 XCUITest aprobados; capturas nativas revisadas.
+- Ensayo físico pendiente. Sin publicación en App Store.
 
-Repositorio público registrado como autorizado: https://github.com/Krazel/tilt-arena-ios .
-La subida de los nuevos cambios está pendiente de la confirmación específica
-exigida por auto-review; ver ESTADO.md. No contiene claves ni historial privado.
-La carpeta sigue en Codex Apps; no se ha ejecutado la migración.
+native-ios/: SwiftUI, SpriteKit, CoreMotion y motor JavaScriptCore único.
+npm test prueba el motor; npm run check:swift-syntax comprueba sintaxis sin SDK;
+bash scripts/verify-ios.sh compila y prueba en Mac. qa/ es un laboratorio de reglas,
+no una validación de iPhone. Web y assets anteriores preservados como historial.
+
+Repositorio: https://github.com/Krazel/tilt-arena-ios .
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34105589370
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34106646635
+Fuente compilada: 5a832ec1906091583383c09c629ae79351717b70.
+No contiene claves ni historial privado de Studio. Ruta local sin traslado.
