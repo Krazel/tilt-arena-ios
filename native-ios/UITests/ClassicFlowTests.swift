@@ -1,6 +1,18 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testSelectedVFXChargeAndLaunch() {
+        let app = XCUIApplication()
+        for charging in [true, false] {
+            app.launchArguments = ["--ui-testing", "--selected-vfx-qa"] + (charging ? ["--charge-vfx-qa"] : [])
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            capture(charging ? "06-selected-vfx-charge" : "07-selected-vfx-fire-trail", app: app)
+            app.terminate()
+        }
+    }
     func testDefaultCalibrationAndSavedResume() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--fresh-controls-qa"]; app.launch()

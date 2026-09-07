@@ -16,8 +16,8 @@ final class ClassicVFX {
     }()
     func show(_ event: ClassicFrame.Event, reduced: Bool) {
         guard let x = event.x, let y = event.y else { return }
-        let important = ["blast", "freeze", "death", "wave", "pickup"].contains(event.kind)
-        guard ["kill", "blast", "freeze", "death", "pickup", "spawnPickup", "lightning", "wave", "combo"].contains(event.kind) else { return }
+        let important = ["blast", "freeze", "death", "wave", "pickup", "burnLaunch"].contains(event.kind)
+        guard ["kill", "blast", "freeze", "death", "pickup", "spawnPickup", "lightning", "wave", "combo", "burnLaunch"].contains(event.kind) else { return }
         if layer.children.count >= 40 {
             guard important else { return }
             (layer.children.first(where: { $0.name == "spark" }) ?? layer.children.first)?.removeFromParent()
@@ -27,6 +27,10 @@ final class ClassicVFX {
         let color = UIColor(hex: event.color ?? "f3ffcd")
         root.run(.sequence([.wait(forDuration: 1.15), .removeFromParent()]))
         switch event.kind {
+        case "burnLaunch":
+            flash(on: root, color: UIColor(hex: "ffb444"), diameter: 95, duration: 0.2, reduced: reduced)
+            ring(on: root, color: UIColor(hex: "ffe3a0"), radius: 45, reduced: reduced)
+            burst(on: root, color: color, count: reduced ? 3 : 14, speed: 150, duration: 0.3)
         case "kill":
             flash(on: root, color: color, diameter: 36, duration: 0.18, reduced: reduced)
             burst(on: root, color: color, count: reduced ? 2 : 6, speed: 105, duration: 0.3)

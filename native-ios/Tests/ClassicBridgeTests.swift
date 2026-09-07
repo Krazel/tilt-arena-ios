@@ -62,6 +62,16 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertEqual(session.phase, .paused)
         session.scene.halt()
     }
+    func testChargeAndTrailDecodeFromBundledJavaScriptCore() throws {
+        let bridge = try ClassicBridge()
+        let charge = try bridge.selectedVFXFrame(left: 100, right: 1300, charging: true)
+        XCTAssertEqual(charge.player.fireChargeProgress, 0.5, accuracy: 0.00001)
+        XCTAssertEqual(charge.player.x, 600, accuracy: 0.00001)
+        XCTAssertFalse(charge.fields.contains { $0.kind == "fire" })
+        let dash = try bridge.selectedVFXFrame(left: 100, right: 1300, charging: false)
+        XCTAssertGreaterThan(dash.player.x, charge.player.x + 200)
+        XCTAssertTrue(dash.fields.contains { $0.kind == "fire" && $0.angle == 0 })
+    }
     func testGeneratedTexturesAreBundledAndLoaded() {
         XCTAssertGreaterThan(ClassicArt.orb.size().width, 10)
         XCTAssertGreaterThan(ClassicArt.spark.size().width, 10)

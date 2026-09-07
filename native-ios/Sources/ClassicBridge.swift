@@ -5,7 +5,7 @@ struct ClassicFrame: Decodable {
     struct Player: Decodable {
         let x, y, vx, vy, angle: Double
         let bubble: Bool
-        let spikesUntil, burnUntil: Double
+        let spikesUntil, burnUntil, fireChargeUntil, fireChargeProgress: Double
     }
     struct Dot: Decodable {
         let id: Int
@@ -28,7 +28,7 @@ struct ClassicFrame: Decodable {
         let id: Int
         let x, y: Double
         let kind: String
-        let remaining: Double
+        let remaining, angle: Double
     }
     struct Event: Decodable {
         let kind: String
@@ -84,6 +84,22 @@ final class ClassicBridge {
         try decode(call("resize", [left, right, bottom, top]))
     }
     #if DEBUG
+    func selectedVFXFrame(left: Double, right: Double, charging: Bool) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.resize(\(left),\(right),52,592);
+          g.player.x=(\(left)+\(right))/2-100;g.player.y=180;g.player.angle=0;
+          g.activate('burn');
+          for(let i=0;i<\(charging ? 30 : 84);i++)g.advance(1/120,{x:1,y:0});
+          g.projectiles.push({id:++g.id,kind:'wave',x:\(left)+220,y:320,angle:0});
+          g.fields.push({id:++g.id,kind:'vortex',x:\(right)-220,y:280,until:4,radius:200});
+          ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+70+i*(\(right)-\(left)-140)/8,490));
+          for(let i=0;i<9;i++)g.addEnemy(\(left)+70+i*(\(right)-\(left)-140)/8,475,{activeAt:0,speed:0});
+          g.events=[];return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
     func visualFrame(left: Double, right: Double) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});

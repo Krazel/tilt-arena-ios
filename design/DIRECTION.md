@@ -77,3 +77,10 @@ borde y se amortigua cerca del centro. La inclinación sigue controlando velocid
 campos superpuestos promedian su atracción para evitar que se acumulen sin límite.
 El desplazamiento se aplica antes de recogidas y colisiones y se limita a la arena.
 Pausa y caducidad desactivan la deriva. No se altera el arrastre de puntos/orbes.
+
+Selección posterior: Onda A Crecientes, Fuego A Llamarada y Agujero negro A Espiral.
+Referencias y detalle en APPROVALS.md. Fuego ahora carga 0,5 s inmóvil y orientable,
+lanza automáticamente un impulso de 0,45 s a 1050 unidades/s y deja estela durante
+3,2 s. Aro progresivo, partículas entrantes, guía de dirección y destello de salida.
+La carga conserva protección de contacto; al terminar el impulso vuelve el control
+normal. Pausa congela la carga; recoger otro fuego inicia una carga nueva.
