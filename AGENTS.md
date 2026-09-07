@@ -27,3 +27,11 @@ CI existentes para entregar los cambios encargados. Mantener secretos e historia
 privado fuera del espejo y verificar estados y asignación por API oficial.
 Esta autorización de TestFlight no amplía el público de testers ni equivale a una
 publicación visible en App Store. Conservar el alcance encargado por producto.
+
+Confirmación expresa adicional del 2026-09-07: tras preguntar «¿Autorizas también
+permanentemente publicar el código en el repositorio público de Tilt Arena para
+compilar y entregar las builds?», el usuario respondió «autorizo». Queda autorizada
+la publicación del código encargado y futuras candidatas en el repositorio público
+https://github.com/Krazel/tilt-arena-ios, además de CI, firma y TestFlight interno.
+No pedir de nuevo permiso para estos envíos. Mantener el espejo saneado y excluir
+secretos e historial privado de Studio, como en las entregas anteriores.

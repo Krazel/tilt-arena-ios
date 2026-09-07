@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-07T17:04:46.124Z",
+  "appId": "6809193185",
+  "version": "0.3.4",
+  "build": "1",
+  "buildId": "e324b2fe-36fc-416d-b2fb-19d247224dc4",
+  "processingState": "VALID",
+  "expires": "2026-12-06T09:03:57-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "name": "Pruebas internas",
+    "isInternalGroup": true,
+    "publicLinkEnabled": null,
+    "testerCount": 1,
+    "onlyOwner": true
+  },
+  "assigned": true,
+  "notesVerified": true,
+  "notes": "0.3.4 (1)\n\nEl fuego mantiene medio segundo de carga y te impulsa hacia delante. Desde que arranca puedes girar con la inclinación manteniendo toda la velocidad hasta que termina el poder; la estela sigue tus giros y queda en el suelo.\n\nEl agujero negro es un 30 % más pequeño y atrae al protagonista con más fuerza.\n\nLa onda lila ahora carga durante medio segundo: verás un núcleo luminoso, un aro y chispas en la punta de la flecha antes del disparo. Puedes seguir moviéndote y apuntando durante la carga.\n\nPrueba giros a ambos lados después de cargar fuego, vueltas cerca de paredes, inclinaciones pequeñas y neutras, pausa durante carga, ondas consecutivas y la atracción del agujero negro. Comprueba ambas orientaciones del iPhone y rendimiento durante 10 minutos.",
+  "appStoreVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API"
+}

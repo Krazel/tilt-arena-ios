@@ -5,18 +5,30 @@ Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
 ## Entrega actual
 
-Candidata local 0.3.4 (1), código bcfb322; espejo preparado f414811. Fuego ahora
+0.3.4 (1) firmada, VALID y activa en TestFlight interno solo para el titular.
+Asignación y notas en español guardadas y releídas por API oficial. Fuego ahora
 dirigible inmediatamente tras cargar, a velocidad completa durante el impulso.
 Onda lila con carga de 0,5 s visible en la punta y disparo desde el rumbo actual.
 Vórtice 30 % menor (radio 140), atracción del protagonista con coeficiente 180.
-Pasan 39 Node y sintaxis de 12 Swift; QA nativa preparada, aún no ejecutada.
-Auto-review rechazó dos veces publicar este nuevo código al espejo público y
-disparar CI, incluso tras verificar el diff de nueve archivos sin nuevos assets
-ni secretos y la titularidad del repositorio. Considera que la autorización
-permanente de TestFlight no cubre claramente nuevas publicaciones de código.
-Se requiere por ese control autorización explícita de publicación de código al
-repositorio público para continuar. No se ha creado ni subido una IPA 0.3.4.
-Evidencia: verification/control-v034.json. Entrega activa: 0.3.3 (1), debajo.
+Pasan 56 pruebas: 39 Node, 11 XCTest y 6 XCUITest. Capturas nativas revisadas:
+carga lila en punta, disparo, giro de fuego con estela y vórtice menor.
+El usuario confirmó explícitamente autorización permanente para publicar código
+en el repositorio público y entregar builds; guardada en AGENTS.md. Bloqueo resuelto.
+Envío público completado, fuente f4148118d6cef9248d53ac290a89af0fbe9fe5e9.
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34144917480.
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34145838577.
+Código canónico bcfb322. Build Apple e324b2fe-36fc-416d-b2fb-19d247224dc4.
+IPA Release ARM64, SDK iOS 26.2, 4.752.132 bytes. Firma, perfil, contenido y
+correspondencia del motor/audio comprobados. Archivo:
+artifacts/TiltArena-0.3.4-build1-TestFlight.ipa.
+SHA-256: 48f7468fffc5bf4ad3083a84cadf8951d97e48127cbb2b1982c29fa0becc70d9.
+Evidencia: verification/native-v034.json, control-v034.json,
+ipa-v034-testflight-build1.json y testflight-v034.json.
+App Store 1.0 sigue PREPARE_FOR_SUBMISSION. Sin pruebas externas; anuncios No.
+Pendiente probar control, posturas, giros con fuego, ondas consecutivas y
+atracción del vórtice durante 10 minutos en iPhone físico.
+
+## Historial de entrega anterior: 0.3.3 (1)
 
 Selección visual entregada en TestFlight: Onda A Crecientes, Fuego A Llamarada y
 Agujero negro A Espiral, de las láminas de ChatGPT Images conservadas en
@@ -109,10 +121,10 @@ los bloqueos anteriores quedaron resueltos por autorización expresa. Envío pú
 y QA nativa de 0.3.3 completados, así como firma, subida y activación en TestFlight.
 Autorización permanente de próximas subidas guardada en AGENTS.md. App Store Connect por API.
 
-PR-031 sincronizada y verificada por GET, revisión 22, 2026-09-07 16:40:02 UTC.
-La ficha registra 0.3.3 (1) activa en TestFlight interno y 0.3.4 local con los
-cambios de control/carga, 39 pruebas del motor y bloqueo de publicación al espejo
-público para QA. La autorización permanente de TestFlight sigue vigente.
+PR-031 sincronizada y verificada por GET, revisión 24, 2026-09-07 17:06:12 UTC.
+La ficha registra 0.3.4 (1) activa en TestFlight interno, cambios de control/carga,
+56 pruebas aprobadas, capturas revisadas, IPA y notas verificadas. Autorizaciones
+permanentes de código público y TestFlight guardadas en AGENTS.md; bloqueos resueltos.
 Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
 Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.
 Historial: verification/ESTADO-v031.md y verification/VERIFICACION-v031.md.

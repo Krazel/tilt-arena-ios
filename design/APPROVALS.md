@@ -43,4 +43,11 @@ pequeño y con mayor atracción, onda lila con carga visible en la punta antes d
 Se conservan los tres diseños seleccionados. Se aplica escala 0,7 al vórtice y
 un nodo nativo de carga violeta en x=28 de la flecha; no se necesita otro bitmap.
 La animación sigue el reloj de simulación. DIRECTION.md documenta el control.
-QA nativa de estos ajustes pendiente; las capturas anteriores corresponden a 0.3.3.
+QA nativa de estos ajustes aprobada: run 34144917480, iPhone 16 Pro, Xcode 26.3.
+Capturas en verification/native-v034: 08-wave-tip-charge, 09-wave-released y
+10-fire-steering. Núcleo violeta en punta antes de disparar, onda liberada delante,
+fuego siguiendo un giro de 90° y vórtice al 70 % de su tamaño lineal anterior.
+Hashes de las capturas conservados en native-v034/captures.json. Las capturas
+de la sección anterior corresponden a 0.3.3. Prueba física pendiente.
+Entrega posterior verificada: 0.3.4 (1) activa en TestFlight interno, build
+e324b2fe-36fc-416d-b2fb-19d247224dc4, run 34145838577.

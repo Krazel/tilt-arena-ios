@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-09-07",
+  "version": "0.3.4",
+  "build": "1",
+  "sourceCommit": "f4148118d6cef9248d53ac290a89af0fbe9fe5e9",
+  "canonicalCodeCommit": "bcfb322",
+  "run": "34144917480",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34144917480",
+  "xcode": "26.3 (17C529)",
+  "sdk": "iphonesimulator26.2",
+  "nodeTests": 39,
+  "unitTests": 11,
+  "uiTests": 6,
+  "failures": 0,
+  "screenshots": "native-v034/",
+  "reviewed": ["08-wave-tip-charge.png", "09-wave-released.png", "10-fire-steering.png"],
+  "findings": [
+    "Purple core, partial ring and sparks visibly gather at the arrow tip before the wave exists",
+    "Released wave travels ahead of the current arrow tip; charge node is hidden after launch",
+    "Powered fire turns upward with the arrow and leaves a fixed L-shaped orange-white trail",
+    "Vortex spiral and dark core render at 70 percent of their prior linear size",
+    "Enemies remain visible above overlapping power-up orbs"
+  ],
+  "engineAndAudioMatchCanonicalSource": true,
+  "physicalDeviceTest": "Pending",
+  "purpose": "Native simulator QA before signed TestFlight delivery",
+  "priorApprovalBlock": "Resolved by explicit permanent authorization for public code publication and TestFlight"
+}

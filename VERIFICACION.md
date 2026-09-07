@@ -1,19 +1,39 @@
-# Verificación — 0.3.3 (1)
+# Verificación — 0.3.4 (1)
 
-## Candidata local posterior: 0.3.4 (1)
+## Entrega TestFlight 0.3.4 verificada
+
+Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34145838577.
+Fuente f4148118d6cef9248d53ac290a89af0fbe9fe5e9, idéntica a la QA nativa.
+Archive Release ARM64, firma, exportación, validación y subida correctos.
+IPA 0.3.4 (1), SDK iPhoneOS 26.2, 4.752.132 bytes; SHA-256:
+48f7468fffc5bf4ad3083a84cadf8951d97e48127cbb2b1982c29fa0becc70d9.
+CRC, plataforma iOS, arquitectura, versión/build, firma, perfil, recursos y
+motor/audio idénticos a la fuente canónica verificados.
+Apple: e324b2fe-36fc-416d-b2fb-19d247224dc4, VALID e IN_BETA_TESTING.
+Grupo Pruebas internas con un tester, solo el titular; relación con la build
+y notas es-ES releídas. Ficha App Store 1.0 PREPARE_FOR_SUBMISSION, sin pruebas
+externas. Evidencia testflight-v034.json e ipa-v034-testflight-build1.json.
+
+## QA nativa: 0.3.4 (1)
 
 39 pruebas Node pasan. Comprueban giro de fuego desde el primer paso a velocidad
 constante, input débil/neutral, estela con giros, independencia 30/60/120 Hz,
 carga de onda mientras se mueve, pausa, origen en punta, rumbo de salida y
 recogidas encadenadas. Vórtice con radio físico/visual 140 y mayor atracción;
 se conservan escape, caída de fuerza, caducidad y límites.
-Sintaxis de doce Swift correcta. Código canónico bcfb322; espejo local f414811.
-Nuevas pruebas y capturas nativas preparadas, no ejecutadas: auto-review rechazó
-el envío público y CI, también tras verificar titularidad y diff de nueve archivos.
-No se reintentó por otra vía. Sin nueva IPA; TestFlight activo sigue en 0.3.3.
-Evidencia: verification/control-v034.json.
+Sintaxis de doce Swift correcta. Código canónico bcfb322; fuente pública
+f4148118d6cef9248d53ac290a89af0fbe9fe5e9. Xcode 26.3 (17C529): BUILD SUCCEEDED,
+11 XCTest y 6 XCUITest sin fallos, TEST SUCCEEDED. Total: 56 pruebas.
+Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34144917480.
+Capturas nativas revisadas: 08-wave-tip-charge, 09-wave-released, 10-fire-steering;
+núcleo/aro/chispas en la punta, disparo posterior, estela en L al girar y vórtice menor.
+Archivo de simulador verificado: 0.3.4 (1), bundle correcto, motor y audio idénticos
+a la fuente canónica. Evidencia: native-v034.json, simulator-v034.json y control-v034.json.
+El bloqueo quedó resuelto por autorización explícita permanente de publicar código
+al repositorio público y entregar builds, guardada en AGENTS.md.
+Ensayo físico de control y rendimiento pendiente.
 
-## Entrega TestFlight verificada
+## Historial: entrega TestFlight 0.3.3 verificada
 
 Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34138863698.
 Fuente d09515338c6051b4b43f0c676bf5f6c85a94168a, idéntica a la QA nativa.
