@@ -1,0 +1,52 @@
+[
+  {
+    "file": "00-overview-v1.png",
+    "bytes": 1757202,
+    "sha256": "2fe63ea471b8a7689b50262f5bdf0151c45cc91ad1bcbf378afb8eb4a008120d"
+  },
+  {
+    "file": "01-bomba-abc.png",
+    "bytes": 1803785,
+    "sha256": "db45b38d1c8cebb9edb72341b8e2aeeca47ff09ffae4573a9c3c6b18fca7f2d4"
+  },
+  {
+    "file": "02-onda-abc.png",
+    "bytes": 1793311,
+    "sha256": "14e7254ba607909b21d521584eb91fff33be59d2e8a69ffc60d6cb93ccc68bbd"
+  },
+  {
+    "file": "03-misiles-abc.png",
+    "bytes": 1850092,
+    "sha256": "ce6a4dc7b57637a18d005e7308c8874c20911d8d4719ea420a89326b2126b3b8"
+  },
+  {
+    "file": "04-hielo-abc.png",
+    "bytes": 1576239,
+    "sha256": "eeda3173ea6a8aaef0ef24ae5180fb087f15390f0144d3e9dd479764bb73f7aa"
+  },
+  {
+    "file": "05-burbuja-abc.png",
+    "bytes": 1631037,
+    "sha256": "4560bd50c2d0f9fa8b26c86e5fdf3fff4820cbb346384a0da5d7b1ecbd823508"
+  },
+  {
+    "file": "06-pinchos-abc.png",
+    "bytes": 1883688,
+    "sha256": "aafb6fea9ae393f6aef471856a336cbc9f92003dd671fb1d6a2c577c4d0297c1"
+  },
+  {
+    "file": "07-agujero-negro-abc.png",
+    "bytes": 1587156,
+    "sha256": "74629b2b28df9eadb9bddec9d19bce3c368df3a001ee504d35a6ac956d158d2a"
+  },
+  {
+    "file": "08-rayos-abc.png",
+    "bytes": 1861750,
+    "sha256": "9c6835d888dcd6a1f2afcbb1f1657ea2573d4653ab6671455b2fc22e420ddbb7"
+  },
+  {
+    "file": "09-fuego-abc.png",
+    "bytes": 1399009,
+    "sha256": "55f2a9fae2cbf5273aebc0c5d7f8e7425920208cebb451bc27aa401338bd6efe"
+  }
+]

@@ -1,7 +1,7 @@
 {
   "id": "PR-031",
-  "revision": 16,
-  "updatedAt": "2026-09-07T09:45:15.428Z",
+  "revision": 17,
+  "updatedAt": "2026-09-07T13:38:08.800Z",
   "version": "0.3.2 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
@@ -11,7 +11,9 @@
     "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
     "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
   },
-  "candidate": "0.3.3 (1) local; enemy layering and player vortex drift; native QA pending",
+  "visualProposals": 27,
+  "visualSelection": "Pending",
+  "proposalGallery": "design/vfx-proposals/2026-09-07/GALERIA.md",
   "notesPreserved": true,
   "verifiedBy": "Authorized GET after revision-checked PUT"
 }

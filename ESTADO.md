@@ -5,6 +5,12 @@ Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
 ## Entrega actual
 
+Propuestas visuales en revisión: 27 variantes de VFX (A/B/C para nueve poderes),
+generadas con ChatGPT Images y guardadas en design/vfx-proposals/2026-09-07/GALERIA.md.
+Son conceptos estáticos, no assets integrados ni animaciones verificadas. El usuario
+valora el hielo existente de 0.3.2; se conserva como referencia. Próximo paso visual:
+recibir su selección por poder antes de implementar estos nuevos diseños.
+
 Candidata local siguiente: 0.3.3 (1), aún sin compilar ni subir. Enemigos por encima
 de los orbes (z=3,5 frente a 3); protagonista en 4. El agujero negro atrae suavemente
 al protagonista dentro de su radio, con caída en borde y centro, conservando el
@@ -62,8 +68,9 @@ Git independiente e historial preservado. Espejo público saneado; firma y clave
 fuera del repo, en entorno protegido. Usuario autorizó compilar y subir el 07/09;
 el bloqueo de aprobación anterior quedó resuelto. App Store Connect por API.
 
-PR-031 sincronizada y verificada por GET, revisión 16, 2026-09-07 09:45:15 UTC.
-La ficha separa la candidata local 0.3.3 de la entrega activa 0.3.2.
+PR-031 sincronizada y verificada por GET, revisión 17, 2026-09-07 13:38:08 UTC.
+La ficha separa la candidata local 0.3.3 de la entrega activa 0.3.2 y registra
+las 27 propuestas visuales pendientes de elección, aún sin implementar.
 Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
 Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.
 Historial: verification/ESTADO-v031.md y verification/VERIFICACION-v031.md.
