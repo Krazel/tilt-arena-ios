@@ -13,16 +13,19 @@ después impulsa 0,45 s a 1050 unidades/s dejando fuego durante 3,2 s. Conserva
 protección durante carga/impulso; después devuelve el control normal.
 Detalles y referencias: design/APPROVALS.md. Resto de variantes sin seleccionar.
 
-Candidata local siguiente: 0.3.3 (1), aún sin compilar ni subir. Enemigos por encima
+Candidata siguiente: 0.3.3 (1), compilada y probada en simulador; sin nueva IPA
+firmada ni subida a TestFlight. Enemigos por encima
 de los orbes (z=3,5 frente a 3); protagonista en 4. El agujero negro atrae suavemente
 al protagonista dentro de su radio, con caída en borde y centro, conservando el
 control. Campos superpuestos promedian su atracción. Desplazamiento incluido en
 recogidas y colisiones, respetando pausa, caducidad y límites de arena.
-35 pruebas Node y sintaxis de 11 Swift aprobadas. Canónico b629799; espejo local
-d095153. Preparadas capturas nativas de carga/estela y prueba de decodificación.
-Pendiente QA nativa: auto-review rechazó enviar los nuevos cambios al repositorio
-público y ejecutar CI, por considerar necesaria autorización específica para ese
-envío. No se ejecutó el push ni CI; no se ha creado una IPA nueva.
+50 pruebas aprobadas: 35 Node, 10 XCTest y 5 XCUITest. Canónico b629799;
+fuente pública compilada d09515338c6051b4b43f0c676bf5f6c85a94168a. Xcode 26.3.
+Capturas nativas de carga/estela, crecientes, espiral y solapamiento revisadas.
+Motor y audio del binario coinciden con el código canónico. Evidencia:
+verification/native-v033.json, verification/simulator-v033.json y native-v033/.
+El usuario autorizó expresamente el envío público y la compilación; bloqueo resuelto.
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34137296208.
 La entrega comprobada en TestFlight continúa siendo 0.3.2 (1), descrita debajo.
 
 0.3.2 (1) activa en TestFlight interno para la cuenta del titular. Apple confirma
@@ -72,13 +75,14 @@ verification/ipa-v032-testflight-build1.json, verification/testflight-v032.json.
 Ruta efectiva: C:\Users\dmkra\Documents\Codex Apps\TiltArena. Sin traslado.
 Git independiente e historial preservado. Espejo público saneado; firma y claves
 fuera del repo, en entorno protegido. Usuario autorizó compilar y subir el 07/09;
-el bloqueo de aprobación anterior quedó resuelto para 0.3.2. Un rechazo nuevo
-afecta al envío público de estos cambios de 0.3.3. App Store Connect por API.
+los bloqueos anteriores quedaron resueltos por autorización expresa. Envío público
+y QA nativa de 0.3.3 completados. App Store Connect por API.
 
-PR-031 sincronizada y verificada por GET, revisión 18, 2026-09-07 13:57:43 UTC.
+PR-031 sincronizada y verificada por GET, revisión 20, 2026-09-07 15:28:10 UTC.
 La ficha separa la candidata local 0.3.3 de la entrega activa 0.3.2 y registra
 la selección implementada localmente de Onda A, Fuego A y Agujero negro A, la
-carga orientable de 0,5 s y el bloqueo de envío al espejo público para QA nativa.
+carga orientable de 0,5 s, la compilación de simulador, las 50 pruebas aprobadas
+y las capturas nativas revisadas. El bloqueo anterior está resuelto.
 Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
 Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.
 Historial: verification/ESTADO-v031.md y verification/VERIFICACION-v031.md.

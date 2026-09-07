@@ -23,5 +23,14 @@ Fuego en el suelo durante 3,2 s, sin acumular segmentos inmóviles contra parede
 Pausa congela también progreso visual y dirección. Reducir movimiento conserva
 la señal de progreso y elimina chispas de carga y oscilación decorativa.
 
-Verificación nativa de las tres selecciones y los estados de carga/estela pendiente
-en la candidata 0.3.3 (1). El resto de propuestas sigue sin seleccionar.
+Verificación nativa completada en simulador iPhone 16 Pro, candidata 0.3.3 (1),
+Xcode 26.3, run 34137296208. Capturas comparables:
+[Carga](C:/Users/dmkra/Documents/Codex%20Apps/TiltArena/verification/native-v033/06-selected-vfx-charge.png)
+y [Estela](C:/Users/dmkra/Documents/Codex%20Apps/TiltArena/verification/native-v033/07-selected-vfx-fire-trail.png).
+Tres crecientes, tres cintas espirales con núcleo oscuro y fuego naranja-blanco
+orientado detrás de la flecha. Se conserva la lectura del concepto mediante
+geometría nativa; no se afirma identidad píxel a píxel con las láminas.
+SHA-256 de capturas en verification/native-v033/captures.json. Carga, pausa,
+rumbo, impulso y estela probados por motor y puente JavaScriptCore real.
+Prueba de tacto y rendimiento en iPhone físico pendiente. El resto de propuestas
+sigue sin seleccionar. Sin nueva subida a TestFlight en esta comprobación.

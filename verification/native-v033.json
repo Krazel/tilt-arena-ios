@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-09-07",
+  "version": "0.3.3",
+  "build": "1",
+  "purpose": "Native simulator compilation and visual QA; not a signed iPhone IPA",
+  "sourceCommit": "d09515338c6051b4b43f0c676bf5f6c85a94168a",
+  "canonicalCodeCommit": "b629799",
+  "run": "34137296208",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34137296208",
+  "xcode": "26.3 (17C529)",
+  "sdk": "iphonesimulator26.2",
+  "nodeTests": 35,
+  "unitTests": 10,
+  "uiTests": 5,
+  "failures": 0,
+  "screenshots": "native-v033/",
+  "reviewed": ["06-selected-vfx-charge.png", "07-selected-vfx-fire-trail.png", "05-native-ice-and-blast.png"],
+  "findings": [
+    "Charge at 0.25 seconds shows half-filled ring, inward sparks and forward aim chevrons; no premature fire trail",
+    "Launch snapshot at 0.7 seconds shows arrow displaced right, charge hidden and continuous orange-white flame behind",
+    "Three purple crescents and three broad purple spiral ribbons with a dark core render in native SpriteKit",
+    "Red enemies appear above overlapping power-up orbs",
+    "Selected art is a native geometric adaptation of the approved concept sheets",
+    "Existing ice implementation preserved; effect screenshot is a transient sample, not physical performance evidence"
+  ],
+  "engineAndAudioMatchCanonicalSource": true,
+  "physicalDeviceTest": "Pending",
+  "signedIPA": false,
+  "testflight": "Existing 0.3.2 (1), internal only",
+  "priorApprovalBlock": "Resolved by explicit user authorization; public push and CI completed"
+}

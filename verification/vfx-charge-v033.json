@@ -2,7 +2,7 @@
   "candidate": "0.3.3 (1)",
   "date": "2026-09-07",
   "canonicalCode": "b629799",
-  "preparedPublicMirrorCode": "d095153",
+  "publicMirrorCode": "d09515338c6051b4b43f0c676bf5f6c85a94168a",
   "selected": {
     "wave": {"variant": "A Crecientes", "sha256": "14e7254ba607909b21d521584eb91fff33be59d2e8a69ffc60d6cb93ccc68bbd"},
     "burn": {"variant": "A Llamarada", "sha256": "55f2a9fae2cbf5273aebc0c5d7f8e7425920208cebb451bc27aa401338bd6efe"},
@@ -10,9 +10,10 @@
   },
   "mechanic": {"chargeSeconds": 0.5, "aimWhileStationary": true, "dashSeconds": 0.45, "dashSpeed": 1050, "fireLifetimeSeconds": 3.2},
   "nodeTests": {"passed": 35, "failed": 0},
-  "swiftSyntax": {"passedFiles": 11, "sdkTypecheck": false},
-  "nativeQA": "Pending: automatic approval rejected public source push and CI dispatch",
-  "newXCTestAndXCUITest": "Prepared, not run",
+  "swiftSyntax": {"passedFiles": 11, "sdkTypecheck": true},
+  "nativeQA": "Passed: Xcode build, 10 XCTest, 5 XCUITest; captures reviewed; verification/native-v033.json",
+  "qaRun": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34137296208",
+  "priorApprovalBlock": "Resolved by explicit user authorization",
   "newIPA": false,
   "testflight": "Existing 0.3.2 (1), internal only; no changes this turn"
 }

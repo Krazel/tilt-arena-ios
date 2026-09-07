@@ -1,7 +1,7 @@
 {
   "id": "PR-031",
-  "revision": 18,
-  "updatedAt": "2026-09-07T13:57:43.884Z",
+  "revision": 20,
+  "updatedAt": "2026-09-07T15:28:10.696Z",
   "version": "0.3.2 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
@@ -11,12 +11,8 @@
     "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
     "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
   },
-  "visualSelection": {
-    "wave": "A Crecientes",
-    "burn": "A Llamarada",
-    "vortex": "A Espiral"
-  },
-  "candidate": "0.3.3 (1), local; 35 Node tests pass; native QA blocked at public mirror approval",
+  "candidate": "0.3.3 (1), simulator build and native visual QA passed; 50 tests; no new signed IPA or TestFlight upload",
+  "qa": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34137296208",
   "notesPreserved": true,
   "verifiedBy": "Authorized GET after revision-checked PUT"
 }

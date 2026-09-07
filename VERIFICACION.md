@@ -1,6 +1,6 @@
 # Verificación — 0.3.2 (1)
 
-## Trabajo local posterior: 0.3.3 (1)
+## Candidata posterior: 0.3.3 (1), compilada y verificada en simulador
 
 Enemigos por encima de orbes y deriva suave del protagonista hacia vórtices.
 35 pruebas Node pasan: atracción consistente a 30/60/120 Hz, escape con control,
@@ -9,12 +9,26 @@ con puntos congelados al ser arrastrado. Carga de fuego inmóvil y orientable a
 30/60/120 Hz, exactamente 0,5 s sin estela anticipada; impulso único de 0,45 s,
 conservación de rumbo con input neutral, pausa, recogida repetida, protección
 limitada, recogidas/colisiones durante impulso, fuego persistente y límites.
-Sintaxis de once Swift correcta. Nuevas pruebas XCTest y XCUITest preparadas,
-pero aún no ejecutadas con SDK. Código canónico b629799; espejo local d095153.
-Revisión automática rechazó el push público y disparo de CI; requiere autorización
-para enviar estos nuevos cambios al repositorio público. No se intentó un rodeo.
-QA visual nativa, compilación y subida pendientes; las pruebas nativas y la IPA
-descritas a continuación corresponden exclusivamente a 0.3.2 (1).
+Sintaxis de once Swift correcta. Xcode 26.3 (17C529), SDK iOS Simulator 26.2:
+BUILD SUCCEEDED, 10 XCTest y 5 XCUITest sin fallos, TEST SUCCEEDED. Total: 50.
+Código canónico b629799; fuente pública d09515338c6051b4b43f0c676bf5f6c85a94168a.
+El usuario autorizó expresamente el envío al espejo público y la compilación;
+el rechazo anterior quedó resuelto y ambas acciones se completaron.
+Run: https://github.com/Krazel/tilt-arena-ios/actions/runs/34137296208.
+
+Revisadas capturas de iPhone 16 Pro: 06-selected-vfx-charge (0,25 s),
+07-selected-vfx-fire-trail (0,7 s), 05-native-ice-and-blast. Aro de carga a la mitad,
+guía de rumbo, estela naranja-blanca detrás, tres crecientes lilas, espiral violeta
+con núcleo oscuro y enemigos encima de orbes. Son adaptaciones geométricas nativas
+de las referencias aprobadas. Capturas completas y SHA-256 en native-v033/captures.json.
+Son fixtures de simulador; falta prueba de inclinación y rendimiento en iPhone físico.
+
+Archivo de simulador inspeccionado: versión 0.3.3 (1), bundle com.dmkr.tiltarena,
+plataforma iPhoneSimulator. Motor y audio idénticos a fuente probada. SHA-256:
+d9930bdf5e78db3a6eda39c94b27fc5fdb77fa8decf393ef12f15beebb06bb92.
+Evidencia verification/native-v033.json y verification/simulator-v033.json.
+No es una IPA instalable en iPhone. TestFlight permanece en 0.3.2 (1).
+Las pruebas y la IPA descritas a continuación corresponden exclusivamente a 0.3.2.
 
 7 de septiembre de 2026. Autorización expresa de compilar y subir recibida.
 Fuente pública 5a832ec1906091583383c09c629ae79351717b70; código canónico 5f78fa1.
