@@ -1,25 +1,25 @@
-# Candidata iOS 0.3.1 · build 1
+# Candidata iOS 0.3.2 · build 1
 
 SpriteKit dibuja; CoreMotion obtiene inclinación; SwiftUI presenta los menús.
 JavaScriptCore ejecuta Resources/classic-core.js, el motor compartido con Node.
 iPhone, iOS 16+, español. Sin red, cuentas, WebView, anuncios ni compras.
 
-Arena adaptable, posturas Normal/Inclinado/Personalizado, calibración guardada
-y Reanudar directo. Enemigos originales vectoriales restaurados: círculos rojos
-con borde claro; congelados cian. Orbes y destellos conservan las dos texturas
-de ChatGPT Images. Las nueve armas y los VFX se dibujan con SpriteKit.
-La dificultad no cambia en esta corrección.
+Arena adaptable, objetos mayores y reposición inmediata del último orbe. Posturas
+Calibrar (inicial), Normal a 45° e Inclinado plano. Calibración guardada, Reanudar
+directo y sensibilidad fija sin selector. Velocidad 470 y radio del protagonista 8.
+Enemigos vectoriales rojos/cian; orbes y destellos conservan las dos texturas de
+ChatGPT Images. VFX nativos de hielo facetado, explosiones, ondas, rayos y estelas.
 
-Pruebas: 25 Node, 7 XCTest y 2 XCUITest aprobados con Xcode 26.3.
-https://github.com/Krazel/tilt-arena-ios/actions/runs/34043377249
-El fixture visual existe solo en Debug; control físico y fps requieren iPhone.
+41 pruebas aprobadas: 28 Node, 9 XCTest y 4 XCUITest con Xcode 26.3.
+https://github.com/Krazel/tilt-arena-ios/actions/runs/34105589370
+Fixtures de arte solo en Debug. Control físico y fps requieren ensayo en iPhone.
 
-Build Release firmada con SDK iOS 26.2, validada y subida a TestFlight interno:
-https://github.com/Krazel/tilt-arena-ios/actions/runs/34043750047
+Release ARM64 firmada, SDK iOS 26.2, validada y activa en TestFlight interno:
+https://github.com/Krazel/tilt-arena-ios/actions/runs/34106646635
 No publicada en App Store. Bundle com.dmkr.tiltarena.
+Fuente compilada: 5a832ec1906091583383c09c629ae79351717b70.
 
-Verificación en Mac: Xcode 26.3 y XcodeGen, bash scripts/verify-ios.sh.
-TestFlight: workflow manual, solo propietario/main, secretos cifrados en el
-entorno app-store-production. Identidad de candidata en store/testflight.json.
-La validación nativa debe aprobarse antes de lanzar una distribución.
-El workflow Local-QA continúa disponible para generar IPA sin firma.
+Verificación: Xcode 26.3 y XcodeGen, bash scripts/verify-ios.sh.
+TestFlight: workflow manual autorizado, propietario/main, secretos cifrados en
+app-store-production. Identidad de candidata en store/testflight.json. Validar
+nativo antes de distribuir; verificar operaciones de App Store Connect por API.
