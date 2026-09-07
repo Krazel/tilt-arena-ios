@@ -95,9 +95,60 @@ test('lightning propagates through connected dots and stops at gaps',()=>{
 test('spikes expire and fire leaves a bounded persistent trail',()=>{
   const g=fresh();g.activate('spikes');dot(g,500,320);g.advance(1/60);assert.equal(g.kills,1);
   run(g,5.1);dot(g,480,320);g.advance(1/60);assert.equal(g.state,'gameOver');
-  const b=fresh();b.activate('burn');run(b,0.5,{x:1,y:0});assert.ok(b.fields.length>0);
+  const b=fresh();b.activate('burn');run(b,0.7,{x:1,y:0});assert.ok(b.fields.length>0);
   const at=b.fields[0];dot(b,at.x,at.y);b.advance(1/60);assert.equal(b.kills,1);
   run(b,5);assert.equal(b.fields.length,0);
+});
+
+test('fire holds position for exactly half a second while aiming, then launches once',()=>{
+  const g=fresh();g.player.vx=300;g.activate('burn');
+  g.activate('vortex',{x:570,y:320});
+  run(g,0.25,{x:1,y:0});
+  assert.equal(g.player.x,480);assert.equal(g.player.y,320);
+  assert.equal(g.player.angle,0);assert.ok(Math.abs(g.snapshot().player.fireChargeProgress-0.5)<1e-8);
+  run(g,0.25,{x:0,y:-1});
+  assert.equal(g.player.x,480);assert.equal(g.player.y,320);assert.equal(g.player.angle,-Math.PI/2);
+  assert.equal(g.fields.filter(f=>f.kind==='fire').length,0);
+  assert.equal(g.events.filter(e=>e.kind==='burnLaunch').length,1);
+  run(g,0.1,{x:1,y:0});
+  assert.ok(Math.abs(g.player.y-215)<1e-8);assert.equal(g.player.x,480);
+  assert.equal(g.events.filter(e=>e.kind==='burnLaunch').length,0);
+});
+
+test('fire charge, launch distance and trail agree at 30/60/120 Hz and neutral input keeps aim',()=>{
+  const games=[30,60,120].map(fps=>{
+    const g=fresh();g.resize(0,2000,0,800);g.player.x=400;g.player.y=400;g.player.angle=0;
+    g.activate('burn');run(g,1,undefined,fps);return g;
+  });
+  for(const g of games) {
+    assert.ok(Math.abs(g.player.x-(400+1050*0.45))<1e-7);
+    assert.equal(g.player.y,400);assert.equal(g.player.vx,0);
+    const f=g.fields.filter(f=>f.kind==='fire');assert.ok(f.length>=16&&f.length<=19);
+    assert.ok(f.every((p,i)=>p.x<g.player.x&&p.angle===0&&(!i||p.x-f[i-1].x<=32)));
+  }
+  assert.deepEqual(games[0].snapshot(),games[2].snapshot());
+});
+
+test('pause freezes fire charge; repeat pickup starts one new charge; protection ends after dash',()=>{
+  const g=fresh();g.player.angle=0;g.activate('burn');run(g,0.25);
+  g.pause();const state=g.snapshot();run(g,4,{x:0,y:1});assert.deepEqual(g.snapshot(),state);
+  g.resume();run(g,0.25);assert.equal(g.player.x,480);
+  run(g,0.1);g.activate('burn');const x=g.player.x;
+  run(g,0.25,{x:-1,y:0});assert.equal(g.player.x,x);assert.equal(g.player.angle,Math.PI);
+  const during=dot(g,x,320);g.advance(TUNING.step);assert.equal(during.dead,true);
+  run(g,1.2);g.fields=[];dot(g,g.player.x,g.player.y);g.advance(TUNING.step);
+  assert.equal(g.state,'gameOver');
+});
+
+test('dash sweeps through enemies and pickups, persists fire and cannot pile up at the wall',()=>{
+  const g=fresh();g.player.angle=0;g.activate('burn');dot(g,570,320);g.addPickup('bubble',630,320);
+  run(g,1);assert.equal(g.kills,1);assert.equal(g.player.bubble,true);
+  assert.equal(g.player.x,BOUNDS.right-TUNING.playerExtent);
+  assert.ok(g.fields.length<19);
+  const ember={...g.fields[0]};run(g,0.4,{x:-1,y:0});
+  assert.equal(g.fields[0].x,ember.x);assert.equal(g.fields[0].angle,ember.angle);
+  dot(g,ember.x,ember.y);g.advance(TUNING.step);assert.equal(g.kills,2);
+  run(g,4);assert.equal(g.fields.length,0);
 });
 test('vortex attracts both dots and pickups and then expires',()=>{
   const g=fresh();g.activate('vortex',{x:250,y:250});const e=dot(g,350,250);

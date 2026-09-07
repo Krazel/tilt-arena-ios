@@ -11,7 +11,8 @@
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
   const TUNING = Object.freeze({step: 1 / 120, speed: 470, response: 22,
     playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
-    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 60});
+    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 60,
+    fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn'];
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
     bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c'};
@@ -55,7 +56,7 @@
       this.id = 0; this.time = 0; this.accumulator = 0;
       this.state = 'running'; this.score = 0; this.combo = 0; this.bestCombo = 0;
       this.comboUntil = 0; this.kills = 0;
-      this.player = {x:480,y:320,vx:0,vy:0,angle:Math.PI/2,bubble:false,spikesUntil:0,burnUntil:0};
+      this.player = {x:480,y:320,vx:0,vy:0,angle:Math.PI/2,bubble:false,spikesUntil:0,burnUntil:0,fireChargeUntil:0};
       this.enemies = []; this.pickups = []; this.projectiles = []; this.fields = [];
       this.events = []; this.spawnAt = 1; this.patternAt = 12; this.pickupAt = 3;
       this.waveAt = []; this.trailAt = 0;
@@ -96,13 +97,28 @@
       let ix = Number.isFinite(input.x)?input.x:0, iy = Number.isFinite(input.y)?input.y:0;
       const mag = Math.max(1,length(ix,iy)); ix/=mag; iy/=mag;
       const response = 1 - Math.exp(-TUNING.response*dt);
-      const boost = p.burnUntil>this.time ? 1.5 : 1;
-      p.vx += (ix*TUNING.speed*boost-p.vx)*response;
-      p.vy += (iy*TUNING.speed*boost-p.vy)*response;
-      const pull = this.playerVortexPull();
-      p.x = clamp(p.x+(p.vx+pull.x)*dt,this.bounds.left+TUNING.playerExtent,this.bounds.right-TUNING.playerExtent);
-      p.y = clamp(p.y+(p.vy+pull.y)*dt,this.bounds.bottom+TUNING.playerExtent,this.bounds.top-TUNING.playerExtent);
-      if (length(p.vx,p.vy)>8) p.angle = Math.atan2(p.vy,p.vx);
+      if(p.fireChargeUntil>0) {
+        // Input aims while translation (including vortex drift) is locked.
+        p.vx=0;p.vy=0;
+        if(length(ix,iy)>0.001)p.angle=Math.atan2(iy,ix);
+        if(this.time+1e-9>=p.fireChargeUntil) {
+          p.burnUntil=p.fireChargeUntil+TUNING.fireDash;p.fireChargeUntil=0;
+          this.trailAt=this.time+dt;
+          this.event('burnLaunch',{x:p.x,y:p.y,angle:p.angle,color:COLORS.burn});
+        }
+      } else {
+        const dashing=p.burnUntil>this.time-dt+1e-9;
+        if(dashing) {
+          p.vx=Math.cos(p.angle)*TUNING.fireSpeed;p.vy=Math.sin(p.angle)*TUNING.fireSpeed;
+        } else {
+          if(p.burnUntil>0){p.burnUntil=0;p.vx=0;p.vy=0;}
+          p.vx+=(ix*TUNING.speed-p.vx)*response;p.vy+=(iy*TUNING.speed-p.vy)*response;
+          if(length(p.vx,p.vy)>8)p.angle=Math.atan2(p.vy,p.vx);
+        }
+        const pull=dashing?{x:0,y:0}:this.playerVortexPull();
+        p.x=clamp(p.x+(p.vx+pull.x)*dt,this.bounds.left+TUNING.playerExtent,this.bounds.right-TUNING.playerExtent);
+        p.y=clamp(p.y+(p.vy+pull.y)*dt,this.bounds.bottom+TUNING.playerExtent,this.bounds.top-TUNING.playerExtent);
+      }
       if (this.options.spawning !== false) this.spawnDirector();
       for(const orb of this.pickups) {
         if(!orb.dead && orb.until>this.time && swept(before,p,orb,TUNING.pickupReach)) {
@@ -133,7 +149,7 @@
         }
         // Relative swept collision includes the dot's movement as well as the arrow's.
         const relativeEnd={x:p.x-(e.x-old.x),y:p.y-(e.y-old.y)};
-        const armored = p.spikesUntil>this.time || p.burnUntil>this.time;
+        const armored = p.spikesUntil>this.time || p.fireChargeUntil>0 || p.burnUntil>this.time-dt+1e-9;
         if(swept(before,relativeEnd,old,armored?35:TUNING.playerRadius+TUNING.dotRadius)) {
           if(frozen || armored) this.kill(e, frozen?'ice':'dot');
           else if(p.bubble) {
@@ -285,7 +301,8 @@
           }
         }break;
       }
-      case 'burn':p.burnUntil=this.time+1.5;break;
+      case 'burn':
+        p.burnUntil=0;p.fireChargeUntil=this.time+TUNING.fireCharge;p.vx=0;p.vy=0;break;
       }
     }
     playerVortexPull() {
@@ -304,9 +321,13 @@
     }
     updateFields(dt) {
       const p=this.player;
-      if(p.burnUntil>this.time && this.time>=this.trailAt) {
-        this.fields.push({id:++this.id,kind:'fire',x:p.x,y:p.y,radius:22,until:this.time+3.2});
-        this.trailAt=this.time+0.055;
+      if(p.burnUntil>this.time-dt+1e-9 && this.time+1e-9>=this.trailAt) {
+        const last=this.fields[this.fields.length-1];
+        // World-space embers stay behind the arrow; no pile-up against a wall.
+        const at={x:p.x-Math.cos(p.angle)*18,y:p.y-Math.sin(p.angle)*18};
+        if(!last || last.kind!=='fire' || distance(last,at)>=12)
+          this.fields.push({id:++this.id,kind:'fire',...at,angle:p.angle,radius:22,until:this.time+3.2});
+        this.trailAt=this.time+0.025;
       }
       for(const f of this.fields)if(f.until>this.time) {
         if(f.kind==='fire') {
@@ -373,12 +394,13 @@
       return {state:this.state,time:this.time,score:this.score,combo:this.combo,
         comboBase:6*this.combo,pendingBonus:6*this.combo*this.combo,
         comboRemaining:Math.max(0,this.comboUntil-this.time)/TUNING.comboWindow,
-        bestCombo:this.bestCombo,kills:this.kills,player:Object.assign({},this.player),
+        bestCombo:this.bestCombo,kills:this.kills,player:Object.assign({},this.player,{
+          fireChargeProgress:this.player.fireChargeUntil>0?clamp(1-(this.player.fireChargeUntil-this.time)/TUNING.fireCharge,0,1):0}),
         enemies:this.enemies.map(e=>({id:e.id,x:e.x,y:e.y,telegraph:this.time<e.activeAt,
           frozen:this.time<e.frozenUntil,thawing:e.frozenUntil>this.time&&e.frozenUntil-this.time<1})),
         pickups:this.pickups.map(o=>({id:o.id,x:o.x,y:o.y,power:o.power,remaining:o.until-this.time})),
         projectiles:this.projectiles.map(o=>({id:o.id,x:o.x,y:o.y,kind:o.kind,angle:o.angle})),
-        fields:this.fields.map(f=>({id:f.id,x:f.x,y:f.y,kind:f.kind,remaining:f.until-this.time})),
+        fields:this.fields.map(f=>({id:f.id,x:f.x,y:f.y,kind:f.kind,angle:f.angle||0,remaining:f.until-this.time})),
         events:this.events.slice()};
     }
   }

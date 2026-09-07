@@ -13,6 +13,8 @@ final class ClassicScene: SKScene {
     private lazy var vfx = ClassicVFX(layer: effects)
     private(set) var arenaBounds = CGRect(x: 24, y: 52, width: 912, height: 540)
     private var objects: [String: SKNode] = [:], textures: [String: SKTexture] = [:]
+    private var textureAnchors: [String: CGPoint] = [:]
+    private let fireCharge = ClassicFireCharge()
     private let arrow = SKNode()
     private var bubble = SKShapeNode(), spikes = SKShapeNode()
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
@@ -33,6 +35,8 @@ final class ClassicScene: SKScene {
     private let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
     private let visualPreview = ProcessInfo.processInfo.arguments.contains("--visual-qa")
     private let freezeVFXPreview = ProcessInfo.processInfo.arguments.contains("--freeze-vfx-qa")
+    private let selectedVFXPreview = ProcessInfo.processInfo.arguments.contains("--selected-vfx-qa")
+    private let chargeVFXPreview = ProcessInfo.processInfo.arguments.contains("--charge-vfx-qa")
     private var previewStarted: Double?
     #endif
 
@@ -156,6 +160,7 @@ final class ClassicScene: SKScene {
                 gameFrame = try resizeEngine()
                 #if DEBUG
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
             lastTime = nil; touchOrigin = nil; touchVector = (0, 0)
@@ -188,6 +193,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
+        if selectedVFXPreview, let frame = gameFrame { render(frame); return }
         if visualPreview, let frame = gameFrame {
             render(frame)
             if freezeVFXPreview {
@@ -256,6 +262,7 @@ final class ClassicScene: SKScene {
         border.fillColor = .clear;arenaDecoration.addChild(border)
     }
     private func drawPlayer() {
+        fireCharge.zPosition = -0.1; arrow.addChild(fireCharge)
         arrow.addChild(ClassicArt.node(style:"arrow"));arrow.zPosition=4
         arrow.position=CGPoint(x:480,y:320);world.addChild(arrow)
         bubble = SKShapeNode(circleOfRadius:32);bubble.strokeColor=UIColor(hex:"7bde83")
@@ -291,9 +298,15 @@ final class ClassicScene: SKScene {
         else if let cached = textures[style] { node=SKSpriteNode(texture:cached) }
         else {
             let shape=ClassicArt.node(style:style)
-            if let rendered=view?.texture(from:shape) { textures[style]=rendered;node=SKSpriteNode(texture:rendered) }
+            let bounds = shape.calculateAccumulatedFrame()
+            if let rendered=view?.texture(from:shape) {
+                textures[style]=rendered;node=SKSpriteNode(texture:rendered)
+                // Preserve authored origin for asymmetric crescents and flame tongues.
+                textureAnchors[style]=CGPoint(x: -bounds.minX/bounds.width, y: -bounds.minY/bounds.height)
+            }
             else { node=shape }
         }
+        if let sprite = node as? SKSpriteNode, let anchor = textureAnchors[style] { sprite.anchorPoint = anchor }
         node.name=style;world.addChild(node);objects[key]=node
         if style == "missileShot" { vfx.attachMissileTrail(to: node, reduced: reduceEffects) }
         return node
@@ -322,12 +335,15 @@ final class ClassicScene: SKScene {
             let key="f\(field.id)";alive.insert(key)
             let node=sprite(key:key,style:field.kind == "vortex" ? "vortexField" : "fire")
             node.position=CGPoint(x:field.x,y:field.y);node.zPosition=1
-            node.alpha=min(0.8,field.remaining);node.zRotation=reduceEffects ? 0 : frame.time*2
+            node.alpha=min(field.kind == "fire" ? 1 : 0.85,field.remaining)
+            node.zRotation=field.kind == "fire" ? field.angle : (reduceEffects ? 0 : frame.time * -1.7)
+            if field.kind == "fire" { node.yScale = reduceEffects ? 1 : 0.9 + 0.1 * sin(frame.time * 12 + Double(field.id)) }
         }
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
         bubble.isHidden = !frame.player.bubble;spikes.isHidden=frame.player.spikesUntil<=frame.time
         bubble.glowWidth = reduceEffects ? 0 : 2
+        fireCharge.update(progress: frame.player.fireChargeProgress, active: frame.player.fireChargeUntil > frame.time, reduced: reduceEffects)
         scoreLabel.text="\(frame.score.formatted())"
         comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : "ENLAZA LAS ARMAS"
         comboBar.xScale=frame.comboRemaining;bestLabel.text="RÉCORD  \(max(session?.best ?? 0,frame.score).formatted())"

@@ -54,31 +54,58 @@ enum ClassicArt {
             if style == "missileShot" { shape.setScale(0.4) };return shape
         }
         if style == "waveShot" {
-            let path=CGMutablePath();path.move(to:CGPoint(x:-10,y:-48))
-            path.addQuadCurve(to:CGPoint(x:-10,y:48),control:CGPoint(x:24,y:0))
             let root = SKNode()
-            for (width, color) in [(CGFloat(17), UIColor(hex: "a557f0").withAlphaComponent(0.5)), (CGFloat(7), UIColor(hex: "f1dfff"))] {
-                let n=SKShapeNode(path:path);n.strokeColor=color;n.lineWidth=width;n.glowWidth=2;root.addChild(n)
+            // Approved A: three smooth, tapered crescents; leading edge is +X.
+            for i in (0..<3).reversed() {
+                let x = CGFloat(-i * 15), r = CGFloat(48 - i * 5)
+                for (thickness, tint) in [(CGFloat(22), "8542ce"), (CGFloat(13), "ba71ee"), (CGFloat(4), "f5e5ff")] {
+                    let path = CGMutablePath(); path.move(to: CGPoint(x: x - 24, y: -r))
+                    path.addQuadCurve(to: CGPoint(x: x - 24, y: r), control: CGPoint(x: x + 54, y: 0))
+                    path.addQuadCurve(to: CGPoint(x: x - 24, y: -r), control: CGPoint(x: x + 54 - thickness, y: 0))
+                    path.closeSubpath()
+                    let blade = SKShapeNode(path: path); blade.fillColor = UIColor(hex: tint)
+                    blade.strokeColor = .clear; blade.alpha = thickness == 22 ? 0.55 : 1
+                    root.addChild(blade)
+                }
             }
             return root
         }
         if style == "fire" {
-            let node = SKSpriteNode(texture: spark); node.size = CGSize(width: 58, height: 58)
-            node.color = UIColor(hex: "ff963d"); node.colorBlendFactor = 1; node.blendMode = .add; return node
+            let root = SKNode()
+            // Approved A: pointed orange flame tongues behind a white-hot core.
+            for (scale, tint) in [(CGFloat(1), "ef5321"), (CGFloat(0.72), "ffb324"), (CGFloat(0.36), "fff3ba")] {
+                let path = CGMutablePath(); path.move(to: CGPoint(x: 22, y: 0))
+                for p in [CGPoint(x: -40, y: 19), CGPoint(x: -24, y: 4), CGPoint(x: -48, y: 7),
+                          CGPoint(x: -30, y: -2), CGPoint(x: -43, y: -17), CGPoint(x: -12, y: -7)] {
+                    path.addLine(to: CGPoint(x: p.x, y: p.y * scale))
+                }
+                path.closeSubpath(); let flame = SKShapeNode(path: path)
+                flame.fillColor = UIColor(hex: tint); flame.strokeColor = .clear; root.addChild(flame)
+            }
+            return root
         }
         let root=SKNode(),color=UIColor(hex:colors[style] ?? "ee77bc")
         if style == "vortexField" {
             for arm in 0..<3 {
-                let path = CGMutablePath()
-                for i in 0...45 {
-                    let t = CGFloat(i) / 45, a = t * .pi * 1.5 + CGFloat(arm) * .pi * 2 / 3
-                    let r = 22 + t * 168, p = CGPoint(x: cos(a) * r, y: sin(a) * r)
-                    if i == 0 { path.move(to: p) } else { path.addLine(to: p) }
+                for (width, tint, opacity) in [(CGFloat(28), "64299c", CGFloat(0.45)), (CGFloat(17), "b54ff1", CGFloat(0.85)), (CGFloat(5), "eed2ff", CGFloat(0.95))] {
+                    let path = CGMutablePath()
+                    for side in [CGFloat(1), CGFloat(-1)] {
+                        let indices = side > 0 ? Array(0...64) : Array((0...64).reversed())
+                        for i in indices {
+                            let t = CGFloat(i) / 64, a = t * .pi * 1.5 + CGFloat(arm) * .pi * 2 / 3
+                            let r = 23 + t * 165 + side * sin(t * .pi) * width
+                            let p = CGPoint(x: cos(a) * r, y: sin(a) * r)
+                            if side > 0 && i == 0 { path.move(to: p) } else { path.addLine(to: p) }
+                        }
+                    }
+                    path.closeSubpath(); let spiral = SKShapeNode(path: path)
+                    spiral.fillColor = UIColor(hex: tint); spiral.strokeColor = .clear
+                    spiral.alpha = opacity; root.addChild(spiral)
                 }
-                let spiral = SKShapeNode(path: path); spiral.strokeColor = color.withAlphaComponent(0.35)
-                spiral.lineWidth = 4; spiral.glowWidth = 2; root.addChild(spiral)
             }
-            root.addChild(circle(24,fill:UIColor(hex:"261c31"),stroke:color,width:4));return root
+            let rim = circle(26, fill: UIColor(hex: "10051d"), stroke: UIColor(hex: "c47aff"), width: 3)
+            rim.glowWidth = 3; root.addChild(rim)
+            root.addChild(circle(21, fill: UIColor(hex: "090211"), stroke: .clear, width: 0));return root
         }
         let housing = SKSpriteNode(texture: orb); housing.size = CGSize(width: 42, height: 42)
         housing.color = color; housing.colorBlendFactor = 0.72; root.addChild(housing)
