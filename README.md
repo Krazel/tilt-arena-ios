@@ -4,6 +4,8 @@ Juego iOS inspirado en la sensación de Tilt to Live Classic, con código, arte 
 sonido propios. Nombre provisional; biblioteca PR-031.
 
 - Entrega actual: 0.3.2 (1), activa en TestFlight interno.
+- Candidata local 0.3.3 (1): enemigos sobre orbes y atracción suave del vórtice
+  al protagonista. 31 pruebas de motor aprobadas; QA nativa y nueva IPA pendientes.
 - Objetos mayores, última magia repuesta inmediatamente y VFX mejorados.
 - Calibrar inicial, Normal e Inclinado plano; sensibilidad fija sin selector.
 - Velocidad máxima +6,8 % y hitbox del protagonista ligeramente menor.

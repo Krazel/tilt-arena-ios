@@ -1,5 +1,14 @@
 # Verificación — 0.3.2 (1)
 
+## Trabajo local posterior: 0.3.3 (1)
+
+Enemigos por encima de orbes y deriva suave del protagonista hacia vórtices.
+31 pruebas Node pasan: atracción consistente a 30/60/120 Hz, escape con control,
+pausa, caducidad, centro, alcance, límites, campos superpuestos, recogida y choque
+con puntos congelados al ser arrastrado. Sintaxis de diez Swift correcta.
+QA visual nativa, compilación y subida pendientes; las pruebas nativas y la IPA
+descritas a continuación corresponden exclusivamente a 0.3.2 (1).
+
 7 de septiembre de 2026. Autorización expresa de compilar y subir recibida.
 Fuente pública 5a832ec1906091583383c09c629ae79351717b70; código canónico 5f78fa1.
 

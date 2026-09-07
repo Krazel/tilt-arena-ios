@@ -5,6 +5,14 @@ Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
 ## Entrega actual
 
+Candidata local siguiente: 0.3.3 (1), aún sin compilar ni subir. Enemigos por encima
+de los orbes (z=3,5 frente a 3); protagonista en 4. El agujero negro atrae suavemente
+al protagonista dentro de su radio, con caída en borde y centro, conservando el
+control. Campos superpuestos promedian su atracción. Desplazamiento incluido en
+recogidas y colisiones, respetando pausa, caducidad y límites de arena.
+31 pruebas Node y sintaxis Swift aprobadas. Pendiente QA nativa de esta candidata.
+La entrega comprobada en TestFlight continúa siendo 0.3.2 (1), descrita debajo.
+
 0.3.2 (1) activa en TestFlight interno para la cuenta del titular. Apple confirma
 VALID e IN_BETA_TESTING. Grupo Pruebas internas: solo el titular; la nueva build
 se añade a la anterior. Notas en español guardadas y verificadas por API oficial.
@@ -54,7 +62,8 @@ Git independiente e historial preservado. Espejo público saneado; firma y clave
 fuera del repo, en entorno protegido. Usuario autorizó compilar y subir el 07/09;
 el bloqueo de aprobación anterior quedó resuelto. App Store Connect por API.
 
-PR-031 sincronizada y verificada por GET, revisión 15, 2026-09-07 09:38:54 UTC.
+PR-031 sincronizada y verificada por GET, revisión 16, 2026-09-07 09:45:15 UTC.
+La ficha separa la candidata local 0.3.3 de la entrega activa 0.3.2.
 Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
 Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.
 Historial: verification/ESTADO-v031.md y verification/VERIFICACION-v031.md.

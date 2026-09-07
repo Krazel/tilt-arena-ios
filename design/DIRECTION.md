@@ -67,3 +67,13 @@ con hielo/explosión detenidos en su máximo mediante fixture exclusiva de Debug
 El fixture no es una prueba de rendimiento físico. Ensayo con iPhone pendiente.
 
 Historial: DIRECTION-v03.md y DIRECTION-v02.md.
+
+## Ajustes posteriores para 0.3.3
+
+Por petición del usuario, enemigos en z=3,5, por encima de orbes/proyectiles (3)
+y debajo del protagonista (4). El agujero negro también aplica deriva al jugador:
+60·(1-d/r)·min(1,d/24) unidades/s dentro de radio 200. Es suave, desaparece en el
+borde y se amortigua cerca del centro. La inclinación sigue controlando velocidad;
+campos superpuestos promedian su atracción para evitar que se acumulen sin límite.
+El desplazamiento se aplica antes de recogidas y colisiones y se limita a la arena.
+Pausa y caducidad desactivan la deriva. No se altera el arrastre de puntos/orbes.

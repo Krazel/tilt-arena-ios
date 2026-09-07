@@ -104,6 +104,36 @@ test('vortex attracts both dots and pickups and then expires',()=>{
   const o=g.addPickup('nuke',350,270);run(g,0.2);
   assert.ok(e.x<350);assert.ok(o.x<350);run(g,4.1);assert.equal(g.fields.length,0);
 });
+test('vortex gently pulls the player at all frame rates and steering can escape',()=>{
+  const positions=[30,60,120].map(fps=>{
+    const g=fresh();g.activate('vortex',{x:580,y:320});run(g,0.5,undefined,fps);
+    assert.ok(g.player.x>480&&g.player.x<510);assert.equal(g.player.y,320);
+    return g.player.x;
+  });
+  assert.ok(Math.max(...positions)-Math.min(...positions)<1e-8);
+  const g=fresh();g.activate('vortex',{x:580,y:320});run(g,0.5,{x:-1,y:0});
+  assert.ok(g.player.x<400);
+});
+test('player vortex drift obeys range, expiry, pause, center and arena bounds',()=>{
+  for(const point of [{x:800,y:320},{x:480,y:320}]) {
+    const g=fresh();g.activate('vortex',point);run(g,0.5);assert.equal(g.player.x,480);
+  }
+  const g=fresh();g.activate('vortex',{x:580,y:320});g.pause();run(g,1);
+  assert.equal(g.player.x,480);g.resume();g.fields[0].until=0;run(g,0.5);assert.equal(g.player.x,480);
+  const edge=fresh();edge.player.x=BOUNDS.left+TUNING.playerExtent;
+  edge.activate('vortex',{x:BOUNDS.left+10,y:320});run(edge,0.5);
+  assert.equal(edge.player.x,BOUNDS.left+TUNING.playerExtent);
+});
+test('overlapping vortices do not amplify drift and pulled movement collects powers',()=>{
+  const a=fresh(),b=fresh();a.activate('vortex',{x:580,y:320});
+  for(let i=0;i<5;i++)b.activate('vortex',{x:580,y:320});
+  run(a,0.5);run(b,0.5);assert.ok(Math.abs(a.player.x-b.player.x)<1e-8);
+  const g=fresh();g.activate('vortex',{x:580,y:320});g.addPickup('bubble',513.1,320);
+  g.advance(TUNING.step);assert.equal(g.player.bubble,true);
+  const frozen=fresh();frozen.activate('vortex',{x:580,y:320});
+  dot(frozen,498.1,320).frozenUntil=10;frozen.advance(TUNING.step);
+  assert.equal(frozen.kills,1);assert.equal(frozen.state,'running');
+});
 test('combo is an uncapped integer with one quadratic settlement',()=>{
   const g=fresh();for(let i=0;i<213;i++)g.kill(dot(g,80,80),'dot');
   assert.equal(g.combo,213);assert.equal(g.score,2130);

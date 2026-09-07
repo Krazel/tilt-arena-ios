@@ -1,5 +1,9 @@
 # Candidata iOS 0.3.2 · build 1
 
+El código actual prepara 0.3.3 (1): enemigos por encima de los orbes y atracción
+suave del vórtice al protagonista. 31 pruebas Node y sintaxis Swift aprobadas;
+QA nativa pendiente. La entrega 0.3.2 (1) verificada se documenta debajo.
+
 SpriteKit dibuja; CoreMotion obtiene inclinación; SwiftUI presenta los menús.
 JavaScriptCore ejecuta Resources/classic-core.js, el motor compartido con Node.
 iPhone, iOS 16+, español. Sin red, cuentas, WebView, anuncios ni compras.
