@@ -3,9 +3,16 @@
 ## Trabajo local posterior: 0.3.3 (1)
 
 Enemigos por encima de orbes y deriva suave del protagonista hacia vórtices.
-31 pruebas Node pasan: atracción consistente a 30/60/120 Hz, escape con control,
+35 pruebas Node pasan: atracción consistente a 30/60/120 Hz, escape con control,
 pausa, caducidad, centro, alcance, límites, campos superpuestos, recogida y choque
-con puntos congelados al ser arrastrado. Sintaxis de diez Swift correcta.
+con puntos congelados al ser arrastrado. Carga de fuego inmóvil y orientable a
+30/60/120 Hz, exactamente 0,5 s sin estela anticipada; impulso único de 0,45 s,
+conservación de rumbo con input neutral, pausa, recogida repetida, protección
+limitada, recogidas/colisiones durante impulso, fuego persistente y límites.
+Sintaxis de once Swift correcta. Nuevas pruebas XCTest y XCUITest preparadas,
+pero aún no ejecutadas con SDK. Código canónico b629799; espejo local d095153.
+Revisión automática rechazó el push público y disparo de CI; requiere autorización
+para enviar estos nuevos cambios al repositorio público. No se intentó un rodeo.
 QA visual nativa, compilación y subida pendientes; las pruebas nativas y la IPA
 descritas a continuación corresponden exclusivamente a 0.3.2 (1).
 

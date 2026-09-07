@@ -4,6 +4,11 @@ Tres opciones por poder, creadas con ChatGPT Imágenes. Son conceptos estáticos
 
 Puedes elegir una letra por poder: «Bomba B, onda A, misiles C…». El hielo existente que te gustó se conserva como referencia.
 
+Selección recibida e implementada localmente el 07/09: **Onda A, Fuego A y Agujero
+negro A**, más carga orientable de fuego de 0,5 segundos. QA nativa pendiente;
+las imágenes de esta galería siguen siendo las propuestas originales. Detalles
+en [APPROVALS.md](C:/Users/dmkra/Documents/Codex%20Apps/TiltArena/design/APPROVALS.md).
+
 | Poder | A | B | C |
 | --- | --- | --- | --- |
 | Bomba / destello radial | Ondas | Estallido | Fragmentos |
@@ -73,4 +78,3 @@ A: Llamarada · B: Brasas · C: Magma
 Prompts y procedencia: [prompts.json](C:/Users/dmkra/Documents/Codex Apps/TiltArena/design/vfx-proposals/2026-09-07/prompts.json).
 
 El fondo de las láminas es orientativo; las propuestas no deciden cambios de escenario ni de mecánicas. El tamaño y número de detalles de cada efecto se ajustarán al alcance real y a la legibilidad del juego al implementar la selección.
-

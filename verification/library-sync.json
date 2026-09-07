@@ -1,7 +1,7 @@
 {
   "id": "PR-031",
-  "revision": 17,
-  "updatedAt": "2026-09-07T13:38:08.800Z",
+  "revision": 18,
+  "updatedAt": "2026-09-07T13:57:43.884Z",
   "version": "0.3.2 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
@@ -11,9 +11,12 @@
     "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
     "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
   },
-  "visualProposals": 27,
-  "visualSelection": "Pending",
-  "proposalGallery": "design/vfx-proposals/2026-09-07/GALERIA.md",
+  "visualSelection": {
+    "wave": "A Crecientes",
+    "burn": "A Llamarada",
+    "vortex": "A Espiral"
+  },
+  "candidate": "0.3.3 (1), local; 35 Node tests pass; native QA blocked at public mirror approval",
   "notesPreserved": true,
   "verifiedBy": "Authorized GET after revision-checked PUT"
 }

@@ -5,18 +5,24 @@ Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
 ## Entrega actual
 
-Propuestas visuales en revisión: 27 variantes de VFX (A/B/C para nueve poderes),
-generadas con ChatGPT Images y guardadas en design/vfx-proposals/2026-09-07/GALERIA.md.
-Son conceptos estáticos, no assets integrados ni animaciones verificadas. El usuario
-valora el hielo existente de 0.3.2; se conserva como referencia. Próximo paso visual:
-recibir su selección por poder antes de implementar estos nuevos diseños.
+Selección visual implementada localmente: Onda A Crecientes, Fuego A Llamarada y
+Agujero negro A Espiral, de las láminas de ChatGPT Images conservadas en
+design/vfx-proposals/2026-09-07/GALERIA.md. Hielo nativo existente conservado.
+Fuego carga 0,5 s inmóvil y orientable, con aro de progreso, guía y chispas entrantes;
+después impulsa 0,45 s a 1050 unidades/s dejando fuego durante 3,2 s. Conserva
+protección durante carga/impulso; después devuelve el control normal.
+Detalles y referencias: design/APPROVALS.md. Resto de variantes sin seleccionar.
 
 Candidata local siguiente: 0.3.3 (1), aún sin compilar ni subir. Enemigos por encima
 de los orbes (z=3,5 frente a 3); protagonista en 4. El agujero negro atrae suavemente
 al protagonista dentro de su radio, con caída en borde y centro, conservando el
 control. Campos superpuestos promedian su atracción. Desplazamiento incluido en
 recogidas y colisiones, respetando pausa, caducidad y límites de arena.
-31 pruebas Node y sintaxis Swift aprobadas. Pendiente QA nativa de esta candidata.
+35 pruebas Node y sintaxis de 11 Swift aprobadas. Canónico b629799; espejo local
+d095153. Preparadas capturas nativas de carga/estela y prueba de decodificación.
+Pendiente QA nativa: auto-review rechazó enviar los nuevos cambios al repositorio
+público y ejecutar CI, por considerar necesaria autorización específica para ese
+envío. No se ejecutó el push ni CI; no se ha creado una IPA nueva.
 La entrega comprobada en TestFlight continúa siendo 0.3.2 (1), descrita debajo.
 
 0.3.2 (1) activa en TestFlight interno para la cuenta del titular. Apple confirma
@@ -66,11 +72,13 @@ verification/ipa-v032-testflight-build1.json, verification/testflight-v032.json.
 Ruta efectiva: C:\Users\dmkra\Documents\Codex Apps\TiltArena. Sin traslado.
 Git independiente e historial preservado. Espejo público saneado; firma y claves
 fuera del repo, en entorno protegido. Usuario autorizó compilar y subir el 07/09;
-el bloqueo de aprobación anterior quedó resuelto. App Store Connect por API.
+el bloqueo de aprobación anterior quedó resuelto para 0.3.2. Un rechazo nuevo
+afecta al envío público de estos cambios de 0.3.3. App Store Connect por API.
 
-PR-031 sincronizada y verificada por GET, revisión 17, 2026-09-07 13:38:08 UTC.
+PR-031 sincronizada y verificada por GET, revisión 18, 2026-09-07 13:57:43 UTC.
 La ficha separa la candidata local 0.3.3 de la entrega activa 0.3.2 y registra
-las 27 propuestas visuales pendientes de elección, aún sin implementar.
+la selección implementada localmente de Onda A, Fuego A y Agujero negro A, la
+carga orientable de 0,5 s y el bloqueo de envío al espejo público para QA nativa.
 Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
 Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.
 Historial: verification/ESTADO-v031.md y verification/VERIFICACION-v031.md.

@@ -1,0 +1,18 @@
+{
+  "candidate": "0.3.3 (1)",
+  "date": "2026-09-07",
+  "canonicalCode": "b629799",
+  "preparedPublicMirrorCode": "d095153",
+  "selected": {
+    "wave": {"variant": "A Crecientes", "sha256": "14e7254ba607909b21d521584eb91fff33be59d2e8a69ffc60d6cb93ccc68bbd"},
+    "burn": {"variant": "A Llamarada", "sha256": "55f2a9fae2cbf5273aebc0c5d7f8e7425920208cebb451bc27aa401338bd6efe"},
+    "vortex": {"variant": "A Espiral", "sha256": "74629b2b28df9eadb9bddec9d19bce3c368df3a001ee504d35a6ac956d158d2a"}
+  },
+  "mechanic": {"chargeSeconds": 0.5, "aimWhileStationary": true, "dashSeconds": 0.45, "dashSpeed": 1050, "fireLifetimeSeconds": 3.2},
+  "nodeTests": {"passed": 35, "failed": 0},
+  "swiftSyntax": {"passedFiles": 11, "sdkTypecheck": false},
+  "nativeQA": "Pending: automatic approval rejected public source push and CI dispatch",
+  "newXCTestAndXCUITest": "Prepared, not run",
+  "newIPA": false,
+  "testflight": "Existing 0.3.2 (1), internal only; no changes this turn"
+}
