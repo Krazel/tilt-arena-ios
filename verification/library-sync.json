@@ -1,11 +1,7 @@
 {
   "id": "PR-031",
-  "revision": 21,
-  "updatedAt": "2026-09-07T15:39:32.779Z",
-  "verifiedBy": [
-    "Authorized library GET after revision-checked PUT",
-    "Apple App Store Connect API"
-  ],
+  "revision": 22,
+  "updatedAt": "2026-09-07T16:40:02.763Z",
   "version": "0.3.3 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
@@ -15,8 +11,8 @@
     "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
     "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
   },
-  "published": "No",
+  "candidate": "0.3.4 (1), local, 39 Node tests passed; native QA blocked by automatic review of public source export",
+  "qa": "Not run: public push and CI rejected",
   "notesPreserved": true,
-  "physicalTestPending": true,
-  "standingAuthorization": "Future internal TestFlight uploads authorized by user, 2026-09-07; product AGENTS.md"
+  "verifiedBy": "Authorized GET after revision-checked PUT"
 }

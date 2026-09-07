@@ -1,0 +1,18 @@
+{
+  "version": "0.3.4",
+  "build": "1",
+  "canonicalCodeCommit": "bcfb322",
+  "preparedPublicMirrorCommit": "f414811",
+  "nodeTests": {"passed": 39, "failed": 0},
+  "swiftSyntax": {"filesPassed": 12, "sdkTypecheck": false},
+  "changes": {
+    "fire": "0.5 s charge; steering on every powered step at constant 1050 speed for 0.45 s; neutral keeps heading; trail preserves bends",
+    "wave": "0.5 s charge while moving; tip animation; projectile emits at current tip and heading; queued pickups retain separate shots",
+    "vortex": "Physical and visual radius 140 instead of 200; player pull coefficient 180 instead of 60; falloff, overlap limit and bounds preserved"
+  },
+  "nativeTestsPrepared": ["Wave tip charge and release snapshots", "Steered fire trail snapshot", "Wave charge, radius and steering through native JavaScriptCore decoder"],
+  "nativeQA": "Not run: automatic approval rejected public source push and CI twice, including retry after diff and repository ownership checks",
+  "newIPA": false,
+  "testflight": "Existing 0.3.3 (1) remains active internally for owner",
+  "approvalNeededByAutomaticReview": "Explicit authorization to publish the new source payload to existing public Krazel/tilt-arena-ios; standing internal TestFlight authorization was not accepted for public source publication"
+}

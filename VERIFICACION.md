@@ -1,5 +1,18 @@
 # Verificación — 0.3.3 (1)
 
+## Candidata local posterior: 0.3.4 (1)
+
+39 pruebas Node pasan. Comprueban giro de fuego desde el primer paso a velocidad
+constante, input débil/neutral, estela con giros, independencia 30/60/120 Hz,
+carga de onda mientras se mueve, pausa, origen en punta, rumbo de salida y
+recogidas encadenadas. Vórtice con radio físico/visual 140 y mayor atracción;
+se conservan escape, caída de fuerza, caducidad y límites.
+Sintaxis de doce Swift correcta. Código canónico bcfb322; espejo local f414811.
+Nuevas pruebas y capturas nativas preparadas, no ejecutadas: auto-review rechazó
+el envío público y CI, también tras verificar titularidad y diff de nueve archivos.
+No se reintentó por otra vía. Sin nueva IPA; TestFlight activo sigue en 0.3.3.
+Evidencia: verification/control-v034.json.
+
 ## Entrega TestFlight verificada
 
 Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34138863698.
