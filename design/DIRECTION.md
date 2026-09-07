@@ -84,3 +84,22 @@ lanza automáticamente un impulso de 0,45 s a 1050 unidades/s y deja estela dura
 3,2 s. Aro progresivo, partículas entrantes, guía de dirección y destello de salida.
 La carga conserva protección de contacto; al terminar el impulso vuelve el control
 normal. Pausa congela la carga; recoger otro fuego inicia una carga nueva.
+
+## Correcciones de control y carga para 0.3.4
+
+Petición del usuario posterior a probar 0.3.3: tras el lanzamiento de fuego se
+puede dirigir inmediatamente a velocidad completa hasta que acaba. Se conserva
+carga 0,5 s, velocidad 1050 y duración 0,45 s; el input gira el rumbo en cada paso,
+sin frenar por menor inclinación. Neutral conserva el rumbo. La estela mantiene
+posición y orientación de cada tramo al girar.
+
+Agujero negro: radio físico y visual 140 frente a 200 (30 % menor), coeficiente
+de atracción del protagonista 180 frente a 60. Sigue amortiguado en borde/centro,
+promedia superpuestos y permite escapar. No amplía radios invisibles ni cambia
+la duración o la fuerza base de arrastre de enemigos y orbes.
+
+Onda lila: carga 0,5 s con núcleo, aro y chispas en la punta de la flecha.
+Se puede seguir moviendo y apuntando mientras carga. Sale desde la punta con el
+rumbo del momento de disparo. Las recogidas encadenadas conservan sus disparos;
+la pausa congela temporizador y animación. Reducir movimiento conserva núcleo
+y progreso y suprime las chispas decorativas.

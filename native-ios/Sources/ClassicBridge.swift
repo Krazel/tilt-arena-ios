@@ -6,6 +6,8 @@ struct ClassicFrame: Decodable {
         let x, y, vx, vy, angle: Double
         let bubble: Bool
         let spikesUntil, burnUntil, fireChargeUntil, fireChargeProgress: Double
+        let waveCharging: Bool
+        let waveChargeProgress: Double
     }
     struct Dot: Decodable {
         let id: Int
@@ -28,7 +30,7 @@ struct ClassicFrame: Decodable {
         let id: Int
         let x, y: Double
         let kind: String
-        let remaining, angle: Double
+        let remaining, angle, radius: Double
     }
     struct Event: Decodable {
         let kind: String
@@ -84,15 +86,18 @@ final class ClassicBridge {
         try decode(call("resize", [left, right, bottom, top]))
     }
     #if DEBUG
-    func selectedVFXFrame(left: Double, right: Double, charging: Bool) throws -> ClassicFrame {
+    func selectedVFXFrame(left: Double, right: Double, charging: Bool, wave: Bool = false, turning: Bool = false) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
           g.resize(\(left),\(right),52,592);
           g.player.x=(\(left)+\(right))/2-100;g.player.y=180;g.player.angle=0;
-          g.activate('burn');
-          for(let i=0;i<\(charging ? 30 : 84);i++)g.advance(1/120,{x:1,y:0});
-          g.projectiles.push({id:++g.id,kind:'wave',x:\(left)+220,y:320,angle:0});
-          g.fields.push({id:++g.id,kind:'vortex',x:\(right)-220,y:280,until:4,radius:200});
+          g.activate('\(wave ? "wave" : "burn")');
+          for(let i=0;i<\(charging ? 30 : 84);i++) {
+            const turn=\(turning ? "true" : "false")&&i>=72;
+            g.advance(1/120,\(wave ? "{x:0,y:0}" : "{x:turn?0:1,y:turn?1:0}"));
+          }
+          if(!\(wave ? "true" : "false"))g.projectiles.push({id:++g.id,kind:'wave',x:\(left)+220,y:320,angle:0});
+          g.activate('vortex',{x:\(right)-220,y:280});
           ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+70+i*(\(right)-\(left)-140)/8,490));
           for(let i=0;i<9;i++)g.addEnemy(\(left)+70+i*(\(right)-\(left)-140)/8,475,{activeAt:0,speed:0});
           g.events=[];return JSON.stringify(g.snapshot());})()
@@ -108,7 +113,8 @@ final class ClassicBridge {
           colors.forEach((p,i)=>g.addPickup(p,\(left)+70+i*(\(right)-\(left)-140)/8,450));
           for(let i=0;i<18;i++)g.addEnemy(\(left)+45+i*(\(right)-\(left)-90)/17,350,{activeAt:0,speed:0});
           g.enemies.slice(12).forEach(e=>e.frozenUntil=4);
-          g.fields.push({id:90,kind:'vortex',x:\(right)-140,y:210,until:4});
+          g.activate('vortex',{x:\(right)-140,y:210});
+          g.events=[];
           return JSON.stringify(g.snapshot());})()
         """
         guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }

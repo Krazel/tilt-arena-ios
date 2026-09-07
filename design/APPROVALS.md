@@ -35,3 +35,12 @@ rumbo, impulso y estela probados por motor y puente JavaScriptCore real.
 Prueba de tacto y rendimiento en iPhone físico pendiente. El resto de propuestas
 sigue sin seleccionar. Subida posterior verificada: 0.3.3 (1) activa en TestFlight
 interno, build ac24434e-81b1-452d-ba88-87bc8503400c, run 34138863698.
+
+## Corrección encargada para 0.3.4
+
+Usuario: fuego dirigible inmediatamente después de cargar, agujero negro más
+pequeño y con mayor atracción, onda lila con carga visible en la punta antes de salir.
+Se conservan los tres diseños seleccionados. Se aplica escala 0,7 al vórtice y
+un nodo nativo de carga violeta en x=28 de la flecha; no se necesita otro bitmap.
+La animación sigue el reloj de simulación. DIRECTION.md documenta el control.
+QA nativa de estos ajustes pendiente; las capturas anteriores corresponden a 0.3.3.

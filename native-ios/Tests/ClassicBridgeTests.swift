@@ -72,6 +72,22 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertGreaterThan(dash.player.x, charge.player.x + 200)
         XCTAssertTrue(dash.fields.contains { $0.kind == "fire" && $0.angle == 0 })
     }
+    func testWaveChargeAndSteeredFireDecodeWithSmallerVortex() throws {
+        let bridge = try ClassicBridge()
+        let wave = try bridge.selectedVFXFrame(left: 100, right: 1300, charging: true, wave: true)
+        XCTAssertTrue(wave.player.waveCharging)
+        XCTAssertEqual(wave.player.waveChargeProgress, 0.5, accuracy: 0.00001)
+        XCTAssertTrue(wave.projectiles.isEmpty)
+        XCTAssertEqual(wave.fields.first?.radius, 140)
+        let shot = try bridge.selectedVFXFrame(left: 100, right: 1300, charging: false, wave: true)
+        XCTAssertFalse(shot.player.waveCharging)
+        XCTAssertEqual(shot.projectiles.count, 1)
+        let turn = try bridge.selectedVFXFrame(left: 100, right: 1300, charging: false, turning: true)
+        XCTAssertEqual(turn.player.vy, 1050, accuracy: 0.00001)
+        XCTAssertEqual(turn.player.vx, 0, accuracy: 0.00001)
+        XCTAssertTrue(turn.fields.contains { $0.kind == "fire" && $0.angle == 0 })
+        XCTAssertTrue(turn.fields.contains { $0.kind == "fire" && $0.angle == .pi / 2 })
+    }
     func testGeneratedTexturesAreBundledAndLoaded() {
         XCTAssertGreaterThan(ClassicArt.orb.size().width, 10)
         XCTAssertGreaterThan(ClassicArt.spark.size().width, 10)
