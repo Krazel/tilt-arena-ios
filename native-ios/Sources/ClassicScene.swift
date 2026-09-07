@@ -305,7 +305,7 @@ final class ClassicScene: SKScene {
             let node=sprite(key:key,style:"dot");node.position=CGPoint(x:dot.x,y:dot.y)
             (node as? SKShapeNode)?.fillColor = UIColor(hex: dot.frozen ? "70dce9" : "ff5658")
             node.alpha=dot.telegraph ? 0.22+0.12*sin(frame.time*18) : (dot.thawing ? 0.65+0.35*sin(frame.time*22) : 1)
-            node.setScale(dot.telegraph ? 1.45 : 1);node.zPosition=2
+            node.setScale(dot.telegraph ? 1.45 : 1);node.zPosition=3.5
         }
         for orb in frame.pickups {
             let key="o\(orb.id)";alive.insert(key)

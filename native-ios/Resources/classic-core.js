@@ -11,7 +11,7 @@
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
   const TUNING = Object.freeze({step: 1 / 120, speed: 470, response: 22,
     playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
-    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105});
+    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 60});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn'];
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
     bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c'};
@@ -99,8 +99,9 @@
       const boost = p.burnUntil>this.time ? 1.5 : 1;
       p.vx += (ix*TUNING.speed*boost-p.vx)*response;
       p.vy += (iy*TUNING.speed*boost-p.vy)*response;
-      p.x = clamp(p.x+p.vx*dt,this.bounds.left+TUNING.playerExtent,this.bounds.right-TUNING.playerExtent);
-      p.y = clamp(p.y+p.vy*dt,this.bounds.bottom+TUNING.playerExtent,this.bounds.top-TUNING.playerExtent);
+      const pull = this.playerVortexPull();
+      p.x = clamp(p.x+(p.vx+pull.x)*dt,this.bounds.left+TUNING.playerExtent,this.bounds.right-TUNING.playerExtent);
+      p.y = clamp(p.y+(p.vy+pull.y)*dt,this.bounds.bottom+TUNING.playerExtent,this.bounds.top-TUNING.playerExtent);
       if (length(p.vx,p.vy)>8) p.angle = Math.atan2(p.vy,p.vx);
       if (this.options.spawning !== false) this.spawnDirector();
       for(const orb of this.pickups) {
@@ -286,6 +287,20 @@
       }
       case 'burn':p.burnUntil=this.time+1.5;break;
       }
+    }
+    playerVortexPull() {
+      const p=this.player;
+      let x=0,y=0,count=0;
+      for(const f of this.fields)if(f.kind==='vortex' && f.until>this.time) {
+        const d=distance(p,f);
+        if(d>0 && d<f.radius) {
+          // Gentle drift, tapering at the rim and the center. Average overlapping
+          // fields so stacking powers cannot overpower the player's steering.
+          const speed=TUNING.vortexPlayerPull*(1-d/f.radius)*Math.min(1,d/24);
+          x+=(f.x-p.x)/d*speed;y+=(f.y-p.y)/d*speed;count++;
+        }
+      }
+      return {x:x/Math.max(1,count),y:y/Math.max(1,count)};
     }
     updateFields(dt) {
       const p=this.player;
