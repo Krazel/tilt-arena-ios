@@ -11,8 +11,8 @@
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
   const TUNING = Object.freeze({step: 1 / 120, speed: 470, response: 22,
     playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
-    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 60,
-    fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050});
+    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 180, vortexRadius: 140,
+    fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050, waveCharge: 0.5});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn'];
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
     bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c'};
@@ -109,6 +109,9 @@
       } else {
         const dashing=p.burnUntil>this.time-dt+1e-9;
         if(dashing) {
+          // The release aims forward; subsequent input steers immediately at
+          // full powered speed. Neutral keeps the last heading without braking.
+          if(length(ix,iy)>0.001)p.angle=Math.atan2(iy,ix);
           p.vx=Math.cos(p.angle)*TUNING.fireSpeed;p.vy=Math.sin(p.angle)*TUNING.fireSpeed;
         } else {
           if(p.burnUntil>0){p.burnUntil=0;p.vx=0;p.vy=0;}
@@ -126,11 +129,12 @@
           this.activate(orb.power,{x:orb.x,y:orb.y});
         }
       }
-      for(const wave of this.waveAt) if(!wave.dead && this.time>=wave.at) {
+      for(const wave of this.waveAt) if(!wave.dead && this.time+1e-9>=wave.at) {
         wave.dead=true;
-        this.projectiles.push({id:++this.id,kind:'wave',x:p.x,y:p.y,
+        const tip={x:p.x+Math.cos(p.angle)*24,y:p.y+Math.sin(p.angle)*24};
+        this.projectiles.push({id:++this.id,kind:'wave',...tip,
           vx:Math.cos(p.angle)*580,vy:Math.sin(p.angle)*580,angle:p.angle,radius:48,until:this.time+1.8});
-        this.event('wave',{x:p.x,y:p.y,angle:p.angle,color:COLORS.wave});
+        this.event('wave',{...tip,angle:p.angle,color:COLORS.wave});
       }
       this.waveAt = this.waveAt.filter(w=>!w.dead);
       this.updateFields(dt);
@@ -277,7 +281,7 @@
       this.event('pickup',{power,x:at.x,y:at.y,color:COLORS[power]});
       switch(power) {
       case 'nuke':this.blast(at,155,power);break;
-      case 'wave':this.waveAt.push({at:this.time+0.22});break;
+      case 'wave':this.waveAt.push({at:this.time+TUNING.waveCharge});break;
       case 'missiles':
         for(let i=0;i<5;i++) {
           const a=p.angle+(i-2)*0.7;
@@ -289,7 +293,7 @@
         this.event('freeze',{x:at.x,y:at.y,radius:205,color:COLORS.frost});break;
       case 'bubble':p.bubble=true;break;
       case 'spikes':p.spikesUntil=this.time+5;break;
-      case 'vortex':this.fields.push({id:++this.id,kind:'vortex',x:at.x,y:at.y,until:this.time+4,radius:200});break;
+      case 'vortex':this.fields.push({id:++this.id,kind:'vortex',x:at.x,y:at.y,until:this.time+4,radius:TUNING.vortexRadius});break;
       case 'lightning': {
         // Flood fill by actual adjacency; no arbitrary list of nearest targets.
         const queue=[{x:p.x,y:p.y}],visited=new Set();
@@ -311,7 +315,7 @@
       for(const f of this.fields)if(f.kind==='vortex' && f.until>this.time) {
         const d=distance(p,f);
         if(d>0 && d<f.radius) {
-          // Gentle drift, tapering at the rim and the center. Average overlapping
+          // Stronger drift, tapering at the rim and the center. Average overlapping
           // fields so stacking powers cannot overpower the player's steering.
           const speed=TUNING.vortexPlayerPull*(1-d/f.radius)*Math.min(1,d/24);
           x+=(f.x-p.x)/d*speed;y+=(f.y-p.y)/d*speed;count++;
@@ -391,16 +395,19 @@
       }
     }
     snapshot() {
+      const chargingWave=this.waveAt.find(w=>!w.dead);
       return {state:this.state,time:this.time,score:this.score,combo:this.combo,
         comboBase:6*this.combo,pendingBonus:6*this.combo*this.combo,
         comboRemaining:Math.max(0,this.comboUntil-this.time)/TUNING.comboWindow,
         bestCombo:this.bestCombo,kills:this.kills,player:Object.assign({},this.player,{
-          fireChargeProgress:this.player.fireChargeUntil>0?clamp(1-(this.player.fireChargeUntil-this.time)/TUNING.fireCharge,0,1):0}),
+          fireChargeProgress:this.player.fireChargeUntil>0?clamp(1-(this.player.fireChargeUntil-this.time)/TUNING.fireCharge,0,1):0,
+          waveCharging:!!chargingWave,
+          waveChargeProgress:chargingWave?clamp(1-(chargingWave.at-this.time)/TUNING.waveCharge,0,1):0}),
         enemies:this.enemies.map(e=>({id:e.id,x:e.x,y:e.y,telegraph:this.time<e.activeAt,
           frozen:this.time<e.frozenUntil,thawing:e.frozenUntil>this.time&&e.frozenUntil-this.time<1})),
         pickups:this.pickups.map(o=>({id:o.id,x:o.x,y:o.y,power:o.power,remaining:o.until-this.time})),
         projectiles:this.projectiles.map(o=>({id:o.id,x:o.x,y:o.y,kind:o.kind,angle:o.angle})),
-        fields:this.fields.map(f=>({id:f.id,x:f.x,y:f.y,kind:f.kind,angle:f.angle||0,remaining:f.until-this.time})),
+        fields:this.fields.map(f=>({id:f.id,x:f.x,y:f.y,kind:f.kind,angle:f.angle||0,radius:f.radius||TUNING.vortexRadius,remaining:f.until-this.time})),
         events:this.events.slice()};
     }
   }

@@ -110,7 +110,7 @@ test('fire holds position for exactly half a second while aiming, then launches 
   assert.equal(g.player.x,480);assert.equal(g.player.y,320);assert.equal(g.player.angle,-Math.PI/2);
   assert.equal(g.fields.filter(f=>f.kind==='fire').length,0);
   assert.equal(g.events.filter(e=>e.kind==='burnLaunch').length,1);
-  run(g,0.1,{x:1,y:0});
+  run(g,0.1);
   assert.ok(Math.abs(g.player.y-215)<1e-8);assert.equal(g.player.x,480);
   assert.equal(g.events.filter(e=>e.kind==='burnLaunch').length,0);
 });
@@ -155,15 +155,68 @@ test('vortex attracts both dots and pickups and then expires',()=>{
   const o=g.addPickup('nuke',350,270);run(g,0.2);
   assert.ok(e.x<350);assert.ok(o.x<350);run(g,4.1);assert.equal(g.fields.length,0);
 });
-test('vortex gently pulls the player at all frame rates and steering can escape',()=>{
+test('smaller vortex pulls the player more strongly at all frame rates and steering can escape',()=>{
   const positions=[30,60,120].map(fps=>{
     const g=fresh();g.activate('vortex',{x:580,y:320});run(g,0.5,undefined,fps);
-    assert.ok(g.player.x>480&&g.player.x<510);assert.equal(g.player.y,320);
+    assert.ok(g.player.x>510&&g.player.x<530);assert.equal(g.player.y,320);
     return g.player.x;
   });
   assert.ok(Math.max(...positions)-Math.min(...positions)<1e-8);
   const g=fresh();g.activate('vortex',{x:580,y:320});run(g,0.5,{x:-1,y:0});
   assert.ok(g.player.x<400);
+});
+
+test('powered fire steers on the first step, keeps full speed and preserves bent world-space trail',()=>{
+  const games=[30,60,120].map(fps=>{
+    const g=fresh();g.resize(0,2000,0,1000);g.player.x=500;g.player.y=400;g.player.angle=0;
+    g.activate('burn');run(g,0.5,{x:1,y:0},fps);run(g,0.1,{x:1,y:0},fps);
+    assert.ok(Math.abs(g.player.x-605)<1e-7);
+    run(g,0.1,{x:0,y:0.25},fps);
+    assert.ok(Math.abs(g.player.x-605)<1e-7);assert.ok(Math.abs(g.player.y-505)<1e-7);
+    assert.ok(Math.abs(Math.hypot(g.player.vx,g.player.vy)-1050)<1e-7);
+    const fire=g.fields.filter(f=>f.kind==='fire');
+    assert.ok(fire.some(f=>f.angle===0)&&fire.some(f=>f.angle===Math.PI/2));
+    assert.ok(fire.filter(f=>f.angle===0).every(f=>f.y===400));
+    g.advance(TUNING.step,{x:-1,y:0});assert.equal(g.player.vx,-1050);assert.ok(Math.abs(g.player.vy)<1e-8);
+    return g.snapshot();
+  });
+  assert.deepEqual(games[0],games[2]);
+});
+
+test('wave charges while moving, freezes on pause, and releases exactly once from the current tip',()=>{
+  const g=fresh();g.activate('wave');run(g,0.25,{x:1,y:0});
+  assert.equal(g.projectiles.length,0);assert.ok(g.player.x>550);
+  assert.equal(g.snapshot().player.waveCharging,true);
+  assert.ok(Math.abs(g.snapshot().player.waveChargeProgress-0.5)<1e-8);
+  g.pause();const held=g.snapshot();run(g,2,{x:0,y:1});assert.deepEqual(g.snapshot(),held);g.resume();
+  run(g,0.25,{x:0,y:1});
+  assert.equal(g.projectiles.length,1);assert.equal(g.snapshot().player.waveCharging,false);
+  const shot=g.projectiles[0];assert.ok(Math.abs(shot.angle-g.player.angle)<1e-8);
+  assert.ok(Math.abs(Math.hypot(shot.x-g.player.x,shot.y-g.player.y)-(24+580*TUNING.step))<1e-7);
+  assert.equal(g.events.filter(e=>e.kind==='wave').length,1);
+  run(g,0.1);assert.equal(g.projectiles.length,1);assert.equal(g.events.filter(e=>e.kind==='wave').length,0);
+});
+
+test('queued wave pickups each charge and release, with deterministic progress at every frame rate',()=>{
+  const snapshots=[30,60,120].map(fps=>{
+    const g=fresh();g.activate('wave');run(g,0.1,undefined,fps);g.activate('wave');
+    run(g,0.4,undefined,fps);assert.equal(g.projectiles.length,1);
+    assert.equal(g.snapshot().player.waveCharging,true);
+    assert.ok(Math.abs(g.snapshot().player.waveChargeProgress-0.8)<1e-7);
+    run(g,0.1,undefined,fps);assert.equal(g.projectiles.length,2);
+    assert.equal(g.snapshot().player.waveCharging,false);return g.snapshot();
+  });
+  assert.deepEqual(snapshots[0],snapshots[2]);
+});
+
+test('vortex radius matches its visible size and the stronger pull stops at its new rim',()=>{
+  const g=fresh();g.activate('vortex',{x:580,y:320});
+  assert.equal(g.snapshot().fields[0].radius,140);
+  assert.ok(g.playerVortexPull().x>50);
+  const edge=fresh();edge.activate('vortex',{x:630,y:320});run(edge,0.5);
+  assert.equal(edge.player.x,480);
+  const e=dot(edge,480,400);const o=edge.addPickup('bubble',480,430);
+  run(edge,0.25);assert.equal(e.x,480);assert.equal(o.x,480);
 });
 test('player vortex drift obeys range, expiry, pause, center and arena bounds',()=>{
   for(const point of [{x:800,y:320},{x:480,y:320}]) {

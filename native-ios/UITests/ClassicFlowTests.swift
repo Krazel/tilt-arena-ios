@@ -1,6 +1,21 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testWaveTipChargeAndFireSteering() {
+        let app = XCUIApplication()
+        for (name, flags) in [
+            ("08-wave-tip-charge", ["--wave-vfx-qa", "--charge-vfx-qa"]),
+            ("09-wave-released", ["--wave-vfx-qa"]),
+            ("10-fire-steering", ["--turn-fire-qa"])
+        ] {
+            app.launchArguments = ["--ui-testing", "--selected-vfx-qa"] + flags
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            capture(name, app: app); app.terminate()
+        }
+    }
     func testSelectedVFXChargeAndLaunch() {
         let app = XCUIApplication()
         for charging in [true, false] {

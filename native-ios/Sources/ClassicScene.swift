@@ -15,6 +15,7 @@ final class ClassicScene: SKScene {
     private var objects: [String: SKNode] = [:], textures: [String: SKTexture] = [:]
     private var textureAnchors: [String: CGPoint] = [:]
     private let fireCharge = ClassicFireCharge()
+    private let waveCharge = ClassicWaveCharge()
     private let arrow = SKNode()
     private var bubble = SKShapeNode(), spikes = SKShapeNode()
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
@@ -37,6 +38,8 @@ final class ClassicScene: SKScene {
     private let freezeVFXPreview = ProcessInfo.processInfo.arguments.contains("--freeze-vfx-qa")
     private let selectedVFXPreview = ProcessInfo.processInfo.arguments.contains("--selected-vfx-qa")
     private let chargeVFXPreview = ProcessInfo.processInfo.arguments.contains("--charge-vfx-qa")
+    private let waveVFXPreview = ProcessInfo.processInfo.arguments.contains("--wave-vfx-qa")
+    private let turnFirePreview = ProcessInfo.processInfo.arguments.contains("--turn-fire-qa")
     private var previewStarted: Double?
     #endif
 
@@ -160,7 +163,7 @@ final class ClassicScene: SKScene {
                 gameFrame = try resizeEngine()
                 #if DEBUG
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
-                if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview) }
+                if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
             lastTime = nil; touchOrigin = nil; touchVector = (0, 0)
@@ -263,6 +266,7 @@ final class ClassicScene: SKScene {
     }
     private func drawPlayer() {
         fireCharge.zPosition = -0.1; arrow.addChild(fireCharge)
+        waveCharge.zPosition = 0.1; arrow.addChild(waveCharge)
         arrow.addChild(ClassicArt.node(style:"arrow"));arrow.zPosition=4
         arrow.position=CGPoint(x:480,y:320);world.addChild(arrow)
         bubble = SKShapeNode(circleOfRadius:32);bubble.strokeColor=UIColor(hex:"7bde83")
@@ -337,6 +341,7 @@ final class ClassicScene: SKScene {
             node.position=CGPoint(x:field.x,y:field.y);node.zPosition=1
             node.alpha=min(field.kind == "fire" ? 1 : 0.85,field.remaining)
             node.zRotation=field.kind == "fire" ? field.angle : (reduceEffects ? 0 : frame.time * -1.7)
+            if field.kind == "vortex" { node.setScale(field.radius / 200) }
             if field.kind == "fire" { node.yScale = reduceEffects ? 1 : 0.9 + 0.1 * sin(frame.time * 12 + Double(field.id)) }
         }
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
@@ -344,6 +349,7 @@ final class ClassicScene: SKScene {
         bubble.isHidden = !frame.player.bubble;spikes.isHidden=frame.player.spikesUntil<=frame.time
         bubble.glowWidth = reduceEffects ? 0 : 2
         fireCharge.update(progress: frame.player.fireChargeProgress, active: frame.player.fireChargeUntil > frame.time, reduced: reduceEffects)
+        waveCharge.update(progress: frame.player.waveChargeProgress, active: frame.player.waveCharging, reduced: reduceEffects)
         scoreLabel.text="\(frame.score.formatted())"
         comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : "ENLAZA LAS ARMAS"
         comboBar.xScale=frame.comboRemaining;bestLabel.text="RÉCORD  \(max(session?.best ?? 0,frame.score).formatted())"
