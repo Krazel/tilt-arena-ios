@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-07T15:38:21.902Z",
+  "appId": "6809193185",
+  "version": "0.3.3",
+  "build": "1",
+  "buildId": "ac24434e-81b1-452d-ba88-87bc8503400c",
+  "processingState": "VALID",
+  "expires": "2026-12-06T07:36:41-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "name": "Pruebas internas",
+    "isInternalGroup": true,
+    "publicLinkEnabled": null,
+    "testerCount": 1,
+    "onlyOwner": true
+  },
+  "assigned": true,
+  "notesVerified": true,
+  "notes": "0.3.3 (1)\n\nNuevos efectos elegidos: onda lila con tres crecientes, fuego con núcleo luminoso y agujero negro en espiral. El hielo conserva su aspecto.\n\nEl poder de fuego detiene la flecha durante medio segundo. Mientras carga puedes orientar el puntero; el aro y las chispas muestran la carga. Después sale disparada en la dirección elegida y deja una estela de fuego. Al terminar el impulso recuperas el movimiento normal.\n\nLos enemigos se ven por encima de las magias. El agujero negro también atrae suavemente al protagonista.\n\nPrueba apuntar durante la carga, soltar la inclinación antes del impulso, cargar cerca de paredes, encadenar poderes y pausar/reanudar a mitad de carga. Comprueba ambas orientaciones del iPhone, la lectura de enemigos sobre magias, la atracción del agujero negro y el rendimiento durante 10 minutos.",
+  "appStoreVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API"
+}

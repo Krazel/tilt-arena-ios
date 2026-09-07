@@ -14,6 +14,7 @@
   "nativeQA": "Passed: Xcode build, 10 XCTest, 5 XCUITest; captures reviewed; verification/native-v033.json",
   "qaRun": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34137296208",
   "priorApprovalBlock": "Resolved by explicit user authorization",
-  "newIPA": false,
-  "testflight": "Existing 0.3.2 (1), internal only; no changes this turn"
+  "newIPA": true,
+  "testflight": "0.3.3 (1) VALID and IN_BETA_TESTING, owner-only internal group; verification/testflight-v033.json",
+  "distributionRun": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34138863698"
 }

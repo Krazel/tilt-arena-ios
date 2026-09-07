@@ -1,0 +1,51 @@
+{
+  "app": "Tilt Arena",
+  "purpose": "TestFlight",
+  "version": "0.3.3",
+  "build": "1",
+  "bundleId": "com.dmkr.tiltarena",
+  "appId": "6809193185",
+  "commit": "d09515338c6051b4b43f0c676bf5f6c85a94168a",
+  "run": "34138863698",
+  "sha256": "23448724e68daa311016c6006723dfbff75974709fa5b6cfb1509470c0b990d2",
+  "bytes": 4747507,
+  "sdk": "iphoneos26.2",
+  "signatureVerified": true,
+  "uploadAccepted": true,
+  "zipCRCValid": true,
+  "verifiedMachOPlatform": "iOS",
+  "verifiedArchitecture": "arm64",
+  "encrypted": false,
+  "engineAndAudioMatchCanonicalSource": true,
+  "resourceSHA256": {
+    "classic-core.js": "3f06996cd6e7c862eec0f16e1b90249a7ecf97fc54f96cdc4ef864906dd6ff7a",
+    "classic-loop.wav": "207fcf403b3f7038be23ce18d730fc838535d59ae7328421f7dc01702d1e43ed",
+    "death.wav": "f4b0efe694255297fbb554d171288d67d9bde699799774aef44ce3b140b44988",
+    "hit.wav": "9d72ca5560742d29d2d648185d6f8f4a0cd4305432bf22e15b530a2f06e3b6e2",
+    "pickup.wav": "ab41f87aa2927894f8bf3ee23f6992dfd8f0eabaf2cf652fe4cce53b48d6cb9c",
+    "orb-glass-v03.png": "abcd91bf1c0b224226e673bf5fa4c7f28d6b8741d5db4526c84acf67840e2c72",
+    "energy-spark-v03.png": "ed5061a1d1b2dba428010344a37662bf309757e5d8685a2a45364e04321f78d8"
+  },
+  "optimizedImages": {
+    "orb-glass-v03.png": {
+      "format": "Apple CgBI PNG",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sourceSHA256": "e28e80738d2117e35432a4f9835438e85a699e2ebd131f3d7db1090be9afa961",
+      "verification": "Dimensions and ZIP CRC; rendered appearance checked separately in native QA"
+    },
+    "energy-spark-v03.png": {
+      "format": "Apple CgBI PNG",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sourceSHA256": "4a57c519df6ae4f7b4e8dc2d4befe2bccfb989dbfce1c521ef4782fe3de7d6ad",
+      "verification": "Dimensions and ZIP CRC; rendered appearance checked separately in native QA"
+    }
+  },
+  "embeddedProvisioningProfile": true,
+  "executablePermission": "0o100755"
+}

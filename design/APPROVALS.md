@@ -33,4 +33,5 @@ geometría nativa; no se afirma identidad píxel a píxel con las láminas.
 SHA-256 de capturas en verification/native-v033/captures.json. Carga, pausa,
 rumbo, impulso y estela probados por motor y puente JavaScriptCore real.
 Prueba de tacto y rendimiento en iPhone físico pendiente. El resto de propuestas
-sigue sin seleccionar. Sin nueva subida a TestFlight en esta comprobación.
+sigue sin seleccionar. Subida posterior verificada: 0.3.3 (1) activa en TestFlight
+interno, build ac24434e-81b1-452d-ba88-87bc8503400c, run 34138863698.

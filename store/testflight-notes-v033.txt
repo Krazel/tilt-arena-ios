@@ -1,0 +1,9 @@
+0.3.3 (1)
+
+Nuevos efectos elegidos: onda lila con tres crecientes, fuego con núcleo luminoso y agujero negro en espiral. El hielo conserva su aspecto.
+
+El poder de fuego detiene la flecha durante medio segundo. Mientras carga puedes orientar el puntero; el aro y las chispas muestran la carga. Después sale disparada en la dirección elegida y deja una estela de fuego. Al terminar el impulso recuperas el movimiento normal.
+
+Los enemigos se ven por encima de las magias. El agujero negro también atrae suavemente al protagonista.
+
+Prueba apuntar durante la carga, soltar la inclinación antes del impulso, cargar cerca de paredes, encadenar poderes y pausar/reanudar a mitad de carga. Comprueba ambas orientaciones del iPhone, la lectura de enemigos sobre magias, la atracción del agujero negro y el rendimiento durante 10 minutos.

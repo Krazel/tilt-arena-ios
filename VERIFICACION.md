@@ -1,4 +1,21 @@
-# Verificación — 0.3.2 (1)
+# Verificación — 0.3.3 (1)
+
+## Entrega TestFlight verificada
+
+Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34138863698.
+Fuente d09515338c6051b4b43f0c676bf5f6c85a94168a, idéntica a la QA nativa.
+Archive Release ARM64, firma, exportación, validación y subida correctos.
+IPA 0.3.3 (1), SDK iPhoneOS 26.2, 4.747.507 bytes; SHA-256:
+23448724e68daa311016c6006723dfbff75974709fa5b6cfb1509470c0b990d2.
+Comprobados CRC, plataforma iOS, arquitectura, versión/build, firma, perfil,
+recursos y motor/audio idénticos a la fuente canónica.
+
+API Apple: build ac24434e-81b1-452d-ba88-87bc8503400c, VALID e IN_BETA_TESTING.
+Grupo Pruebas internas con un tester, solo el titular; relación con la nueva build
+y notas es-ES guardadas y releídas. Caduca el 06/12/2026. Ficha App Store 1.0
+PREPARE_FOR_SUBMISSION; sin distribución externa. Evidencia testflight-v033.json
+e ipa-v033-testflight-build1.json. Siguientes subidas autorizadas permanentemente
+por el usuario y registradas en AGENTS.md. Prueba física pendiente.
 
 ## Candidata posterior: 0.3.3 (1), compilada y verificada en simulador
 
@@ -27,7 +44,8 @@ Archivo de simulador inspeccionado: versión 0.3.3 (1), bundle com.dmkr.tiltaren
 plataforma iPhoneSimulator. Motor y audio idénticos a fuente probada. SHA-256:
 d9930bdf5e78db3a6eda39c94b27fc5fdb77fa8decf393ef12f15beebb06bb92.
 Evidencia verification/native-v033.json y verification/simulator-v033.json.
-No es una IPA instalable en iPhone. TestFlight permanece en 0.3.2 (1).
+Ese archivo de simulador no es instalable en iPhone. La IPA firmada y su
+activación en TestFlight están verificadas por separado en la sección anterior.
 Las pruebas y la IPA descritas a continuación corresponden exclusivamente a 0.3.2.
 
 7 de septiembre de 2026. Autorización expresa de compilar y subir recibida.
