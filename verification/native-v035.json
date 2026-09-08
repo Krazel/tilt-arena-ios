@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-09-08",
+  "version": "0.3.5",
+  "build": "1",
+  "sourceCommit": "66604059cfc1069574f5482aefd674c35eb7f04b",
+  "canonicalCodeCommit": "c4715ae",
+  "run": "34231987284",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34231987284",
+  "xcode": "26.3 (17C529)",
+  "sdk": "iphonesimulator26.2",
+  "nodeTests": 43,
+  "unitTests": 12,
+  "uiTests": 7,
+  "failures": 0,
+  "screenshots": "native-v035/",
+  "reviewed": ["11-spikes-over-shield.png", "12-spikes-expiry-warning.png"],
+  "findings": [
+    "Twelve filled blue-white teeth with dark outlines remain clearly separate from the green bubble",
+    "The arrow stays readable inside the shield; teeth extend outside its circumference",
+    "The warning trough visibly dims the teeth without hiding the active power; the green shield stays visible",
+    "The native node test verifies simulation-clock rotation, warning peak/trough, pause stability, expiry and reduced motion",
+    "The real JavaScriptCore fixture decodes both active shields and outward-moving enemies"
+  ],
+  "engineAndAudioMatchCanonicalSource": true,
+  "physicalDeviceTest": "Pending",
+  "purpose": "Native simulator QA before signed TestFlight delivery"
+}

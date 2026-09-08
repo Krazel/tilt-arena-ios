@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-08T13:44:55.163Z",
+  "appId": "6809193185",
+  "version": "0.3.5",
+  "build": "1",
+  "buildId": "0cf5be7f-7c13-4d3a-8a6a-63648b3ea389",
+  "processingState": "VALID",
+  "expires": "2026-12-07T05:42:09-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "name": "Pruebas internas",
+    "isInternalGroup": true,
+    "publicLinkEnabled": null,
+    "testerCount": 1,
+    "onlyOwner": true
+  },
+  "assigned": true,
+  "notesVerified": true,
+  "notes": "0.3.5 (1) — Atracción, pinchos y aparición de poderes\n\nEl agujero negro conserva su tamaño pequeño y atrae al protagonista desde más lejos (radio 300 frente a 140).\nLos enemigos huyen mientras llevas pinchos. Sus dientes giran, destacan sobre la protección verde y parpadean durante los últimos 1,25 segundos.\nReparto de apariciones: bomba, onda e hielo 20 % cada uno; misiles 16 %; fuego, rayos y agujero negro 7 % cada uno; protección 2 % y pinchos 1 %. Son probabilidades por aparición, no una secuencia garantizada. Los dos orbes iniciales se conservan.\n\nPrueba en iPhone la atracción desde lejos, escapar inclinando, perseguir enemigos con pinchos y la lectura del aviso con el escudo verde. Comprueba pausa, caducidad y recuperación de la persecución normal. Sensor y rendimiento físico pendientes de esta prueba.",
+  "appStoreVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API"
+}

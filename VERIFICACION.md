@@ -1,6 +1,51 @@
-# Verificación — 0.3.4 (1)
+# Verificación — 0.3.5 (1)
 
-## Entrega TestFlight 0.3.4 verificada
+## Entrega TestFlight 0.3.5 verificada
+
+Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34233289930.
+Fuente 66604059cfc1069574f5482aefd674c35eb7f04b, la misma que pasó QA nativa.
+Archive, firma, exportación, validación y subida sin errores. IPA Release ARM64,
+SDK iPhoneOS 26.2, 4.753.484 bytes; SHA-256:
+ac99f3c95ba45a9275e04d1b71e0bcebcf4e1ed1c00ab4d9d3dd6dd255caf0d1.
+CRC, versión, bundle, plataforma, arquitectura, perfil y contenido comprobados;
+motor y audio idénticos a la fuente canónica y al simulador probado.
+Apple: build 0cf5be7f-7c13-4d3a-8a6a-63648b3ea389, VALID e IN_BETA_TESTING.
+Asignada a Pruebas internas, solo el titular; relación y notas es-ES releídas
+por API oficial el 2026-09-08. Caduca 2026-12-07. Sin beta externa; App Store
+1.0 sigue PREPARE_FOR_SUBMISSION. Evidencia testflight-v035.json y
+ipa-v035-testflight-build1.json. Ensayo con iPhone físico pendiente.
+
+## QA nativa 0.3.5 verificada
+
+Código canónico c4715ae; fuente pública 66604059cfc1069574f5482aefd674c35eb7f04b.
+Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34231987284.
+Xcode 26.3 (17C529), SDK iOS Simulator 26.2: BUILD SUCCEEDED y TEST SUCCEEDED.
+62 pruebas pasan: 43 Node, 12 XCTest y 7 XCUITest. Sintaxis de 13 Swift correcta.
+
+Atracción del protagonista hasta 300 sin ampliar tamaño físico/visual del vórtice
+140 ni arrastre de orbes/puntos. Deriva a 250 unidades comprobada; radio límite,
+escape, superposición, pausa, centro, caducidad y bordes siguen verificados.
+Pinchos: huida de activos/formaciones; congelados/apariciones respetados, regreso
+al comportamiento habitual al acabar, contacto ofensivo sin consumir burbuja,
+límites, pausa y equivalencia a 30/60/120 Hz.
+20.000 apariciones reales: pinchos 1,01 %, protección 1,94 %, resto dentro de un
+punto porcentual de sus objetivos. Subconjuntos se renormalizan; reposición del
+último orbe sigue garantizada. Evidencia control-v035.json.
+
+Capturas nativas 11-spikes-over-shield y 12-spikes-expiry-warning revisadas:
+dientes rellenos fuera del escudo, borde oscuro, flecha legible y atenuación sin
+ocultar el poder. XCTest verifica giro, aviso, pausa y Reducir movimiento;
+JavaScriptCore nativo decodifica las dos protecciones y enemigos que se alejan.
+Binario de simulador: versión/build, plataforma y motor/audio iguales a la fuente
+canónica. Evidencia native-v035.json, simulator-v035.json y native-v035/captures.json.
+Prueba de sensor, tacto y rendimiento físico pendiente.
+
+Fuentes operativas de Apple comprobadas el 2026-09-08:
+https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/
+y https://developer.apple.com/help/app-store-connect/test-a-beta-version/add-internal-testers/.
+La entrega se gestiona por CI y API oficial; no requiere nuevas cuentas de testers.
+
+## Historial: entrega TestFlight 0.3.4 verificada
 
 Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34145838577.
 Fuente f4148118d6cef9248d53ac290a89af0fbe9fe5e9, idéntica a la QA nativa.

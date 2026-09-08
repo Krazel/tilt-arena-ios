@@ -51,3 +51,20 @@ Hashes de las capturas conservados en native-v034/captures.json. Las capturas
 de la sección anterior corresponden a 0.3.3. Prueba física pendiente.
 Entrega posterior verificada: 0.3.4 (1) activa en TestFlight interno, build
 e324b2fe-36fc-416d-b2fb-19d247224dc4, run 34145838577.
+
+## Pinchos encargados para 0.3.5 — 2026-09-08
+
+El usuario pide giro, parpadeo al agotarse y visibilidad con el escudo verde.
+Se conservan flecha, escudo y demás VFX. Doce dientes rellenos azul-blanco con
+borde oscuro sobresalen del aro verde y giran independientemente del rumbo.
+Capturas nativas revisadas en iPhone 16 Pro, paisaje, español, Xcode 26.3:
+verification/native-v035/11-spikes-over-shield.png (activo) y
+verification/native-v035/12-spikes-expiry-warning.png (mínimo del parpadeo).
+La silueta exterior se distingue con ambos poderes; en el aviso se atenúa sin
+desaparecer. Flecha y escudo siguen legibles. SHA-256 en native-v035/captures.json.
+El XCTest del nodo verifica giro, extremos del aviso, pausa y Reducir movimiento.
+Run 34231987284: 43 Node, 12 XCTest y 7 XCUITest pasan. Es QA de simulador;
+percepción, sensor y rendimiento físico pendientes. Los cambios son geometría
+SpriteKit del diseño existente, sin nuevos bitmaps ni otra selección pendiente.
+Entrega posterior verificada: 0.3.5 (1) activa en TestFlight interno, build
+0cf5be7f-7c13-4d3a-8a6a-63648b3ea389, run 34233289930.
