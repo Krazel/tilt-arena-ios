@@ -86,6 +86,21 @@ final class ClassicBridge {
         try decode(call("resize", [left, right, bottom, top]))
     }
     #if DEBUG
+    func spikesVFXFrame(left: Double, right: Double, warning: Bool) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.resize(\(left),\(right),52,592);
+          g.player.x=(\(left)+\(right))/2;g.player.y=300;g.player.angle=0.4;
+          g.activate('bubble');g.activate('spikes');
+          g.time=\(warning ? "4.0" : "1.0");
+          for(let i=0;i<12;i++){const a=i*Math.PI/6;
+            g.addEnemy(g.player.x+Math.cos(a)*100,g.player.y+Math.sin(a)*100,{activeAt:0});}
+          for(let i=0;i<30;i++)g.advance(1/120,{x:0,y:0});
+          g.events=[];return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
     func selectedVFXFrame(left: Double, right: Double, charging: Bool, wave: Bool = false, turning: Bool = false) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});

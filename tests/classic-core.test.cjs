@@ -158,7 +158,7 @@ test('vortex attracts both dots and pickups and then expires',()=>{
 test('smaller vortex pulls the player more strongly at all frame rates and steering can escape',()=>{
   const positions=[30,60,120].map(fps=>{
     const g=fresh();g.activate('vortex',{x:580,y:320});run(g,0.5,undefined,fps);
-    assert.ok(g.player.x>510&&g.player.x<530);assert.equal(g.player.y,320);
+    assert.ok(g.player.x>540&&g.player.x<560);assert.equal(g.player.y,320);
     return g.player.x;
   });
   assert.ok(Math.max(...positions)-Math.min(...positions)<1e-8);
@@ -209,14 +209,65 @@ test('queued wave pickups each charge and release, with deterministic progress a
   assert.deepEqual(snapshots[0],snapshots[2]);
 });
 
-test('vortex radius matches its visible size and the stronger pull stops at its new rim',()=>{
+test('compact vortex attracts the player from farther away without extending enemy or orb reach',()=>{
   const g=fresh();g.activate('vortex',{x:580,y:320});
   assert.equal(g.snapshot().fields[0].radius,140);
   assert.ok(g.playerVortexPull().x>50);
-  const edge=fresh();edge.activate('vortex',{x:630,y:320});run(edge,0.5);
-  assert.equal(edge.player.x,480);
+  const edge=fresh();edge.activate('vortex',{x:730,y:320});run(edge,0.5);
+  assert.ok(edge.player.x>495&&edge.player.x<505);
   const e=dot(edge,480,400);const o=edge.addPickup('bubble',480,430);
   run(edge,0.25);assert.equal(e.x,480);assert.equal(o.x,480);
+});
+
+test('spikes make regular and formation enemies flee, with frozen and telegraph states respected',()=>{
+  const g=fresh();g.activate('spikes');
+  const normal=g.addEnemy(580,320,{activeAt:0});
+  const formation=g.addEnemy(380,320,{activeAt:0,formationUntil:10,vx:90,vy:0});
+  const frozen=g.addEnemy(480,420,{activeAt:0,frozenUntil:10});
+  const pending=g.addEnemy(480,220,{activeAt:1});
+  run(g,0.25);
+  assert.ok(normal.x>590);assert.ok(formation.x<370);
+  assert.equal(frozen.y,420);assert.equal(pending.y,220);
+  g.player.spikesUntil=g.time;
+  const positions=[normal.x,formation.x];run(g,0.25);
+  assert.ok(normal.x<positions[0]);assert.ok(formation.x>positions[1]);
+});
+
+test('spikes retain contact kills and shield, expire on time, and fleeing dots stay in the arena',()=>{
+  const g=fresh();g.activate('spikes');g.activate('bubble');
+  g.addEnemy(510,320,{activeAt:0});g.advance(TUNING.step);
+  assert.equal(g.kills,1);assert.equal(g.player.bubble,true);
+  const e=g.addEnemy(BOUNDS.right-10,320,{activeAt:0});run(g,0.25);
+  assert.equal(e.x,BOUNDS.right-10);
+  g.pause();const paused=g.snapshot();run(g,10);assert.deepEqual(g.snapshot(),paused);g.resume();
+  run(g,4.8);assert.ok(g.time>g.player.spikesUntil);
+  g.addEnemy(g.player.x,g.player.y,{activeAt:0});g.advance(TUNING.step);
+  assert.equal(g.player.bubble,false);assert.equal(g.state,'running');
+  g.addEnemy(g.player.x,g.player.y,{activeAt:0});g.advance(TUNING.step);
+  assert.equal(g.state,'gameOver');
+});
+
+test('fleeing is deterministic at all frame rates and chasing resumes after expiry',()=>{
+  const states=[30,60,120].map(fps=>{
+    const g=fresh();g.activate('spikes');
+    const e=g.addEnemy(600,400,{activeAt:0});run(g,5,undefined,fps);
+    const distance=Math.hypot(e.x-g.player.x,e.y-g.player.y);
+    run(g,0.5,undefined,fps);
+    assert.ok(Math.hypot(e.x-g.player.x,e.y-g.player.y)<distance);
+    return g.snapshot();
+  });assert.deepEqual(states[0],states[2]);
+});
+
+test('actual pickup spawns follow rarity with spikes rarest and bubble second rarest',()=>{
+  const g=fresh();const counts=Object.fromEntries(POWERS.map(p=>[p,0]));
+  for(let i=0;i<20000;i++){g.pickups=[];g.spawnPickup(true);counts[g.pickups[0].power]++;}
+  const expected={nuke:20,wave:20,frost:20,missiles:16,burn:7,vortex:7,lightning:7,bubble:2,spikes:1};
+  for(const p of POWERS)assert.ok(Math.abs(counts[p]/200-expected[p])<1,`${p}: ${counts[p]/200}%`);
+  assert.ok(counts.spikes<counts.bubble&&counts.bubble<counts.burn);
+  const subset=new ClassicGame(24,{spawning:false,powers:['spikes','bubble']});
+  const sample=Array.from({length:6000},()=>subset.choosePower());
+  assert.ok(sample.every(p=>p==='spikes'||p==='bubble'));
+  assert.ok(Math.abs(sample.filter(p=>p==='bubble').length/6000-2/3)<0.03);
 });
 test('player vortex drift obeys range, expiry, pause, center and arena bounds',()=>{
   for(const point of [{x:800,y:320},{x:480,y:320}]) {

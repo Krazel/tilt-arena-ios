@@ -17,7 +17,8 @@ final class ClassicScene: SKScene {
     private let fireCharge = ClassicFireCharge()
     private let waveCharge = ClassicWaveCharge()
     private let arrow = SKNode()
-    private var bubble = SKShapeNode(), spikes = SKShapeNode()
+    private var bubble = SKShapeNode()
+    private let spikes = ClassicSpikes()
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     private let bestLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
@@ -40,6 +41,8 @@ final class ClassicScene: SKScene {
     private let chargeVFXPreview = ProcessInfo.processInfo.arguments.contains("--charge-vfx-qa")
     private let waveVFXPreview = ProcessInfo.processInfo.arguments.contains("--wave-vfx-qa")
     private let turnFirePreview = ProcessInfo.processInfo.arguments.contains("--turn-fire-qa")
+    private let spikesPreview = ProcessInfo.processInfo.arguments.contains("--spikes-vfx-qa")
+    private let spikesWarningPreview = ProcessInfo.processInfo.arguments.contains("--spikes-warning-qa")
     private var previewStarted: Double?
     #endif
 
@@ -163,6 +166,7 @@ final class ClassicScene: SKScene {
                 gameFrame = try resizeEngine()
                 #if DEBUG
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
@@ -196,7 +200,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
-        if selectedVFXPreview, let frame = gameFrame { render(frame); return }
+        if selectedVFXPreview || spikesPreview, let frame = gameFrame { render(frame); return }
         if visualPreview, let frame = gameFrame {
             render(frame)
             if freezeVFXPreview {
@@ -272,8 +276,7 @@ final class ClassicScene: SKScene {
         bubble = SKShapeNode(circleOfRadius:32);bubble.strokeColor=UIColor(hex:"7bde83")
         bubble.lineWidth=3;bubble.fillColor=UIColor(hex:"7bde83").withAlphaComponent(0.12);arrow.addChild(bubble)
         bubble.glowWidth = 2
-        spikes = SKShapeNode(path:ClassicArt.star(radius:35,inner:24,points:12))
-        spikes.strokeColor=UIColor(hex:"b5d8ff");spikes.lineWidth=2;spikes.fillColor = .clear;arrow.addChild(spikes)
+        arrow.addChild(spikes)
         bubble.isHidden=true;spikes.isHidden=true
     }
     private func drawHUD() {
@@ -346,7 +349,8 @@ final class ClassicScene: SKScene {
         }
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
-        bubble.isHidden = !frame.player.bubble;spikes.isHidden=frame.player.spikesUntil<=frame.time
+        bubble.isHidden = !frame.player.bubble
+        spikes.update(time: frame.time, until: frame.player.spikesUntil, heading: frame.player.angle, reduced: reduceEffects)
         bubble.glowWidth = reduceEffects ? 0 : 2
         fireCharge.update(progress: frame.player.fireChargeProgress, active: frame.player.fireChargeUntil > frame.time, reduced: reduceEffects)
         waveCharge.update(progress: frame.player.waveChargeProgress, active: frame.player.waveCharging, reduced: reduceEffects)

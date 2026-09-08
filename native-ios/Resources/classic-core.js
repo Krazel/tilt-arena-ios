@@ -11,9 +11,12 @@
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
   const TUNING = Object.freeze({step: 1 / 120, speed: 470, response: 22,
     playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
-    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 180, vortexRadius: 140,
+    maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 180, vortexRadius: 140, vortexPlayerRadius: 300,
     fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050, waveCharge: 0.5});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn'];
+  // Relative weights: renormalized when diagnostics limit the available arsenal.
+  const POWER_WEIGHTS = Object.freeze({nuke:20,wave:20,frost:20,missiles:16,
+    burn:7,vortex:7,lightning:7,bubble:2,spikes:1});
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
     bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c'};
   function swept(a, b, c, radius) {
@@ -143,7 +146,12 @@
         if(e.dead || this.time<e.activeAt) continue;
         const old = {x:e.x,y:e.y}, frozen = e.frozenUntil>this.time;
         if(!frozen) {
-          if(e.formationUntil>this.time) {e.x+=e.vx*dt;e.y+=e.vy*dt;}
+          if(p.spikesUntil>this.time) {
+            // Fear overrides formation travel until the contact weapon expires.
+            const d=Math.max(1,distance(e,p));
+            e.x+=(e.x-p.x)/d*e.speed*dt;e.y+=(e.y-p.y)/d*e.speed*dt;
+          }
+          else if(e.formationUntil>this.time) {e.x+=e.vx*dt;e.y+=e.vy*dt;}
           else {
             const d=Math.max(1,distance(e,p));
             e.x+=(p.x-e.x)/d*e.speed*dt;e.y+=(p.y-e.y)/d*e.speed*dt;
@@ -199,6 +207,14 @@
       const o={id:++this.id,power,x,y,until:this.time+TUNING.pickupLife,dead:false};
       this.pickups.push(o);return o;
     }
+    choosePower() {
+      let ticket=this.rng.next()*this.powers.reduce((sum,p)=>sum+POWER_WEIGHTS[p],0);
+      for(const power of this.powers) {
+        ticket-=POWER_WEIGHTS[power];
+        if(ticket<0)return power;
+      }
+      return this.powers[this.powers.length-1];
+    }
     spawnPickup(required=false) {
       const b=this.bounds, live=this.pickups.filter(o=>!o.dead && o.until>this.time);
       this.pickups=live;
@@ -216,7 +232,7 @@
       if(required && !best)for(let row=0;row<3;row++)for(let col=0;col<3;col++)
         consider(b.left+40+col*(b.right-b.left-80)/2,b.bottom+40+row*(b.top-b.bottom-80)/2);
       if(best){
-        this.addPickup(this.rng.pick(this.powers),best.x,best.y);
+        this.addPickup(this.choosePower(),best.x,best.y);
         this.event('spawnPickup',{x:best.x,y:best.y,color:COLORS[this.pickups[this.pickups.length-1].power]});
       }
     }
@@ -314,10 +330,10 @@
       let x=0,y=0,count=0;
       for(const f of this.fields)if(f.kind==='vortex' && f.until>this.time) {
         const d=distance(p,f);
-        if(d>0 && d<f.radius) {
+        if(d>0 && d<TUNING.vortexPlayerRadius) {
           // Stronger drift, tapering at the rim and the center. Average overlapping
           // fields so stacking powers cannot overpower the player's steering.
-          const speed=TUNING.vortexPlayerPull*(1-d/f.radius)*Math.min(1,d/24);
+          const speed=TUNING.vortexPlayerPull*(1-d/TUNING.vortexPlayerRadius)*Math.min(1,d/24);
           x+=(f.x-p.x)/d*speed;y+=(f.y-p.y)/d*speed;count++;
         }
       }

@@ -1,6 +1,18 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testSpikesOverGreenShieldAndExpiryWarning() {
+        let app = XCUIApplication()
+        for warning in [false, true] {
+            app.launchArguments = ["--ui-testing", "--spikes-vfx-qa"] + (warning ? ["--spikes-warning-qa"] : [])
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            capture(warning ? "12-spikes-expiry-warning" : "11-spikes-over-shield", app: app)
+            app.terminate()
+        }
+    }
     func testWaveTipChargeAndFireSteering() {
         let app = XCUIApplication()
         for (name, flags) in [
