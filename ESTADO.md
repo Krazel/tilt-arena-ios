@@ -1,9 +1,18 @@
 # Tilt Arena — estado de producto
 
-Actualizado 2026-09-07. Krazel Games. Registro PR-031.
+Actualizado 2026-09-08. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Entrega actual
+## Candidata en verificación: 0.3.5 (1)
+
+Alcance de atracción del protagonista 300 conservando vórtice de radio 140.
+Pinchos hacen huir a puntos activos, giran sobre el escudo verde y parpadean
+los últimos 1,25 s. Reparto: bomba/onda/hielo 20 % cada uno; misiles 16 %;
+fuego/rayos/vórtice 7 % cada uno; protección 2 %; pinchos 1 %.
+43 pruebas Node y sintaxis de 13 Swift pasan. Pendiente QA nativa, capturas,
+firma y TestFlight interno autorizado. 0.3.4 sigue siendo la entrega activa.
+
+## Entrega anterior: 0.3.4 (1)
 
 0.3.4 (1) firmada, VALID y activa en TestFlight interno solo para el titular.
 Asignación y notas en español guardadas y releídas por API oficial. Fuego ahora

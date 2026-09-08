@@ -103,3 +103,26 @@ Se puede seguir moviendo y apuntando mientras carga. Sale desde la punta con el
 rumbo del momento de disparo. Las recogidas encadenadas conservan sus disparos;
 la pausa congela temporizador y animación. Reducir movimiento conserva núcleo
 y progreso y suprime las chispas decorativas.
+
+## Atracción, pinchos y rareza para 0.3.5
+
+Encargo del 2026-09-08: el alcance de atracción del protagonista pasa de 140 a
+300, conservando tamaño del vórtice y alcance de enemigos/orbes en 140. Mantiene
+coeficiente 180, caída en borde/centro y promedio al superponerse. Este alcance
+separado reemplaza expresamente la decisión de 0.3.4 de coincidir con lo visible.
+
+Mientras hay pinchos (5 s), los puntos activos huyen a su velocidad habitual;
+la huida prevalece sobre formaciones. Congelados y apariciones conservan sus
+estados. Al caducar, vuelven a su movimiento normal. Límites y contacto ofensivo
+35 no cambian; el escudo verde no se consume al matar con pinchos.
+Doce dientes rellenos de radio visual 43, borde oscuro, encima del escudo de radio
+32. Giran a 2,4 rad/s y parpadean dos veces/s los últimos 1,25 s, sin desaparecer
+del todo. Reloj de simulación: la pausa congela giro y aviso. Reducir movimiento
+conserva dientes fijos y aviso atenuado estable.
+
+Probabilidades por aparición: bomba/onda/hielo 20 % cada uno, misiles 16 %,
+fuego/rayos/vórtice 7 % cada uno, protección 2 %, pinchos 1 %. El usuario confirmó
+el reparto por grupos y pidió pinchos como el menos probable y protección justo
+antes. Porcentajes elegidos como ajuste inicial, sin cuotas garantizadas.
+Los dos orbes de apertura siguen siendo bomba y misiles; el muestreo ponderado
+se aplica a nuevas apariciones y reposición inmediata del último orbe.

@@ -1,0 +1,7 @@
+0.3.5 (1) — Atracción, pinchos y aparición de poderes
+
+El agujero negro conserva su tamaño pequeño y atrae al protagonista desde más lejos (radio 300 frente a 140).
+Los enemigos huyen mientras llevas pinchos. Sus dientes giran, destacan sobre la protección verde y parpadean durante los últimos 1,25 segundos.
+Reparto de apariciones: bomba, onda e hielo 20 % cada uno; misiles 16 %; fuego, rayos y agujero negro 7 % cada uno; protección 2 % y pinchos 1 %. Son probabilidades por aparición, no una secuencia garantizada. Los dos orbes iniciales se conservan.
+
+Prueba en iPhone la atracción desde lejos, escapar inclinando, perseguir enemigos con pinchos y la lectura del aviso con el escudo verde. Comprueba pausa, caducidad y recuperación de la persecución normal. Sensor y rendimiento físico pendientes de esta prueba.

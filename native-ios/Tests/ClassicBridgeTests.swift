@@ -2,6 +2,32 @@ import XCTest
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    func testSpikesRemainReadableWithBubbleAndAnimateFromSimulationTime() throws {
+        let bridge = try ClassicBridge()
+        let active = try bridge.spikesVFXFrame(left: 100, right: 1300, warning: false)
+        let warning = try bridge.spikesVFXFrame(left: 100, right: 1300, warning: true)
+        XCTAssertTrue(active.player.bubble && warning.player.bubble)
+        XCTAssertTrue(active.enemies.allSatisfy { hypot($0.x-active.player.x, $0.y-active.player.y) > 110 })
+        let node = ClassicSpikes()
+        node.update(time: active.time, until: active.player.spikesUntil, heading: active.player.angle, reduced: false)
+        XCTAssertFalse(node.isHidden); XCTAssertEqual(node.alpha, 1)
+        XCTAssertGreaterThan(node.zPosition, 0)
+        XCTAssertGreaterThan(node.calculateAccumulatedFrame().width, 78)
+        let rotation = node.zRotation
+        node.update(time: warning.time, until: warning.player.spikesUntil, heading: warning.player.angle, reduced: false)
+        XCTAssertNotEqual(node.zRotation, rotation)
+        XCTAssertEqual(node.alpha, 0.3, accuracy: 0.0001)
+        let pausedRotation = node.zRotation, pausedAlpha = node.alpha
+        node.update(time: warning.time, until: warning.player.spikesUntil, heading: warning.player.angle, reduced: false)
+        XCTAssertEqual(node.zRotation, pausedRotation); XCTAssertEqual(node.alpha, pausedAlpha)
+        node.update(time: 4.5, until: 5, heading: 0, reduced: false)
+        XCTAssertEqual(node.alpha, 1, accuracy: 0.0001)
+        node.update(time: 4.5, until: 5, heading: 0.4, reduced: true)
+        XCTAssertEqual(node.zRotation, -0.4, accuracy: 0.0001)
+        XCTAssertEqual(node.alpha, 0.65, accuracy: 0.0001)
+        node.update(time: 5, until: 5, heading: 0, reduced: false)
+        XCTAssertTrue(node.isHidden)
+    }
     func testSavedPostureWorksInEitherLandscapeOrientation() throws {
         let profile = TiltProfile.sampled(x: 0.6, y: 0.1, landscapeRight: false)
         let left = profile.deviceNeutral(landscapeRight: false)
