@@ -46,6 +46,8 @@ final class ClassicScene: SKScene {
     private let newPowersPreview = ProcessInfo.processInfo.arguments.contains("--new-powers-qa")
     private let returningPreview = ProcessInfo.processInfo.arguments.contains("--returning-qa")
     private let electricityPreview = ProcessInfo.processInfo.arguments.contains("--electricity-qa")
+    private let explosionPreview = ProcessInfo.processInfo.arguments.contains("--explosion-vfx-qa")
+    private let explosionTailPreview = ProcessInfo.processInfo.arguments.contains("--explosion-tail-qa")
     private var previewStarted: Double?
     #endif
 
@@ -171,6 +173,7 @@ final class ClassicScene: SKScene {
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, returning: returningPreview, electricity: electricityPreview) }
+                if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
@@ -178,6 +181,13 @@ final class ClassicScene: SKScene {
             world.isPaused = false; effects.isPaused = false
             session.message = ""; session.phase = .running
             if let frame = gameFrame { render(frame) }; sound.playMusic()
+            #if DEBUG
+            if explosionPreview {
+                let blast = ClassicExplosion(radius: 155, color: UIColor(hex: "ffb52a"), reduced: reduceEffects)
+                blast.removeAllActions(); blast.update(elapsed: explosionTailPreview ? 0.4 : 0.16)
+                blast.position = CGPoint(x: arenaBounds.minX + 280, y: 290); effects.addChild(blast)
+            }
+            #endif
         } catch { session.fail(error) }
     }
     func pauseRun(message: String = "") {
@@ -204,6 +214,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
+        if explosionPreview { return }
         if newPowersPreview {
             // Rendered once by play(); don't replay transient events each frame.
             if previewStarted == nil { previewStarted = currentTime }
@@ -354,18 +365,13 @@ final class ClassicScene: SKScene {
         }
         for field in frame.fields {
             let key="f\(field.id)";alive.insert(key)
-            let style = field.kind == "decoy" ? "decoyField" : (field.kind == "vortex" ? "vortexField" : "fire")
+            let style = field.kind == "vortex" ? "vortexField" : "fire"
             let node=sprite(key:key,style:style)
             node.position=CGPoint(x:field.x,y:field.y);node.zPosition=1
             node.alpha=min(field.kind == "fire" ? 1 : 0.85,field.remaining)
             node.zRotation=field.kind != "vortex" ? field.angle : (reduceEffects ? 0 : frame.time * -1.7)
             if field.kind == "vortex" { node.setScale(field.radius / 200) }
             if field.kind == "fire" { node.yScale = reduceEffects ? 1 : 0.9 + 0.1 * sin(frame.time * 12 + Double(field.id)) }
-            if field.kind == "decoy" {
-                node.zPosition=2
-                node.setScale(reduceEffects ? 1 : 1 + 0.07 * sin(frame.time * 5))
-                node.alpha=min(0.9,field.remaining)
-            }
         }
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle

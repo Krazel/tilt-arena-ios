@@ -3,7 +3,15 @@
 Actualizado 2026-09-09. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Entrega actual: 0.3.6 (1)
+## Candidata en verificación: 0.3.7 (1)
+
+Señuelo retirado; pinchos mayores, giro más rápido y aviso ámbar con cuenta atrás.
+Explosión nativa renovada; alcances físicos conservados. Diez poderes, con el 5 %
+retirado repartido entre bomba/onda/hielo. Informe del balance en design/BALANCE.md.
+48 pruebas Node y sintaxis de 14 Swift pasan. Pendiente QA nativa, capturas y
+entrega interna autorizada. Activa 0.3.6 hasta comprobar la nueva por API.
+
+## Entrega anterior: 0.3.6 (1)
 
 Más fuerza de vórtice solo sobre el jugador (+66,7 %), electricidad inicial 220,
 pinchos 4 %, protección 5 %. Nuevos bumerán de ida/vuelta y señuelo de 4 segundos,

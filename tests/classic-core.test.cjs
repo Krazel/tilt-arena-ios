@@ -261,7 +261,7 @@ test('fleeing is deterministic at all frame rates and chasing resumes after expi
 test('actual pickup spawns follow rarity with spikes rarest and bubble second rarest',()=>{
   const g=fresh();const counts=Object.fromEntries(POWERS.map(p=>[p,0]));
   for(let i=0;i<20000;i++){g.pickups=[];g.spawnPickup(true);counts[g.pickups[0].power]++;}
-  const expected={nuke:16,wave:16,frost:16,missiles:12,burn:7,vortex:7,lightning:7,bubble:5,spikes:4,boomerang:5,decoy:5};
+  const expected={nuke:18,wave:18,frost:17,missiles:12,burn:7,vortex:7,lightning:7,bubble:5,spikes:4,boomerang:5};
   for(const p of POWERS)assert.ok(Math.abs(counts[p]/200-expected[p])<1,`${p}: ${counts[p]/200}%`);
   assert.ok(counts.spikes<counts.bubble&&counts.bubble<counts.burn);
   const subset=new ClassicGame(24,{spawning:false,powers:['spikes','bubble']});
@@ -371,5 +371,7 @@ test('bundle global bridge loads without Node APIs and returns JSON for native d
   const next=JSON.parse(context.ClassicAPI.tick(1/60,0.5,0));assert.ok(next.player.x>first.player.x);
   context.ClassicAPI.pause();assert.equal(JSON.parse(context.ClassicAPI.tick(1,1,1)).state,'paused');
   context.ClassicAPI.resume();assert.equal(JSON.parse(context.ClassicAPI.tick(0,0,0)).state,'running');
-  assert.equal(POWERS.length,11);
+  assert.equal(POWERS.length,10);
+  assert.equal(POWERS.includes('decoy'),false);
+  assert.throws(()=>new ClassicGame(1,{powers:['decoy']}),/Invalid arsenal/);
 });

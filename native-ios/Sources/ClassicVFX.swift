@@ -50,7 +50,10 @@ final class ClassicVFX {
             if reduced { ring(on: root, color: color, radius: radius, reduced: true) }
             else { crystal(on: root, radius: radius, color: color) }
             burst(on: root, color: .white, count: reduced ? 5 : 24, speed: 210, duration: 0.6)
-        case "blast", "death":
+        case "blast":
+            root.addChild(ClassicExplosion(radius: CGFloat(event.radius ?? 155), color: color, reduced: reduced))
+            root.run(.sequence([.wait(forDuration: 0.75), .removeFromParent()]))
+        case "death":
             let radius = event.radius ?? 95
             flash(on: root, color: color, diameter: radius * 2.15, duration: 0.5, reduced: reduced)
             ring(on: root, color: color, radius: radius, reduced: reduced)

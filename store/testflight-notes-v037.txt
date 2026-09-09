@@ -1,0 +1,10 @@
+0.3.7 (1) — Pinchos más claros y explosión nueva
+
+Se elimina el señuelo. Siguen diez poderes, incluido el bumerán.
+Pinchos un 12 % más grandes y giro un 75 % más rápido. En los últimos 1,5 segundos cambian a ámbar, parpadean y aparece un arco que se vacía. El aviso también se reconoce con la protección verde o Reducir movimiento.
+Nueva explosión con núcleo caliente, expansión, doble onda y fragmentos, conservando el alcance de daño.
+
+Probabilidades: bomba/onda 18 % cada uno; hielo 17 %; misiles 12 %; fuego/rayos/agujero negro 7 % cada uno; protección/bumerán 5 % cada uno; pinchos 4 %.
+La progresión por tiempo y la puntuación conservan sus reglas: se documenta su curva, todavía pendiente de ajuste con partidas físicas.
+
+Probar lectura del aviso de pinchos con escudo verde, pausa y caducidad; explosiones encadenadas, visibilidad de enemigos y rendimiento en iPhone. Sensor y tacto físico pendientes de esta prueba.

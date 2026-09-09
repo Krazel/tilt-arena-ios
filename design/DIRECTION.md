@@ -158,3 +158,24 @@ Dos poderes originales encargados, sin atribuirlos al Tilt to Live de referencia
 Ambos reutilizan la base de orbe aprobada de ChatGPT Images con glifos nuevos y
 geometría SpriteKit. Reducir movimiento suprime giro/estela del bumerán y pulsación
 del señuelo. Reloj de simulación y pausa conservados; no se introduce otro modo.
+
+## Retirada y revisión visual para 0.3.7 — 2026-09-09
+
+El usuario retira el señuelo: se eliminan aparición, lógica y arte de producción.
+Su 5 % se reparte entre bomba (+2), onda (+2) e hielo (+1), sin alterar la rareza
+de pinchos/protección ni el resto. Quedan diez poderes. Historial preservado en Git.
+Pinchos: punta visual 43 → 48 (+11,6 %), base 32 y giro 2,4 → 4,2 rad/s (+75 %).
+El alcance de contacto conserva 35. Aviso final 1,5 s: dientes ámbar con borde
+crema, pulsación de 2 Hz y arco exterior de radio 54 que se vacía. Solo los dientes
+pulsan; el arco queda legible e inmóvil respecto al mundo. Reducir movimiento
+conserva color y cuenta atrás sin giro/pulsación. Pausa congela el reloj visual.
+
+Explosiones: nuevo núcleo crema, corona caliente, ocho lóbulos de expansión,
+dos frentes y doce fragmentos, disipación completa en 0,7 s. Colores por poder;
+alcances físicos de bomba, burbuja y misiles conservados. Reducir movimiento evita
+expansión/fragmentos y reduce luminosidad. Máximo existente de 40 raíces VFX.
+Capturas nativas preparadas en dos fases exactas (0,16 y 0,4 s) de la misma clase
+animada que usa producción. Las escenas de muerte e hielo conservan sus efectos.
+
+La revisión de balance se documenta en BALANCE.md con datos del motor. El encargo
+pide explicación, no rediseñar la progresión: se conservan oleadas y puntuación.
