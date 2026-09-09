@@ -1,16 +1,35 @@
 import XCTest
+import SpriteKit
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    func testExplosionHasDistinctBoundedPhasesAndReducedMotion() throws {
+        let blast = ClassicExplosion(radius: 155, color: .orange, reduced: false)
+        blast.removeAllActions(); blast.update(elapsed: 0.16)
+        let front = try XCTUnwrap(blast.childNode(withName: "shock-front"))
+        let core = try XCTUnwrap(blast.childNode(withName: "hot-core"))
+        XCTAssertGreaterThan(front.alpha, 0.5); XCTAssertGreaterThan(core.alpha, 0.6)
+        XCTAssertEqual(blast.children.filter { $0.name == "fragment" }.count, 12)
+        XCTAssertLessThan(blast.calculateAccumulatedFrame().width, 380)
+        blast.update(elapsed: 0.4)
+        XCTAssertEqual(core.alpha, 0); XCTAssertGreaterThan(front.alpha, 0)
+        blast.update(elapsed: 0.7)
+        XCTAssertTrue(blast.children.allSatisfy { $0.alpha == 0 })
+        let reduced = ClassicExplosion(radius: 155, color: .orange, reduced: true)
+        reduced.removeAllActions(); reduced.update(elapsed: 0.16)
+        XCTAssertFalse(reduced.children.contains { $0.name == "fragment" })
+        XCTAssertEqual(reduced.childNode(withName: "shock-front")?.xScale, 1)
+        let frame = try ClassicBridge().explosionFrame(left: 100, right: 1300)
+        XCTAssertEqual(frame.pickups.count, 10); XCTAssertEqual(frame.enemies.count, 12)
+    }
     func testNewPowersAndLongRangeElectricityDecodeAndHaveDistinctNativeArt() throws {
         let bridge = try ClassicBridge()
         let out = try bridge.newPowersFrame(left: 100, right: 1300)
         let back = try bridge.newPowersFrame(left: 100, right: 1300, returning: true)
-        XCTAssertEqual(out.pickups.count, 11)
+        XCTAssertEqual(out.pickups.count, 10)
         XCTAssertTrue(out.pickups.contains { $0.power == "boomerang" })
-        XCTAssertTrue(out.pickups.contains { $0.power == "decoy" })
-        XCTAssertEqual(out.fields.first?.kind, "decoy")
-        XCTAssertEqual(out.fields.first?.radius, 260)
+        XCTAssertFalse(out.pickups.contains { $0.power == "decoy" })
+        XCTAssertTrue(out.fields.isEmpty)
         XCTAssertEqual(out.projectiles.first?.kind, "boomerang")
         XCTAssertEqual(out.projectiles.first?.angle, 0)
         XCTAssertLessThan(back.projectiles.first?.angle ?? 0, -2)
@@ -20,7 +39,7 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertEqual(electric.events.first { $0.kind == "electricPulse" }?.radius, 220)
         let bolt = try XCTUnwrap(electric.events.first { $0.kind == "lightning" })
         XCTAssertEqual((bolt.toX ?? 0) - (bolt.x ?? 0), 200, accuracy: 0.0001)
-        for style in ["boomerang", "decoy", "boomerangShot", "decoyField"] {
+        for style in ["boomerang", "boomerangShot"] {
             let art = ClassicArt.node(style: style)
             XCTAssertGreaterThan(art.children.count, 2)
             XCTAssertGreaterThan(art.calculateAccumulatedFrame().width, 35)
@@ -36,19 +55,26 @@ final class ClassicBridgeTests: XCTestCase {
         node.update(time: active.time, until: active.player.spikesUntil, heading: active.player.angle, reduced: false)
         XCTAssertFalse(node.isHidden); XCTAssertEqual(node.alpha, 1)
         XCTAssertGreaterThan(node.zPosition, 0)
-        XCTAssertGreaterThan(node.calculateAccumulatedFrame().width, 78)
+        XCTAssertGreaterThan(node.calculateAccumulatedFrame().width, 88)
+        XCTAssertEqual(cos(Double(node.zRotation) + active.player.angle), cos(active.time * 4.2), accuracy: 0.0001)
+        let tooth = try XCTUnwrap(node.children.first as? SKShapeNode)
+        let activeColor = tooth.fillColor
+        let countdown = try XCTUnwrap(node.childNode(withName: "expiry-ring") as? SKShapeNode)
+        XCTAssertTrue(countdown.isHidden)
         let rotation = node.zRotation
         node.update(time: warning.time, until: warning.player.spikesUntil, heading: warning.player.angle, reduced: false)
         XCTAssertNotEqual(node.zRotation, rotation)
-        XCTAssertEqual(node.alpha, 0.3, accuracy: 0.0001)
-        let pausedRotation = node.zRotation, pausedAlpha = node.alpha
+        XCTAssertEqual(tooth.alpha, 0.4, accuracy: 0.0001)
+        XCTAssertNotEqual(tooth.fillColor, activeColor); XCTAssertFalse(countdown.isHidden)
+        let pausedRotation = node.zRotation, pausedAlpha = tooth.alpha
         node.update(time: warning.time, until: warning.player.spikesUntil, heading: warning.player.angle, reduced: false)
-        XCTAssertEqual(node.zRotation, pausedRotation); XCTAssertEqual(node.alpha, pausedAlpha)
+        XCTAssertEqual(node.zRotation, pausedRotation); XCTAssertEqual(tooth.alpha, pausedAlpha)
         node.update(time: 4.5, until: 5, heading: 0, reduced: false)
-        XCTAssertEqual(node.alpha, 1, accuracy: 0.0001)
+        XCTAssertEqual(tooth.alpha, 1, accuracy: 0.0001)
         node.update(time: 4.5, until: 5, heading: 0.4, reduced: true)
         XCTAssertEqual(node.zRotation, -0.4, accuracy: 0.0001)
-        XCTAssertEqual(node.alpha, 0.65, accuracy: 0.0001)
+        XCTAssertEqual(tooth.alpha, 1, accuracy: 0.0001)
+        XCTAssertFalse(countdown.isHidden)
         node.update(time: 5, until: 5, heading: 0, reduced: false)
         XCTAssertTrue(node.isHidden)
     }

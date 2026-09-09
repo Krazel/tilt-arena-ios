@@ -1,10 +1,22 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testExplosionHotCoreAndDissipation() {
+        let app = XCUIApplication()
+        for tail in [false, true] {
+            app.launchArguments = ["--ui-testing", "--explosion-vfx-qa"] + (tail ? ["--explosion-tail-qa"] : [])
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            capture(tail ? "17-explosion-dissipation" : "16-explosion-hot-core", app: app)
+            app.terminate()
+        }
+    }
     func testNewPowersOutboundReturnAndElectricRange() {
         let app = XCUIApplication()
         for (name, flags) in [
-            ("13-boomerang-and-decoy", [String]()),
+            ("13-boomerang-outbound", [String]()),
             ("14-boomerang-return", ["--returning-qa"]),
             ("15-electricity-range", ["--electricity-qa"])
         ] {

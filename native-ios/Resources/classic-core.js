@@ -14,14 +14,13 @@
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 300, vortexRadius: 140, vortexPlayerRadius: 300,
     lightningStartRadius: 220, lightningChainRadius: 90,
     boomerangOutTime: 0.55, boomerangOutSpeed: 540, boomerangReturnSpeed: 680, maxBoomerangs: 3,
-    decoyDuration: 4, decoyRadius: 260,
     fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050, waveCharge: 0.5});
-  const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang', 'decoy'];
+  const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang'];
   // Relative weights: renormalized when diagnostics limit the available arsenal.
-  const POWER_WEIGHTS = Object.freeze({nuke:16,wave:16,frost:16,missiles:12,
-    burn:7,vortex:7,lightning:7,bubble:5,spikes:4,boomerang:5,decoy:5});
+  const POWER_WEIGHTS = Object.freeze({nuke:18,wave:18,frost:17,missiles:12,
+    burn:7,vortex:7,lightning:7,bubble:5,spikes:4,boomerang:5});
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
-    bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c',boomerang:'#ffc06a',decoy:'#50f0ca'};
+    bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c',boomerang:'#ffc06a'};
   function swept(a, b, c, radius) {
     const dx = b.x - a.x, dy = b.y - a.y;
     const d = dx * dx + dy * dy;
@@ -145,7 +144,6 @@
       this.waveAt = this.waveAt.filter(w=>!w.dead);
       this.updateFields(dt);
       this.updateProjectiles(dt);
-      const lure=this.fields.find(f=>f.kind==='decoy' && f.until>this.time);
       for(const e of this.enemies) {
         if(e.dead || this.time<e.activeAt) continue;
         const old = {x:e.x,y:e.y}, frozen = e.frozenUntil>this.time;
@@ -154,10 +152,6 @@
             // Fear overrides formation travel until the contact weapon expires.
             const d=Math.max(1,distance(e,p));
             e.x+=(e.x-p.x)/d*e.speed*dt;e.y+=(e.y-p.y)/d*e.speed*dt;
-          }
-          else if(lure && distance(e,lure)<lure.radius) {
-            const d=distance(e,lure), travel=Math.min(d,e.speed*dt);
-            if(d>0){e.x+=(lure.x-e.x)/d*travel;e.y+=(lure.y-e.y)/d*travel;}
           }
           else if(e.formationUntil>this.time) {e.x+=e.vx*dt;e.y+=e.vy*dt;}
           else {
@@ -300,7 +294,7 @@
     activate(power,point) {
       const p=this.player,at=point||p;
       // Pickup points, like timing, remain provisional; combo is the dominant reward.
-      const points={nuke:3,wave:5,missiles:10,frost:10,bubble:10,spikes:10,vortex:10,lightning:6,burn:2000,boomerang:10,decoy:10};
+      const points={nuke:3,wave:5,missiles:10,frost:10,bubble:10,spikes:10,vortex:10,lightning:6,burn:2000,boomerang:10};
       this.score+=points[power]||0;
       this.event('pickup',{power,x:at.x,y:at.y,color:COLORS[power]});
       switch(power) {
@@ -326,11 +320,6 @@
           angle:p.angle,radius:22,turnAt:this.time+TUNING.boomerangOutTime,returning:false,until:this.time+3});
         break;
       }
-      case 'decoy':
-        // One stationary lure; collecting another replaces rather than stacks it.
-        this.fields=this.fields.filter(f=>f.kind!=='decoy');
-        this.fields.push({id:++this.id,kind:'decoy',x:p.x,y:p.y,angle:p.angle,
-          until:this.time+TUNING.decoyDuration,radius:TUNING.decoyRadius});break;
       case 'lightning': {
         // Flood fill by actual adjacency; no arbitrary list of nearest targets.
         this.event('electricPulse',{x:p.x,y:p.y,radius:TUNING.lightningStartRadius,color:COLORS.lightning});

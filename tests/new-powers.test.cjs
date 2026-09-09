@@ -56,33 +56,3 @@ test('boomerangs pause exactly and behave consistently at 30/60/120 Hz',()=>{
     assert.equal(g.projectiles[0].returning,true);return g.snapshot();
   });assert.deepEqual(states[0],states[2]);
 });
-
-test('decoy draws nearby enemies and formations, preserves ice and telegraphs, and stops at its center',()=>{
-  const g=fresh();g.activate('decoy');g.player.x=850;
-  const near=dot(g,600,320,{speed:60}),formation=dot(g,570,400,{speed:60,formationUntil:10,vx:90});
-  const frozen=dot(g,590,240,{speed:60,frozenUntil:5});
-  const pending=dot(g,590,200,{speed:60,activeAt:1});
-  const far=dot(g,200,320,{speed:60});
-  run(g,0.25);assert.ok(near.x<590);assert.ok(formation.x<570);
-  assert.equal(frozen.x,590);assert.equal(pending.x,590);assert.ok(far.x>200);
-  run(g,2.5);assert.equal(near.x,480);assert.equal(g.kills,0);
-});
-
-test('decoy neither grants protection nor kills enemies or pulls pickups and expires back to pursuit',()=>{
-  const lethal=fresh();lethal.activate('decoy');dot(lethal,480,320);lethal.advance(TUNING.step);
-  assert.equal(lethal.state,'gameOver');assert.equal(lethal.kills,0);
-  const g=fresh();g.activate('decoy');g.player.x=850;
-  const e=dot(g,600,320,{speed:60});const orb=g.addPickup('bubble',510,330);
-  run(g,3.9);assert.equal(e.x,480);assert.equal(orb.x,510);assert.equal(g.kills,0);
-  run(g,0.3);assert.equal(g.fields.length,0);assert.ok(e.x>490);
-});
-
-test('decoy respects pause, replaces the old lure, and spikes take priority over distraction',()=>{
-  const g=fresh();g.activate('decoy');g.player.x=850;run(g,0.5);
-  g.pause();const snapshot=g.snapshot();run(g,10);assert.deepEqual(g.snapshot(),snapshot);g.resume();
-  g.activate('decoy');assert.equal(g.fields.length,1);assert.equal(g.fields[0].x,850);
-  assert.ok(Math.abs(g.fields[0].until-g.time-4)<1e-8);
-  g.player.x=700;const e=dot(g,780,320,{speed:60});g.activate('spikes');
-  run(g,0.25);assert.ok(e.x>780); // flee right even when the lure lies behind that direction
-  g.player.x=890;const x=e.x;run(g,0.25);assert.ok(e.x<x); // flee left rather than chase lure at 850
-});

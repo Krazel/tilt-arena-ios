@@ -26,7 +26,7 @@ enum ClassicArt {
     static let spark = imageTexture("energy-spark-v03", maximum: 128)
     static let colors = ["nuke":"ffb52a","wave":"ba71ee","missiles":"f7e36b","frost":"70dce9",
         "bubble":"7bde83","spikes":"6c9ce8","vortex":"ee77bc","lightning":"eeefff","burn":"ff784c",
-        "boomerang":"ffc06a","decoy":"50f0ca"]
+        "boomerang":"ffc06a"]
     static func star(radius: CGFloat, inner: CGFloat, points: Int) -> CGPath {
         let path=CGMutablePath()
         for index in 0..<(points*2) {
@@ -60,26 +60,6 @@ enum ClassicArt {
                 blade.zRotation = angle; root.addChild(blade)
             }
             root.addChild(circle(6, fill: UIColor(hex: "fffce0"), stroke: UIColor(hex: "815824")))
-            return root
-        }
-        if style == "decoyField" {
-            let root = SKNode(), mint = UIColor(hex: "50f0ca")
-            for offset in [CGFloat(-14), CGFloat(0)] {
-                let echo = node(style: "arrow") as! SKShapeNode
-                echo.fillColor = mint.withAlphaComponent(offset == 0 ? 0.3 : 0.08)
-                echo.strokeColor = mint; echo.glowWidth = offset == 0 ? 2 : 0
-                echo.position.x = offset; root.addChild(echo)
-            }
-            for radius in [CGFloat(36), CGFloat(49)] {
-                for index in 0..<4 {
-                    let path = CGMutablePath()
-                    path.addArc(center: .zero, radius: radius, startAngle: CGFloat(index) * .pi / 2,
-                                endAngle: CGFloat(index) * .pi / 2 + .pi / 3, clockwise: false)
-                    let signal = SKShapeNode(path: path); signal.strokeColor = mint
-                    signal.lineWidth = radius == 36 ? 2 : 1.5; signal.alpha = radius == 36 ? 0.8 : 0.4
-                    root.addChild(signal)
-                }
-            }
             return root
         }
         if style == "dot" { return circle(10, fill: UIColor(hex: "ff5658"), stroke: UIColor(hex: "fff5d7"), width: 2) }
@@ -172,10 +152,6 @@ enum ClassicArt {
             root.addChild(line([CGPoint(x:-8,y:-7),CGPoint(x:-7,y:2),CGPoint(x:-2,y:0),CGPoint(x:2,y:12),CGPoint(x:8,y:-7),CGPoint(x:-8,y:-7)]))
         case "boomerang":
             root.addChild(line([CGPoint(x:-10,y:7),CGPoint(x:2,y:2),CGPoint(x:7,y:-10),CGPoint(x:-1,y:-2),CGPoint(x:-10,y:7)],width:3))
-        case "decoy":
-            for x in [CGFloat(-4), CGFloat(3)] {
-                root.addChild(line([CGPoint(x:x-6,y:-7),CGPoint(x:x+5,y:0),CGPoint(x:x-6,y:7),CGPoint(x:x-3,y:0),CGPoint(x:x-6,y:-7)],width:1.6))
-            }
         default:break
         }
         return root

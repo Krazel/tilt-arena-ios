@@ -86,6 +86,18 @@ final class ClassicBridge {
         try decode(call("resize", [left, right, bottom, top]))
     }
     #if DEBUG
+    func explosionFrame(left: Double, right: Double) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.resize(\(left),\(right),52,592);g.player.x=\(right)-160;g.player.y=160;
+          for(let i=0;i<12;i++){const a=i*Math.PI/6;g.addEnemy(\(left)+280+Math.cos(a)*185,290+Math.sin(a)*185,{activeAt:0,speed:0});}
+          g.activate('nuke',{x:\(left)+280,y:290});
+          ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+60+i*(\(right)-\(left)-120)/(ClassicDiagnostics.POWERS.length-1),520));
+          g.events=[];return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
     func newPowersFrame(left: Double, right: Double, returning: Bool = false, electricity: Bool = false) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
@@ -95,7 +107,7 @@ final class ClassicBridge {
             for(let i=0;i<4;i++)g.addEnemy(g.player.x+200+i*75,260,{activeAt:0,speed:0});
             g.events=[];g.activate('lightning');
           } else {
-            g.activate('decoy');g.activate('boomerang');
+            g.activate('boomerang');
             for(let i=0;i<7;i++)g.addEnemy(g.player.x-150+i*48,390,{activeAt:0});
             for(let i=0;i<\(returning ? 84 : 36);i++)g.advance(1/120,{x:0,y:-0.5});
             g.events=[];
