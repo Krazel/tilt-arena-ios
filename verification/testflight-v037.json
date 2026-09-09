@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-09T10:49:12.017Z",
+  "appId": "6809193185",
+  "version": "0.3.7",
+  "build": "1",
+  "buildId": "d68c882f-3f34-4f36-9cf2-fe7882611f07",
+  "processingState": "VALID",
+  "expires": "2026-12-08T02:47:59-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "name": "Pruebas internas",
+    "isInternalGroup": true,
+    "publicLinkEnabled": null,
+    "testerCount": 1,
+    "onlyOwner": true
+  },
+  "assigned": true,
+  "notesVerified": true,
+  "notes": "0.3.7 (1) — Pinchos más claros y explosión nueva\n\nSe elimina el señuelo. Siguen diez poderes, incluido el bumerán.\nPinchos un 12 % más grandes y giro un 75 % más rápido. En los últimos 1,5 segundos cambian a ámbar, parpadean y aparece un arco que se vacía. El aviso también se reconoce con la protección verde o Reducir movimiento.\nNueva explosión con núcleo caliente, expansión, doble onda y fragmentos, conservando el alcance de daño.\n\nProbabilidades: bomba/onda 18 % cada uno; hielo 17 %; misiles 12 %; fuego/rayos/agujero negro 7 % cada uno; protección/bumerán 5 % cada uno; pinchos 4 %.\nLa progresión por tiempo y la puntuación conservan sus reglas: se documenta su curva, todavía pendiente de ajuste con partidas físicas.\n\nProbar lectura del aviso de pinchos con escudo verde, pausa y caducidad; explosiones encadenadas, visibilidad de enemigos y rendimiento en iPhone. Sensor y tacto físico pendientes de esta prueba.",
+  "appStoreVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API"
+}

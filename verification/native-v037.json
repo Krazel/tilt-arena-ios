@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-09-09",
+  "version": "0.3.7",
+  "build": "1",
+  "sourceCommit": "029c446b726b07c2f1f0dd01289b98e322dbbebb",
+  "canonicalCodeCommit": "c4c7148",
+  "run": "34340648343",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34340648343",
+  "xcode": "26.3 (17C529)",
+  "sdk": "iphonesimulator26.2",
+  "nodeTests": 48,
+  "unitTests": 14,
+  "uiTests": 9,
+  "failures": 0,
+  "screenshots": "native-v037/",
+  "reviewed": ["11-spikes-over-shield.png", "12-spikes-expiry-warning.png", "16-explosion-hot-core.png", "17-explosion-dissipation.png"],
+  "findings": [
+    "Twelve filled pale blue teeth extend beyond the green shield and leave the cream player arrow visible",
+    "At the minimum warning pulse, amber teeth remain visible and a bright half countdown arc separates expiry from the active state",
+    "Explosion at 0.16 seconds shows a cream core, star corona, translucent orange lobes, two distinct fronts and triangular fragments",
+    "Explosion at 0.4 seconds has lost its hot core, leaving fading fronts, lobes and fragments; the background remains visible",
+    "The ten remaining pickup glyphs fit within the arena; no decoy orb remains"
+  ],
+  "engineAndAudioMatchCanonicalSource": true,
+  "physicalDeviceTest": "Pending",
+  "purpose": "Native simulator QA before signed TestFlight delivery; does not establish difficulty balance"
+}

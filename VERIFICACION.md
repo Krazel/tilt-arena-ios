@@ -1,4 +1,35 @@
-# Verificación — 0.3.6 (1)
+# Verificación — 0.3.7 (1)
+
+## Entrega actual: 0.3.7 (1)
+
+Señuelo retirado. Pinchos un 12 % mayores visualmente, giro un 75 % más rápido,
+aviso ámbar de 1,5 s con dientes pulsantes y arco de cuenta atrás. Nueva explosión
+nativa: núcleo blanco, expansión de fuego, dos ondas y fragmentos. Diez poderes;
+el peso retirado pasa a bomba/onda/hielo. Progresión y puntuación conservadas;
+informe medido en design/BALANCE.md.
+
+71 pruebas aprobadas: 48 Node, 14 XCTest y 9 XCUITest; sintaxis de 14 Swift correcta.
+QA 34340648343, Xcode 26.3 (17C529), SDK iOS Simulator 26.2.
+Capturas de pinchos activos/aviso y explosión en dos fases revisadas. Fuente pública
+029c446b726b07c2f1f0dd01289b98e322dbbebb, canónico c4c7148.
+Firma y subida run 34341910032; Apple build d68c882f-3f34-4f36-9cf2-fe7882611f07,
+VALID e IN_BETA_TESTING. Grupo interno solo del titular y notas es-ES releídas por
+API. IPA Release ARM64, SDK iOS 26.2; CRC, firma, perfil y motor/audio comprobados.
+Archivo artifacts/TiltArena-0.3.7-build1-TestFlight.ipa. SHA-256: 62624ad27d70ce3218003c7bfed2c0c48ff2f90ef85634aa7baeb004e7afbb8b.
+Evidencia native-v037.json, simulator-v037.json, ipa-v037-testflight-build1.json,
+testflight-v037.json, balance-v037.json y capturas native-v037/.
+Prueba física pendiente. App Store 1.0 PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
+
+La explosión tiene fases acotadas y desaparece a 0,7 s; Reducir movimiento elimina
+fragmentos y expansión. Giro, pausa, color y arco de caducidad de pinchos comprobados.
+Señuelo ausente del arsenal y rechazo de su identificador. Muestra de 20.000
+apariciones y medición del director en balance-v037.json. Las pruebas validan
+reglas y presentación; no demuestran equilibrio de dificultad ni sensación física.
+
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34340648343
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34341910032
+
+# Historial de verificación — 0.3.6 (1)
 
 ## Entrega TestFlight 0.3.6 verificada
 

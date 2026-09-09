@@ -86,3 +86,16 @@ native-v036/captures.json. 72 pruebas aprobadas. No se presenta la captura como
 animación ni prueba física; sensor, sensación y rendimiento pendientes en iPhone.
 Entrega posterior verificada: 0.3.6 (1) activa en TestFlight interno; build
 0ce84509-460b-4cd8-bca9-c4807a381594, run 34294298929.
+
+## Pinchos y explosión encargados para 0.3.7 — 2026-09-09
+
+Señuelo retirado por petición expresa. Doce dientes mayores, giro independiente
+más rápido y aviso ámbar con arco decreciente. Explosión de geometría SpriteKit
+con núcleo crema, lóbulos de fuego, doble frente y doce fragmentos; conserva
+el alcance físico. Base aprobada de orbes e hielo conservados.
+
+Capturas nativas revisadas: native-v037/11-spikes-over-shield.png,
+12-spikes-expiry-warning.png, 16-explosion-hot-core.png y
+17-explosion-dissipation.png. Hallazgos concretos y hashes en verification/.
+QA 34340648343, 71 pruebas; entrega interna 34341910032, build d68c882f-3f34-4f36-9cf2-fe7882611f07.
+Capturas de fases reales del renderer, no una prueba física ni un vídeo.
