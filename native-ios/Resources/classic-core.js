@@ -9,16 +9,17 @@
   const length = (x, y) => Math.hypot(x, y);
   const distance = (a, b) => length(a.x - b.x, a.y - b.y);
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
-  const TUNING = Object.freeze({step: 1 / 120, speed: 470, response: 22,
+  const TUNING = Object.freeze({step: 1 / 120, speed: 600, response: 22, braking: 24,
     playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 300, vortexRadius: 140, vortexPlayerRadius: 300,
     lightningStartRadius: 220, lightningChainRadius: 90,
-    boomerangOutTime: 0.55, boomerangOutSpeed: 540, boomerangReturnSpeed: 680, maxBoomerangs: 3,
+    boomerangCharge: 0.5, boomerangOutTime: 0.55, boomerangOutSpeed: 540, boomerangReturnSpeed: 680, maxBoomerangs: 3,
     fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050, waveCharge: 0.5});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang'];
+  const SCORING = Object.freeze({pickup:10,kill:10,comboFactor:6});
   // Relative weights: renormalized when diagnostics limit the available arsenal.
-  const POWER_WEIGHTS = Object.freeze({nuke:18,wave:18,frost:17,missiles:12,
-    burn:7,vortex:7,lightning:7,bubble:5,spikes:4,boomerang:5});
+  const POWER_WEIGHTS = Object.freeze({nuke:19,wave:19,frost:19,missiles:12,
+    burn:5,vortex:5,lightning:7,bubble:5,spikes:4,boomerang:5});
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
     bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c',boomerang:'#ffc06a'};
   function swept(a, b, c, radius) {
@@ -64,7 +65,7 @@
       this.player = {x:480,y:320,vx:0,vy:0,angle:Math.PI/2,bubble:false,spikesUntil:0,burnUntil:0,fireChargeUntil:0};
       this.enemies = []; this.pickups = []; this.projectiles = []; this.fields = [];
       this.events = []; this.spawnAt = 1; this.patternAt = 12; this.pickupAt = 3;
-      this.waveAt = []; this.trailAt = 0;
+      this.waveAt = []; this.boomerangAt = []; this.trailAt = 0;
       if (this.options.spawning !== false) {
         this.addPickup('nuke', 260, 310);
         this.addPickup('missiles', 700, 330);
@@ -101,7 +102,7 @@
       const p = this.player, before = {x:p.x,y:p.y};
       let ix = Number.isFinite(input.x)?input.x:0, iy = Number.isFinite(input.y)?input.y:0;
       const mag = Math.max(1,length(ix,iy)); ix/=mag; iy/=mag;
-      const response = 1 - Math.exp(-TUNING.response*dt);
+      const response = 1 - Math.exp(-(length(ix,iy)<0.001?TUNING.braking:TUNING.response)*dt);
       if(p.fireChargeUntil>0) {
         // Input aims while translation (including vortex drift) is locked.
         p.vx=0;p.vy=0;
@@ -142,6 +143,15 @@
         this.event('wave',{...tip,angle:p.angle,color:COLORS.wave});
       }
       this.waveAt = this.waveAt.filter(w=>!w.dead);
+      for(const charge of this.boomerangAt) if(this.time+1e-9>=charge.at) {
+        const tip={x:clamp(p.x+Math.cos(p.angle)*24,this.bounds.left+22,this.bounds.right-22),
+          y:clamp(p.y+Math.sin(p.angle)*24,this.bounds.bottom+22,this.bounds.top-22)};
+        this.projectiles.push({id:charge.id,kind:'boomerang',...tip,
+          vx:Math.cos(p.angle)*TUNING.boomerangOutSpeed,vy:Math.sin(p.angle)*TUNING.boomerangOutSpeed,
+          angle:p.angle,radius:22,turnAt:this.time+TUNING.boomerangOutTime,returning:false,until:this.time+3});
+        this.event('boomerangLaunch',{...tip,angle:p.angle,color:COLORS.boomerang});
+      }
+      this.boomerangAt=this.boomerangAt.filter(c=>this.time+1e-9<c.at);
       this.updateFields(dt);
       this.updateProjectiles(dt);
       for(const e of this.enemies) {
@@ -182,14 +192,14 @@
     }
     bankCombo() {
       if(!this.combo) return;
-      const bonus=6*this.combo*this.combo;
+      const bonus=SCORING.comboFactor*this.combo*this.combo;
       this.score+=bonus;
       this.event('combo',{value:this.combo,bonus,x:(this.bounds.left+this.bounds.right)/2,y:this.bounds.bottom+18});
       this.combo=0;this.comboUntil=0;
     }
     kill(e,style) {
       if(e.dead || this.time<e.activeAt) return;
-      e.dead=true;this.kills++;this.score+=10;this.combo++;
+      e.dead=true;this.kills++;this.score+=SCORING.kill;this.combo++;
       this.bestCombo=Math.max(this.bestCombo,this.combo);
       this.comboUntil=this.time+TUNING.comboWindow;
       this.event('kill',{x:e.x,y:e.y,color:style==='ice'?COLORS.frost:'#ff5658'});
@@ -293,9 +303,8 @@
     }
     activate(power,point) {
       const p=this.player,at=point||p;
-      // Pickup points, like timing, remain provisional; combo is the dominant reward.
-      const points={nuke:3,wave:5,missiles:10,frost:10,bubble:10,spikes:10,vortex:10,lightning:6,burn:2000,boomerang:10};
-      this.score+=points[power]||0;
+      // Equal collection reward: weapon luck must not dwarf kills and combos.
+      this.score+=POWERS.includes(power)?SCORING.pickup:0;
       this.event('pickup',{power,x:at.x,y:at.y,color:COLORS[power]});
       switch(power) {
       case 'nuke':this.blast(at,155,power);break;
@@ -313,11 +322,12 @@
       case 'spikes':p.spikesUntil=this.time+5;break;
       case 'vortex':this.fields.push({id:++this.id,kind:'vortex',x:at.x,y:at.y,until:this.time+4,radius:TUNING.vortexRadius});break;
       case 'boomerang': {
-        const live=this.projectiles.filter(m=>m.kind==='boomerang'&&!m.dead&&m.until>this.time);
-        if(live.length>=TUNING.maxBoomerangs)live[0].dead=true;
-        this.projectiles.push({id:++this.id,kind:'boomerang',x:p.x,y:p.y,
-          vx:Math.cos(p.angle)*TUNING.boomerangOutSpeed,vy:Math.sin(p.angle)*TUNING.boomerangOutSpeed,
-          angle:p.angle,radius:22,turnAt:this.time+TUNING.boomerangOutTime,returning:false,until:this.time+3});
+        const occupied=[...this.boomerangAt,...this.projectiles.filter(m=>m.kind==='boomerang'&&!m.dead&&m.until>this.time)].sort((a,b)=>a.id-b.id);
+        if(occupied.length>=TUNING.maxBoomerangs) {
+          occupied[0].dead=true;
+          this.boomerangAt=this.boomerangAt.filter(c=>c.id!==occupied[0].id);
+        }
+        this.boomerangAt.push({id:++this.id,at:this.time+TUNING.boomerangCharge});
         break;
       }
       case 'lightning': {
@@ -439,13 +449,16 @@
     }
     snapshot() {
       const chargingWave=this.waveAt.find(w=>!w.dead);
+      const chargingBoomerang=this.boomerangAt[0];
       return {state:this.state,time:this.time,score:this.score,combo:this.combo,
-        comboBase:6*this.combo,pendingBonus:6*this.combo*this.combo,
+        comboBase:SCORING.comboFactor*this.combo,pendingBonus:SCORING.comboFactor*this.combo*this.combo,
         comboRemaining:Math.max(0,this.comboUntil-this.time)/TUNING.comboWindow,
         bestCombo:this.bestCombo,kills:this.kills,player:Object.assign({},this.player,{
           fireChargeProgress:this.player.fireChargeUntil>0?clamp(1-(this.player.fireChargeUntil-this.time)/TUNING.fireCharge,0,1):0,
           waveCharging:!!chargingWave,
-          waveChargeProgress:chargingWave?clamp(1-(chargingWave.at-this.time)/TUNING.waveCharge,0,1):0}),
+          waveChargeProgress:chargingWave?clamp(1-(chargingWave.at-this.time)/TUNING.waveCharge,0,1):0,
+          boomerangCharging:!!chargingBoomerang,
+          boomerangChargeProgress:chargingBoomerang?clamp(1-(chargingBoomerang.at-this.time)/TUNING.boomerangCharge,0,1):0}),
         enemies:this.enemies.map(e=>({id:e.id,x:e.x,y:e.y,telegraph:this.time<e.activeAt,
           frozen:this.time<e.frozenUntil,thawing:e.frozenUntil>this.time&&e.frozenUntil-this.time<1})),
         pickups:this.pickups.map(o=>({id:o.id,x:o.x,y:o.y,power:o.power,remaining:o.until-this.time})),
@@ -463,5 +476,5 @@
     tilt(gx,gy,nx,ny,orientation,sensitivity){return tiltInput({x:gx,y:gy},{x:nx,y:ny},orientation,sensitivity);}};
   root.ClassicAPI=API;
   if(root.CLASSIC_DIAGNOSTICS===true)root.ClassicDiagnostics={ClassicGame,POWERS,COLORS};
-  if(typeof module!=='undefined'&&module.exports)module.exports={ClassicGame,RNG,TUNING,BOUNDS,POWERS,COLORS,swept,tiltInput};
+  if(typeof module!=='undefined'&&module.exports)module.exports={ClassicGame,RNG,TUNING,SCORING,BOUNDS,POWERS,COLORS,swept,tiltInput};
 })(typeof globalThis!=='undefined'?globalThis:this);

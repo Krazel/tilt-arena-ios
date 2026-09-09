@@ -3,6 +3,35 @@ import SpriteKit
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    func testNewScoringRecordPreservesLegacyAndSurvivesRelaunch() {
+        let suite = "TiltArenaScoreTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(200000, forKey: "classic.v02.best")
+        XCTAssertEqual(ClassicScoreRecord.read(defaults: defaults), 0)
+        XCTAssertEqual(ClassicScoreRecord.save(710, defaults: defaults), 710)
+        XCTAssertEqual(ClassicScoreRecord.save(10, defaults: defaults), 710)
+        XCTAssertEqual(ClassicScoreRecord.read(defaults: UserDefaults(suiteName: suite)!), 710)
+        XCTAssertEqual(defaults.integer(forKey: "classic.v02.best"), 200000)
+    }
+    func testBoomerangChargeDecodesAndShowsBladesAtTipWithReducedMotion() throws {
+        let frame = try ClassicBridge().newPowersFrame(left: 100, right: 1300, charging: true)
+        XCTAssertEqual(frame.score, 10); XCTAssertTrue(frame.projectiles.isEmpty)
+        XCTAssertTrue(frame.player.boomerangCharging)
+        XCTAssertEqual(frame.player.boomerangChargeProgress, 0.5, accuracy: 0.00001)
+        let node = ClassicBoomerangCharge()
+        node.update(progress: frame.player.boomerangChargeProgress, active: true, reduced: false)
+        XCTAssertFalse(node.isHidden); XCTAssertGreaterThan(node.position.x, 23)
+        let blades = try XCTUnwrap(node.childNode(withName: "charging-blades"))
+        XCTAssertEqual(blades.zRotation, .pi, accuracy: 0.0001)
+        let scale = blades.xScale
+        node.update(progress: 0.5, active: true, reduced: false)
+        XCTAssertEqual(blades.xScale, scale)
+        node.update(progress: 0.9, active: true, reduced: true)
+        XCTAssertEqual(blades.zRotation, 0); XCTAssertGreaterThan(blades.xScale, scale)
+        XCTAssertNotNil((node.childNode(withName: "charge-ring") as? SKShapeNode)?.path)
+        node.update(progress: 0, active: false, reduced: false); XCTAssertTrue(node.isHidden)
+    }
     func testExplosionHasDistinctBoundedPhasesAndReducedMotion() throws {
         let blast = ClassicExplosion(radius: 155, color: .orange, reduced: false)
         blast.removeAllActions(); blast.update(elapsed: 0.16)
