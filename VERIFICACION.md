@@ -1,6 +1,47 @@
-# Verificación — 0.3.5 (1)
+# Verificación — 0.3.6 (1)
 
-## Entrega TestFlight 0.3.5 verificada
+## Entrega TestFlight 0.3.6 verificada
+
+Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34294298929.
+Fuente 00d36bb87b04aed847dae46d55c87e824986e3bf, idéntica a la QA nativa.
+Archive, firma, exportación y subida correctos. IPA 4.759.715 bytes, Release ARM64,
+SDK iOS 26.2, SHA-256 c07c330ff9be0821794d5f4b6cd064abb9bac65d630b99e4826db84c711beda0.
+CRC, versión/build, bundle, plataforma, arquitectura y perfil comprobados;
+motor/audio coinciden con canónico y simulador. Apple build
+0ce84509-460b-4cd8-bca9-c4807a381594: VALID e IN_BETA_TESTING, asignada al grupo
+interno solo del titular. Relación y notas es-ES releídas por API el 2026-09-09.
+Caduca 2026-12-08 UTC. App Store 1.0 PREPARE_FOR_SUBMISSION, sin beta externa.
+Evidencia testflight-v036.json e ipa-v036-testflight-build1.json. Prueba física pendiente.
+
+## QA nativa 0.3.6 verificada
+
+Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34293410088.
+Fuente pública 00d36bb87b04aed847dae46d55c87e824986e3bf, canónico 3be57c6.
+Xcode 26.3 (17C529), SDK iOS Simulator 26.2: BUILD SUCCEEDED y TEST SUCCEEDED.
+72 pruebas pasan: 51 Node, 13 XCTest, 8 XCUITest. Sintaxis de 13 Swift correcta.
+El motor del binario es idéntico al probado; también coinciden los cuatro audios.
+
+Regresiones: fuerza extra solo al jugador, arrastre de puntos/orbes sin cambios;
+escape, radio y caducidad. Primer rayo alcanza 219 pero no 221; saltos posteriores
+conservan huecos y apariciones inofensivas. Bumerán atraviesa a ida/vuelta y retorna
+a la posición actual, vuelve antes en paredes, respeta pausa, límite de tres,
+caducidad y equivalencia 30/60/120 Hz. Señuelo desvía cercanos/formaciones,
+conserva congelados/apariciones, no protege ni mata ni mueve orbes, caduca y se
+reemplaza. Pinchos prevalecen sobre la distracción.
+Muestra de 20.000 apariciones: pinchos 4,045 %, protección 5,075 %; bumerán
+5,24 %, señuelo 5,005 %. El resto dentro de un punto porcentual del objetivo.
+
+Capturas nativas de iPhone 16 Pro, paisaje y español, revisadas: 13-boomerang-and-decoy,
+14-boomerang-return, 15-electricity-range. Once glifos caben en la arena;
+copia menta hueca distinta del jugador opaco, cuchillas doradas legibles y primer
+rayo largo con aro de alcance. La estela en movimiento y tacto requieren ensayo
+físico; las capturas son estados estáticos de la app nativa, no una prueba de fps.
+Evidencia native-v036.json, native-v036/captures.json, simulator-v036.json,
+control-v036.json. API oficial de Apple comprobada: candidata 0.3.6 (1) libre.
+Guía de subida de Apple consultada el 2026-09-09:
+https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/.
+
+## Historial: entrega TestFlight 0.3.5 verificada
 
 Run https://github.com/Krazel/tilt-arena-ios/actions/runs/34233289930.
 Fuente 66604059cfc1069574f5482aefd674c35eb7f04b, la misma que pasó QA nativa.

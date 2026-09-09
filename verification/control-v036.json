@@ -1,0 +1,58 @@
+{
+  "checkedAt": "2026-09-09T00:04:25.609Z",
+  "version": "0.3.6",
+  "build": 1,
+  "seed": 42,
+  "sampleSize": 20000,
+  "actualSpawnCounts": {
+    "nuke": 3137,
+    "wave": 3204,
+    "missiles": 2463,
+    "frost": 3127,
+    "bubble": 1015,
+    "spikes": 809,
+    "vortex": 1397,
+    "lightning": 1368,
+    "burn": 1431,
+    "boomerang": 1048,
+    "decoy": 1001
+  },
+  "observedPercent": {
+    "nuke": 15.685,
+    "wave": 16.02,
+    "missiles": 12.315,
+    "frost": 15.635,
+    "bubble": 5.075,
+    "spikes": 4.045,
+    "vortex": 6.985,
+    "lightning": 6.84,
+    "burn": 7.155,
+    "boomerang": 5.24,
+    "decoy": 5.005
+  },
+  "vortexVisualAndEnemyRadius": 140,
+  "playerAttractionRadius": 300,
+  "neutralVortexDrift": [
+    {
+      "initialDistance": 100,
+      "neutralDriftAfterHalfSecond": 97.46138502760539
+    },
+    {
+      "initialDistance": 150,
+      "neutralDriftAfterHalfSecond": 96.79634021678794
+    },
+    {
+      "initialDistance": 250,
+      "neutralDriftAfterHalfSecond": 32.26544673892931
+    },
+    {
+      "initialDistance": 300,
+      "neutralDriftAfterHalfSecond": 0
+    },
+    {
+      "initialDistance": 320,
+      "neutralDriftAfterHalfSecond": 0
+    }
+  ],
+  "physicalDeviceTest": false
+}

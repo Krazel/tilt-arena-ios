@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-09T00:19:49.755Z",
+  "appId": "6809193185",
+  "version": "0.3.6",
+  "build": "1",
+  "buildId": "0ce84509-460b-4cd8-bca9-c4807a381594",
+  "processingState": "VALID",
+  "expires": "2026-12-07T16:18:51-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "name": "Pruebas internas",
+    "isInternalGroup": true,
+    "publicLinkEnabled": null,
+    "testerCount": 1,
+    "onlyOwner": true
+  },
+  "assigned": true,
+  "notesVerified": true,
+  "notes": "0.3.6 (1) — Bumerán, señuelo y poderes ajustados\n\nEl agujero negro tira un 67 % más fuerte de tu flecha. Mantiene su tamaño pequeño y el alcance de atracción lejano; el arrastre de enemigos sigue igual.\nLa electricidad inicia la descarga desde 220 unidades, antes 90, y luego salta entre enemigos próximos.\nPinchos 4 % y protección 5 %: raros pero más habituales que antes.\n\nNuevos poderes:\nBumerán: cuchillas doradas que atraviesan enemigos, giran y vuelven hacia tu posición actual. Puedes moverte para dirigir su regreso. Si llegan a una pared vuelven antes.\nSeñuelo: deja una copia luminosa de tu flecha durante cuatro segundos. Distrae a enemigos cercanos mientras te alejas. No te protege del contacto.\n\nReparto por aparición: bomba/onda/hielo 16 % cada uno; misiles 12 %; fuego/rayos/agujero negro 7 % cada uno; protección/bumerán/señuelo 5 % cada uno; pinchos 4 %. No son cuotas garantizadas. Se conservan los dos poderes iniciales.\n\nProbar en iPhone: escape del agujero negro, primer salto eléctrico, recorrido de ida y vuelta del bumerán, alejarse del señuelo, pausa y caducidad. Sensor y rendimiento físico pendientes de esta prueba.",
+  "appStoreVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API"
+}

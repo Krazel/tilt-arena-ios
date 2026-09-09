@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-09-09",
+  "version": "0.3.6",
+  "build": "1",
+  "sourceCommit": "00d36bb87b04aed847dae46d55c87e824986e3bf",
+  "canonicalCodeCommit": "3be57c6",
+  "run": "34293410088",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34293410088",
+  "xcode": "26.3 (17C529)",
+  "sdk": "iphonesimulator26.2",
+  "nodeTests": 51,
+  "unitTests": 13,
+  "uiTests": 8,
+  "failures": 0,
+  "screenshots": "native-v036/",
+  "reviewed": ["13-boomerang-and-decoy.png", "14-boomerang-return.png", "15-electricity-range.png"],
+  "findings": [
+    "All eleven pickup glyphs fit within the landscape arena; the two new icons are distinct",
+    "The hollow mint decoy and its segmented signal rings remain separate from the opaque cream player arrow",
+    "The golden two-blade boomerang is legible both outbound and on its path toward the moved player",
+    "The electric pulse radius is visible and the first bolt spans the extended 200-unit fixture gap before chaining",
+    "The real JavaScriptCore bridge decodes the new fields, projectiles, eleven pickups and extended lightning events"
+  ],
+  "engineAndAudioMatchCanonicalSource": true,
+  "physicalDeviceTest": "Pending",
+  "purpose": "Native simulator QA before signed TestFlight delivery"
+}

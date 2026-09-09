@@ -3,14 +3,25 @@
 Actualizado 2026-09-09. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Candidata en preparación: 0.3.6 (1)
+## Entrega actual: 0.3.6 (1)
 
 Más fuerza de vórtice solo sobre el jugador (+66,7 %), electricidad inicial 220,
 pinchos 4 %, protección 5 %. Nuevos bumerán de ida/vuelta y señuelo de 4 segundos,
 con arte nativo sobre la base de orbes aprobada. DIRECTION.md y notas v036 detallan
 reglas y probabilidades. 51 pruebas Node y sintaxis de 13 Swift pasan.
-Pendiente QA nativa, revisión de capturas, firma, subida y asignación interna.
-La entrega activa sigue siendo 0.3.5 hasta verificar la nueva por API.
+QA nativa completada: 51 Node, 13 XCTest y 8 XCUITest (72 pruebas), Xcode 26.3.
+Capturas revisadas de bumerán, señuelo y electricidad. Motor/audio del binario
+coinciden con el canónico 3be57c6; fuente pública 00d36bb87b04aed847dae46d55c87e824986e3bf.
+QA run 34293410088. Firma y subida completadas: run 34294298929.
+Apple confirma VALID e IN_BETA_TESTING: build 0ce84509-460b-4cd8-bca9-c4807a381594.
+Grupo interno solo del titular, asignación y notas es-ES guardadas y releídas por
+API oficial. IPA Release ARM64, SDK iOS 26.2, 4.759.715 bytes; firma, perfil, CRC,
+plataforma y motor/audio idénticos a la fuente canónica comprobados. Archivo
+artifacts/TiltArena-0.3.6-build1-TestFlight.ipa. SHA-256:
+c07c330ff9be0821794d5f4b6cd064abb9bac65d630b99e4826db84c711beda0.
+Evidencia native-v036.json, control-v036.json, ipa-v036-testflight-build1.json,
+testflight-v036.json y capturas native-v036/. Prueba física pendiente.
+App Store 1.0 sigue PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
 
 ## Entrega anterior: 0.3.5 (1)
 
@@ -150,9 +161,9 @@ los bloqueos anteriores quedaron resueltos por autorización expresa. Envío pú
 y QA nativa de 0.3.3 completados, así como firma, subida y activación en TestFlight.
 Autorización permanente de próximas subidas guardada en AGENTS.md. App Store Connect por API.
 
-PR-031 sincronizada y verificada por GET, revisión 26, 2026-09-08 13:45:54 UTC.
-La ficha registra 0.3.5 (1) activa en TestFlight interno, atracción, pinchos y rareza,
-62 pruebas aprobadas, capturas revisadas, IPA y notas verificadas. Autorizaciones
+PR-031 sincronizada y verificada por GET, revisión 28, 2026-09-09 00:20:56 UTC.
+La ficha registra 0.3.6 (1) activa en TestFlight interno, bumerán, señuelo y ajustes,
+72 pruebas aprobadas, capturas revisadas, IPA y notas verificadas. Autorizaciones
 permanentes de código público y TestFlight guardadas en AGENTS.md; bloqueos resueltos.
 Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
 Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.

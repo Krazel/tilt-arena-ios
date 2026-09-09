@@ -68,3 +68,21 @@ percepción, sensor y rendimiento físico pendientes. Los cambios son geometría
 SpriteKit del diseño existente, sin nuevos bitmaps ni otra selección pendiente.
 Entrega posterior verificada: 0.3.5 (1) activa en TestFlight interno, build
 0cf5be7f-7c13-4d3a-8a6a-63648b3ea389, run 34233289930.
+
+## Nuevos poderes encargados para 0.3.6 — 2026-09-09
+
+El usuario pide algunos poderes nuevos y delega creatividad. Dos diseños propios:
+bumerán con dos cuchillas doradas/núcleo crema y señuelo con copia hueca menta,
+doble contorno y arcos de señal. Conservan el lenguaje geométrico y la base
+aprobada de orbes de ChatGPT Images; nuevos glifos de bumerán y doble flecha.
+La electricidad conserva sus rayos segmentados y añade aro tenue del primer alcance.
+
+Capturas reales del simulador iPhone 16 Pro, paisaje, español, Xcode 26.3, run
+34293410088. Revisadas verification/native-v036/13-boomerang-and-decoy.png,
+14-boomerang-return.png y 15-electricity-range.png. La copia hueca se distingue
+del protagonista opaco; cuchillas legibles en dos posiciones/orientaciones;
+once orbes en el ancho útil y rayo inicial de mayor longitud. SHA-256 en
+native-v036/captures.json. 72 pruebas aprobadas. No se presenta la captura como
+animación ni prueba física; sensor, sensación y rendimiento pendientes en iPhone.
+Entrega posterior verificada: 0.3.6 (1) activa en TestFlight interno; build
+0ce84509-460b-4cd8-bca9-c4807a381594, run 34294298929.
