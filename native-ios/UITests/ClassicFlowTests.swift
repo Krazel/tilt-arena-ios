@@ -1,6 +1,22 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testNewPowersOutboundReturnAndElectricRange() {
+        let app = XCUIApplication()
+        for (name, flags) in [
+            ("13-boomerang-and-decoy", [String]()),
+            ("14-boomerang-return", ["--returning-qa"]),
+            ("15-electricity-range", ["--electricity-qa"])
+        ] {
+            app.launchArguments = ["--ui-testing", "--new-powers-qa"] + flags
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            Thread.sleep(forTimeInterval: 0.3)
+            capture(name, app: app); app.terminate()
+        }
+    }
     func testSpikesOverGreenShieldAndExpiryWarning() {
         let app = XCUIApplication()
         for warning in [false, true] {

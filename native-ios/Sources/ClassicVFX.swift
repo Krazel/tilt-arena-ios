@@ -16,8 +16,8 @@ final class ClassicVFX {
     }()
     func show(_ event: ClassicFrame.Event, reduced: Bool) {
         guard let x = event.x, let y = event.y else { return }
-        let important = ["blast", "freeze", "death", "wave", "pickup", "burnLaunch"].contains(event.kind)
-        guard ["kill", "blast", "freeze", "death", "pickup", "spawnPickup", "lightning", "wave", "combo", "burnLaunch"].contains(event.kind) else { return }
+        let important = ["blast", "freeze", "death", "wave", "pickup", "burnLaunch", "electricPulse", "boomerangTurn", "boomerangCatch"].contains(event.kind)
+        guard important || ["kill", "spawnPickup", "lightning", "combo"].contains(event.kind) else { return }
         if layer.children.count >= 40 {
             guard important else { return }
             (layer.children.first(where: { $0.name == "spark" }) ?? layer.children.first)?.removeFromParent()
@@ -27,6 +27,16 @@ final class ClassicVFX {
         let color = UIColor(hex: event.color ?? "f3ffcd")
         root.run(.sequence([.wait(forDuration: 1.15), .removeFromParent()]))
         switch event.kind {
+        case "electricPulse":
+            let radius = event.radius ?? 220
+            let rim = SKShapeNode(circleOfRadius: radius)
+            rim.strokeColor = UIColor(hex: "c6f5ff"); rim.lineWidth = reduced ? 1 : 2
+            rim.alpha = 0.35; root.addChild(rim)
+            flash(on: root, color: UIColor(hex: "c6f5ff"), diameter: 90, duration: 0.24, reduced: reduced)
+            root.run(.sequence([.fadeOut(withDuration: 0.35), .removeFromParent()]))
+        case "boomerangTurn", "boomerangCatch":
+            ring(on: root, color: color, radius: event.kind == "boomerangTurn" ? 38 : 26, reduced: reduced)
+            burst(on: root, color: color, count: reduced ? 2 : 8, speed: 75, duration: 0.25)
         case "burnLaunch":
             flash(on: root, color: UIColor(hex: "ffb444"), diameter: 95, duration: 0.2, reduced: reduced)
             ring(on: root, color: UIColor(hex: "ffe3a0"), radius: 45, reduced: reduced)
@@ -142,5 +152,14 @@ final class ClassicVFX {
         emitter.particleBirthRate = 70; emitter.particleLifetime = 0.32
         emitter.particleScale = 0.065; emitter.particleScaleSpeed = -0.17; emitter.particleAlphaSpeed = -2.8
         emitter.position = CGPoint(x: -8, y: 0); emitter.targetNode = layer; node.addChild(emitter)
+    }
+    func attachBoomerangTrail(to node: SKNode, reduced: Bool) {
+        guard !reduced else { return }
+        let emitter = SKEmitterNode(); emitter.particleTexture = Self.glow
+        emitter.particleColor = UIColor(hex: "ffc06a"); emitter.particleColorBlendFactor = 1
+        emitter.particleBlendMode = .add; emitter.particleBirthRate = 55
+        emitter.particleLifetime = 0.18; emitter.particleScale = 0.1
+        emitter.particleScaleSpeed = -0.45; emitter.particleAlphaSpeed = -5
+        emitter.targetNode = layer; node.addChild(emitter)
     }
 }

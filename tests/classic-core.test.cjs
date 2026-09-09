@@ -158,7 +158,7 @@ test('vortex attracts both dots and pickups and then expires',()=>{
 test('smaller vortex pulls the player more strongly at all frame rates and steering can escape',()=>{
   const positions=[30,60,120].map(fps=>{
     const g=fresh();g.activate('vortex',{x:580,y:320});run(g,0.5,undefined,fps);
-    assert.ok(g.player.x>540&&g.player.x<560);assert.equal(g.player.y,320);
+    assert.ok(g.player.x>570&&g.player.x<580);assert.equal(g.player.y,320);
     return g.player.x;
   });
   assert.ok(Math.max(...positions)-Math.min(...positions)<1e-8);
@@ -214,7 +214,7 @@ test('compact vortex attracts the player from farther away without extending ene
   assert.equal(g.snapshot().fields[0].radius,140);
   assert.ok(g.playerVortexPull().x>50);
   const edge=fresh();edge.activate('vortex',{x:730,y:320});run(edge,0.5);
-  assert.ok(edge.player.x>495&&edge.player.x<505);
+  assert.ok(edge.player.x>510&&edge.player.x<520);
   const e=dot(edge,480,400);const o=edge.addPickup('bubble',480,430);
   run(edge,0.25);assert.equal(e.x,480);assert.equal(o.x,480);
 });
@@ -261,13 +261,13 @@ test('fleeing is deterministic at all frame rates and chasing resumes after expi
 test('actual pickup spawns follow rarity with spikes rarest and bubble second rarest',()=>{
   const g=fresh();const counts=Object.fromEntries(POWERS.map(p=>[p,0]));
   for(let i=0;i<20000;i++){g.pickups=[];g.spawnPickup(true);counts[g.pickups[0].power]++;}
-  const expected={nuke:20,wave:20,frost:20,missiles:16,burn:7,vortex:7,lightning:7,bubble:2,spikes:1};
+  const expected={nuke:16,wave:16,frost:16,missiles:12,burn:7,vortex:7,lightning:7,bubble:5,spikes:4,boomerang:5,decoy:5};
   for(const p of POWERS)assert.ok(Math.abs(counts[p]/200-expected[p])<1,`${p}: ${counts[p]/200}%`);
   assert.ok(counts.spikes<counts.bubble&&counts.bubble<counts.burn);
   const subset=new ClassicGame(24,{spawning:false,powers:['spikes','bubble']});
   const sample=Array.from({length:6000},()=>subset.choosePower());
   assert.ok(sample.every(p=>p==='spikes'||p==='bubble'));
-  assert.ok(Math.abs(sample.filter(p=>p==='bubble').length/6000-2/3)<0.03);
+  assert.ok(Math.abs(sample.filter(p=>p==='bubble').length/6000-5/9)<0.03);
 });
 test('player vortex drift obeys range, expiry, pause, center and arena bounds',()=>{
   for(const point of [{x:800,y:320},{x:480,y:320}]) {
@@ -371,5 +371,5 @@ test('bundle global bridge loads without Node APIs and returns JSON for native d
   const next=JSON.parse(context.ClassicAPI.tick(1/60,0.5,0));assert.ok(next.player.x>first.player.x);
   context.ClassicAPI.pause();assert.equal(JSON.parse(context.ClassicAPI.tick(1,1,1)).state,'paused');
   context.ClassicAPI.resume();assert.equal(JSON.parse(context.ClassicAPI.tick(0,0,0)).state,'running');
-  assert.equal(POWERS.length,9);
+  assert.equal(POWERS.length,11);
 });
