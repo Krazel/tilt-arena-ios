@@ -16,7 +16,7 @@ final class ClassicVFX {
     }()
     func show(_ event: ClassicFrame.Event, reduced: Bool) {
         guard let x = event.x, let y = event.y else { return }
-        let important = ["blast", "freeze", "death", "wave", "pickup", "burnLaunch", "electricPulse", "boomerangTurn", "boomerangCatch"].contains(event.kind)
+        let important = ["blast", "freeze", "death", "wave", "pickup", "burnLaunch", "electricPulse", "boomerangLaunch", "boomerangTurn", "boomerangCatch"].contains(event.kind)
         guard important || ["kill", "spawnPickup", "lightning", "combo"].contains(event.kind) else { return }
         if layer.children.count >= 40 {
             guard important else { return }
@@ -34,7 +34,7 @@ final class ClassicVFX {
             rim.alpha = 0.35; root.addChild(rim)
             flash(on: root, color: UIColor(hex: "c6f5ff"), diameter: 90, duration: 0.24, reduced: reduced)
             root.run(.sequence([.fadeOut(withDuration: 0.35), .removeFromParent()]))
-        case "boomerangTurn", "boomerangCatch":
+        case "boomerangLaunch", "boomerangTurn", "boomerangCatch":
             ring(on: root, color: color, radius: event.kind == "boomerangTurn" ? 38 : 26, reduced: reduced)
             burst(on: root, color: color, count: reduced ? 2 : 8, speed: 75, duration: 0.25)
         case "burnLaunch":

@@ -1,0 +1,9 @@
+0.3.8 (1) — Más velocidad, puntos corregidos y bumerán con carga
+
+Velocidad máxima normal del protagonista: 600, un 28 % más. Frenado algo más rápido al dejar la inclinación. El impulso de fuego conserva 1050.
+Todos los poderes dan 10 puntos al recogerlos; fuego deja de regalar 2000. Cada baja da 10 y los combos mantienen su bonus. El récord de estas reglas empieza de cero; el anterior se conserva aparte.
+Bumerán: carga visible de 0,5 segundos en la punta, con movimiento libre. Sale desde tu posición y dirección al terminar. La carga no protege ni mata. Máximo tres entre cargando y volando; pausa y Reducir movimiento respetados.
+Agujero negro y fuego bajan del 7 % al 5 % cada uno. Bomba, onda e hielo 19 % cada uno; misiles 12 %, rayos 7 %, protección y bumerán 5 %, pinchos 4 %.
+
+Se conserva la curva difícil por tiempo: más densidad, formaciones más frecuentes y enemigos nuevos más rápidos. No depende de la puntuación.
+Probar velocidad, frenado, esquivas precisas, carga y orientación del bumerán, puntuación y explosiones encadenadas. Pendiente ensayo físico en iPhone.

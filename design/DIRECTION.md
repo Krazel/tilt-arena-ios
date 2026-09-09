@@ -179,3 +179,28 @@ animada que usa producción. Las escenas de muerte e hielo conservan sus efectos
 
 La revisión de balance se documenta en BALANCE.md con datos del motor. El encargo
 pide explicación, no rediseñar la progresión: se conservan oleadas y puntuación.
+
+## Puntos, carga y velocidad para 0.3.8 — 2026-09-09
+
+El usuario ahora encarga corregir puntos, conservar un juego difícil, carga del
+bumerán de aproximadamente medio segundo, bastante más velocidad del jugador y
+menor aparición de gravedad y fuego propulsor. Se conservan director, velocidades
+de enemigos, colisiones, combos y velocidad de impulso de fuego.
+
+Cada recogida da 10 puntos, incluida fuego (antes 2.000). Bajas 10 y bonus de combo
+6 × bajas². Récord de las reglas nuevas en classic.scoring.v2.best; el anterior
+classic.v02.best se conserva, sin convertir puntos incompatibles ni borrarlo.
+Velocidad normal 470 → 600 (+27,7 %). Respuesta al inclinar 22; frenado sin entrada
+24 para conservar parada rápida. Impulso de fuego 1050, control y hitbox conservados.
+
+Bumerán: espera 0,5 s sin proteger, inmovilizar ni hacer daño. Cuchillas doradas
+crecen y giran en la punta, con arco de progreso; Reducir movimiento evita giro.
+Al terminar sale de la punta actual en el rumbo actual. Retorno, velocidades,
+duración de vuelo de 3 s y máximo de tres conservados; el límite cuenta también
+las cargas pendientes y reemplaza el más antiguo. Recogidas adicionales no
+reinician las otras cargas. La pausa congela progreso y un fin de partida no lanza.
+
+Reparto: bomba/onda/hielo 19 % cada uno, misiles 12 %, rayos 7 %, fuego/vórtice/
+protección/bumerán 5 % cada uno, pinchos 4 %. Son pesos aleatorios sin cuotas.
+La curva por tiempo permanece agresiva; mayor movilidad y menor fuego/vórtice
+cambian la sensación, pendiente de partidas físicas para ajustar con datos.

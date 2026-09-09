@@ -16,6 +16,7 @@ final class ClassicScene: SKScene {
     private var textureAnchors: [String: CGPoint] = [:]
     private let fireCharge = ClassicFireCharge()
     private let waveCharge = ClassicWaveCharge()
+    private let boomerangCharge = ClassicBoomerangCharge()
     private let arrow = SKNode()
     private var bubble = SKShapeNode()
     private let spikes = ClassicSpikes()
@@ -45,6 +46,7 @@ final class ClassicScene: SKScene {
     private let spikesWarningPreview = ProcessInfo.processInfo.arguments.contains("--spikes-warning-qa")
     private let newPowersPreview = ProcessInfo.processInfo.arguments.contains("--new-powers-qa")
     private let returningPreview = ProcessInfo.processInfo.arguments.contains("--returning-qa")
+    private let boomerangChargePreview = ProcessInfo.processInfo.arguments.contains("--boomerang-charge-qa")
     private let electricityPreview = ProcessInfo.processInfo.arguments.contains("--electricity-qa")
     private let explosionPreview = ProcessInfo.processInfo.arguments.contains("--explosion-vfx-qa")
     private let explosionTailPreview = ProcessInfo.processInfo.arguments.contains("--explosion-tail-qa")
@@ -172,7 +174,7 @@ final class ClassicScene: SKScene {
                 #if DEBUG
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
-                if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, returning: returningPreview, electricity: electricityPreview) }
+                if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, returning: returningPreview, electricity: electricityPreview, charging: boomerangChargePreview) }
                 if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
@@ -292,6 +294,7 @@ final class ClassicScene: SKScene {
     private func drawPlayer() {
         fireCharge.zPosition = -0.1; arrow.addChild(fireCharge)
         waveCharge.zPosition = 0.1; arrow.addChild(waveCharge)
+        boomerangCharge.zPosition = 0.2; arrow.addChild(boomerangCharge)
         arrow.addChild(ClassicArt.node(style:"arrow"));arrow.zPosition=4
         arrow.position=CGPoint(x:480,y:320);world.addChild(arrow)
         bubble = SKShapeNode(circleOfRadius:32);bubble.strokeColor=UIColor(hex:"7bde83")
@@ -380,6 +383,7 @@ final class ClassicScene: SKScene {
         bubble.glowWidth = reduceEffects ? 0 : 2
         fireCharge.update(progress: frame.player.fireChargeProgress, active: frame.player.fireChargeUntil > frame.time, reduced: reduceEffects)
         waveCharge.update(progress: frame.player.waveChargeProgress, active: frame.player.waveCharging, reduced: reduceEffects)
+        boomerangCharge.update(progress: frame.player.boomerangChargeProgress, active: frame.player.boomerangCharging, reduced: reduceEffects)
         scoreLabel.text="\(frame.score.formatted())"
         comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : "ENLAZA LAS ARMAS"
         comboBar.xScale=frame.comboRemaining;bestLabel.text="RÉCORD  \(max(session?.best ?? 0,frame.score).formatted())"

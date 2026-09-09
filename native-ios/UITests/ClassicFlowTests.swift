@@ -16,6 +16,7 @@ final class ClassicFlowTests: XCTestCase {
     func testNewPowersOutboundReturnAndElectricRange() {
         let app = XCUIApplication()
         for (name, flags) in [
+            ("18-boomerang-charging", ["--boomerang-charge-qa"]),
             ("13-boomerang-outbound", [String]()),
             ("14-boomerang-return", ["--returning-qa"]),
             ("15-electricity-range", ["--electricity-qa"])

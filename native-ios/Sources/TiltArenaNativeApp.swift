@@ -8,6 +8,17 @@ struct TiltArenaNativeApp: App {
     }
 }
 
+enum ClassicScoreRecord {
+    // Preserve the old fire-inflated record under its original key.
+    static let key = "classic.scoring.v2.best"
+    static func read(defaults: UserDefaults = .standard) -> Int { defaults.integer(forKey: key) }
+    static func save(_ score: Int, defaults: UserDefaults = .standard) -> Int {
+        let best = max(read(defaults: defaults), score)
+        defaults.set(best, forKey: key)
+        return best
+    }
+}
+
 final class GameSession: ObservableObject {
     enum Phase { case menu, calibrating, running, paused, gameOver, failed }
     @Published var phase: Phase = .menu
@@ -15,7 +26,7 @@ final class GameSession: ObservableObject {
     @Published var resultScore = 0
     @Published var resultCombo = 0
     @Published var resultTime = 0
-    @Published var best = UserDefaults.standard.integer(forKey: "classic.v02.best")
+    @Published var best = ClassicScoreRecord.read()
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
     @Published var hasCustom = UserDefaults.standard.object(forKey: "classic.neutralY") != nil
@@ -52,8 +63,7 @@ final class GameSession: ObservableObject {
     }
     func finish(_ frame: ClassicFrame) {
         resultScore = frame.score; resultCombo = frame.bestCombo; resultTime = Int(frame.time)
-        best = max(best, frame.score)
-        UserDefaults.standard.set(best, forKey: "classic.v02.best")
+        best = ClassicScoreRecord.save(frame.score)
         phase = .gameOver
     }
 }

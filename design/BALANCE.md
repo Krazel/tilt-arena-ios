@@ -1,8 +1,8 @@
-# Balance medido — candidata 0.3.7
+# Balance medido — candidata 0.3.8
 
 Inspección del motor de producción y medición reproducible del 9 de septiembre
-de 2026: `verification/balance-v037.json`. Esta versión cambia presentación y
-retira el señuelo; conserva la progresión, los alcances de daño y la puntuación.
+de 2026: `verification/balance-v038.json`. Esta versión corrige la puntuación,
+aumenta la movilidad y retrasa el bumerán. Conserva la progresión difícil.
 
 ## Dificultad por tiempo
 
@@ -44,21 +44,22 @@ inmediatamente; por ello la cadencia efectiva puede superar la programada.
 
 | Poder | Probabilidad por aparición aleatoria |
 |---|---:|
-| Bomba | 18 % |
-| Onda | 18 % |
-| Hielo | 17 % |
+| Bomba | 19 % |
+| Onda | 19 % |
+| Hielo | 19 % |
 | Misiles | 12 % |
-| Fuego | 7 % |
-| Agujero negro | 7 % |
+| Fuego | 5 % |
+| Agujero negro | 5 % |
 | Electricidad | 7 % |
 | Protección | 5 % |
 | Bumerán | 5 % |
 | Pinchos | 4 % |
 
-El 5 % retirado del señuelo se reparte entre bomba, onda e hielo. En una muestra
-determinista de 20.000 apariciones del motor, los pinchos salieron el 3,91 % y
-la protección el 5,045 %. Son probabilidades, sin garantía de aparición cada
-25 o 20 recogidas. El jugador alcanza 470 unidades/s; su colisión con un enemigo
+Fuego y gravedad bajan de 7 % a 5 %: aproximadamente un 29 % menos de frecuencia
+esperada. Los cuatro puntos se reparten entre bomba (+1), onda (+1) e hielo (+2).
+En 20.000 apariciones del motor, fuego salió 5,24 %, gravedad 4,9 %, pinchos
+4,015 % y protección 4,91 %. Son probabilidades, sin garantía de aparición cada
+25 o 20 recogidas. El jugador alcanza 600 unidades/s (+27,7 %); su colisión con un enemigo
 normal suma radios 8 + 10. Un contacto mortal termina la partida salvo protección.
 Los pinchos mantienen alcance físico 35; el tamaño visual pasa a 48.
 
@@ -66,13 +67,21 @@ Los pinchos mantienen alcance físico 35; el tamaño visual pasa a 48.
 
 Cada baja da 10 puntos. Las bajas encadenadas a menos de 2,5 segundos acumulan
 un bonus de `6 × bajas²`, liquidado al terminar el combo o morir: 10 bajas dan
-600 extra; 25, 3.750 extra. Recoger bomba da 3 puntos, onda 5, electricidad 6
-y la mayoría de los demás poderes 10. **Recoger fuego da 2.000 puntos**:
-es una descompensación importante conservada para no alterar puntuación en un
-encargo de explicación. La puntuación no incrementa la dificultad.
+600 extra; 25, 3.750 extra. Todos los poderes dan **10 puntos al recogerlos**,
+incluido fuego (antes 2.000). Diez bajas en un combo, tras una recogida, suman
+710 puntos: 10 + 100 + 600. El récord nuevo usa estas reglas y el anterior queda
+conservado bajo su clave histórica, sin mezclar puntuaciones incompatibles.
+La puntuación no incrementa la dificultad.
+
+El bumerán carga 0,5 s sin inmovilizar ni proteger; sale desde la punta y rumbo
+actuales, después conserva su vuelo y retorno. El máximo de tres incluye cargas.
+La mayor velocidad normal conserva frenado rápido (coeficiente 24 en neutral,
+respuesta al inclinar 22). El fuego impulsor conserva velocidad 1.050.
 
 La curva actual es agresiva por densidad, con oferta programada de poderes
 constante y dependencia del azar y la ruta de recogida. No está demostrado que
 sea justa o esté bien equilibrada. Las pruebas verifican reglas, rangos y
 temporizadores; faltan partidas físicas y datos de supervivencia por minuto
-para ajustar la curva con criterio. Este informe no sustituye esas partidas.
+para ajustar la curva con criterio. El usuario pide conservar el juego difícil;
+no se suavizan oleadas ni velocidades enemigas. La movilidad adicional puede
+facilitar esquivas y exige medir su efecto real. Este informe no sustituye esas partidas.

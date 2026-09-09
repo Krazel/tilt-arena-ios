@@ -3,7 +3,16 @@
 Actualizado 2026-09-09. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Entrega actual: 0.3.7 (1)
+## Candidata en verificación: 0.3.8 (1)
+
+Recogidas uniformes de 10 puntos y récord nuevo, conservando el anterior.
+Bumerán carga 0,5 s con animación en la punta, movimiento libre y rumbo al soltar.
+Velocidad normal 600 (+27,7 %), frenado neutral 24. Fuego/vórtice 5 % cada uno;
+bomba/onda/hielo 19 %. Curva difícil y velocidad de enemigos conservadas.
+54 pruebas Node y sintaxis de 15 Swift pasan. Pendiente QA nativa, capturas,
+firma y entrega autorizada. Activa 0.3.7 hasta verificar la nueva por API.
+
+## Entrega anterior: 0.3.7 (1)
 
 Señuelo retirado. Pinchos un 12 % mayores visualmente, giro un 75 % más rápido,
 aviso ámbar de 1,5 s con dientes pulsantes y arco de cuenta atrás. Nueva explosión

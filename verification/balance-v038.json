@@ -1,0 +1,101 @@
+{
+  "checkedAt": "2026-09-09T11:02:29.954Z",
+  "version": "0.3.8",
+  "rows": [
+    {
+      "seconds": 0,
+      "normalBatch": 2,
+      "normalInterval": 1.6,
+      "intendedNormalEnemiesPerSecond": 1.25,
+      "newEnemySpeed": 49,
+      "formationInterval": 12
+    },
+    {
+      "seconds": 60,
+      "normalBatch": 7,
+      "normalInterval": 1.240000000000002,
+      "intendedNormalEnemiesPerSecond": 5.645161290322571,
+      "newEnemySpeed": 62.8,
+      "formationInterval": 10.5
+    },
+    {
+      "seconds": 120,
+      "normalBatch": 12,
+      "normalInterval": 0.8799999999999955,
+      "intendedNormalEnemiesPerSecond": 13.636363636363706,
+      "newEnemySpeed": 76.6,
+      "formationInterval": 9
+    },
+    {
+      "seconds": 180,
+      "normalBatch": 14,
+      "normalInterval": 0.5200000000000102,
+      "intendedNormalEnemiesPerSecond": 26.923076923076394,
+      "newEnemySpeed": 90.4,
+      "formationInterval": 7.5
+    },
+    {
+      "seconds": 240,
+      "normalBatch": 14,
+      "normalInterval": 0.47999999999998977,
+      "intendedNormalEnemiesPerSecond": 29.16666666666729,
+      "newEnemySpeed": 104.2,
+      "formationInterval": 6
+    },
+    {
+      "seconds": 300,
+      "normalBatch": 14,
+      "normalInterval": 0.4800000000000182,
+      "intendedNormalEnemiesPerSecond": 29.166666666665563,
+      "newEnemySpeed": 109,
+      "formationInterval": 5
+    }
+  ],
+  "formations": {
+    "line": 19,
+    "arrow": 13,
+    "ring": 20
+  },
+  "pickupScores": {
+    "nuke": 10,
+    "wave": 10,
+    "missiles": 10,
+    "frost": 10,
+    "bubble": 10,
+    "spikes": 10,
+    "vortex": 10,
+    "lightning": 10,
+    "burn": 10,
+    "boomerang": 10
+  },
+  "sampleSize": 20000,
+  "powerCounts": {
+    "nuke": 3744,
+    "wave": 3845,
+    "missiles": 2367,
+    "frost": 3799,
+    "bubble": 982,
+    "spikes": 803,
+    "vortex": 980,
+    "lightning": 1431,
+    "burn": 1048,
+    "boomerang": 1001
+  },
+  "observedPercent": {
+    "nuke": 18.72,
+    "wave": 19.225,
+    "missiles": 11.835,
+    "frost": 18.995,
+    "bubble": 4.91,
+    "spikes": 4.015,
+    "vortex": 4.9,
+    "lightning": 7.155,
+    "burn": 5.24,
+    "boomerang": 5.005
+  },
+  "maxActiveEnemies": 550,
+  "maxPickups": 5,
+  "playerSpeed": 600,
+  "playerContactRadius": 18,
+  "caveat": "Director probes with free capacity and valid border positions. Intended spawn pressure, not actual concurrent enemies, human survival, physical performance or a claim of balanced difficulty."
+}
