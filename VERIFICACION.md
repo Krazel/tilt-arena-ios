@@ -1,4 +1,39 @@
-# Verificación — 0.3.7 (1)
+# Verificación — 0.3.8 (1)
+
+## Entrega actual: 0.3.8 (1)
+
+Recogidas uniformes de 10 puntos; bajas 10 y bonus de combo 6 × bajas². Récord
+nuevo con el anterior conservado. Bumerán con carga visual de 0,5 s en la punta,
+movimiento libre y rumbo al terminar; máximo tres entre cargando y volando.
+Velocidad normal 600 (+27,7 %), frenado neutral 24, impulso de fuego 1050. Fuego
+y vórtice 5 % cada uno; bomba/onda/hielo 19 %. Curva difícil de enemigos conservada.
+
+79 pruebas aprobadas: 54 Node, 16 XCTest y 9 XCUITest; sintaxis de 15 Swift correcta.
+QA 34343923896, Xcode 26.3 (17C529), SDK iOS Simulator 26.2.
+Capturas de carga, salida y regreso de bumerán revisadas. Fuente pública
+ad8f3aa75c6c874583e165e80543d51d3dc9a724, canónico 74cb58e.
+Firma y subida run 34344923067; Apple build ae14e9eb-f31b-4f14-8be7-a66e3fea3433,
+VALID e IN_BETA_TESTING. Grupo interno solo del titular y notas es-ES releídas por
+API. IPA Release ARM64, SDK iOS 26.2, 4768130 bytes; CRC, firma, perfil y
+motor/audio comprobados. Archivo artifacts/TiltArena-0.3.8-build1-TestFlight.ipa.
+SHA-256: 3c0ed4b701759869a00f95b2d1ee3893677f64d1f44958a06f24a20d4512bd4f.
+Evidencia native-v038.json, simulator-v038.json, ipa-v038-testflight-build1.json,
+testflight-v038.json, balance-v038.json y capturas native-v038/.
+Prueba física pendiente. App Store 1.0 PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
+
+Pruebas nuevas: puntuación uniforme en diez poderes; liquidación única del combo;
+carga exacta y rumbo/posición actuales; sin daño/protección durante carga; pausa,
+muerte y límite conjunto de cargas/vuelos. Equivalencia 30/60/120 Hz, velocidad
+600 en diagonal y ejes, parada rápida, impulso de fuego conservado. Director
+y velocidades enemigas sin cambios; muestra de 20.000 apariciones.
+XCTest comprueba carga nativa y Reducir movimiento, y conserva el récord anterior
+al guardar/reabrir el nuevo. Las pruebas no acreditan sensación física ni balance
+definitivo de dificultad.
+
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34343923896
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34344923067
+
+# Historial de verificación — 0.3.7 (1)
 
 ## Entrega actual: 0.3.7 (1)
 

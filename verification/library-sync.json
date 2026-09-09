@@ -1,12 +1,12 @@
 {
   "id": "PR-031",
-  "revision": 30,
-  "updatedAt": "2026-09-09T10:49:29.200Z",
+  "revision": 33,
+  "updatedAt": "2026-09-09T11:25:02.288Z",
   "verifiedBy": [
     "Authorized library GET after revision-checked PUT",
     "Apple App Store Connect API"
   ],
-  "version": "0.3.7 (candidata TestFlight interno)",
+  "version": "0.3.8 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
     "testflight": "Interno",

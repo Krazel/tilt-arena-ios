@@ -3,14 +3,26 @@
 Actualizado 2026-09-09. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Candidata en verificación: 0.3.8 (1)
+## Entrega actual: 0.3.8 (1)
 
-Recogidas uniformes de 10 puntos y récord nuevo, conservando el anterior.
-Bumerán carga 0,5 s con animación en la punta, movimiento libre y rumbo al soltar.
-Velocidad normal 600 (+27,7 %), frenado neutral 24. Fuego/vórtice 5 % cada uno;
-bomba/onda/hielo 19 %. Curva difícil y velocidad de enemigos conservadas.
-54 pruebas Node y sintaxis de 15 Swift pasan. Pendiente QA nativa, capturas,
-firma y entrega autorizada. Activa 0.3.7 hasta verificar la nueva por API.
+Recogidas uniformes de 10 puntos; bajas 10 y bonus de combo 6 × bajas². Récord
+nuevo con el anterior conservado. Bumerán con carga visual de 0,5 s en la punta,
+movimiento libre y rumbo al terminar; máximo tres entre cargando y volando.
+Velocidad normal 600 (+27,7 %), frenado neutral 24, impulso de fuego 1050. Fuego
+y vórtice 5 % cada uno; bomba/onda/hielo 19 %. Curva difícil de enemigos conservada.
+
+79 pruebas aprobadas: 54 Node, 16 XCTest y 9 XCUITest; sintaxis de 15 Swift correcta.
+QA 34343923896, Xcode 26.3 (17C529), SDK iOS Simulator 26.2.
+Capturas de carga, salida y regreso de bumerán revisadas. Fuente pública
+ad8f3aa75c6c874583e165e80543d51d3dc9a724, canónico 74cb58e.
+Firma y subida run 34344923067; Apple build ae14e9eb-f31b-4f14-8be7-a66e3fea3433,
+VALID e IN_BETA_TESTING. Grupo interno solo del titular y notas es-ES releídas por
+API. IPA Release ARM64, SDK iOS 26.2, 4768130 bytes; CRC, firma, perfil y
+motor/audio comprobados. Archivo artifacts/TiltArena-0.3.8-build1-TestFlight.ipa.
+SHA-256: 3c0ed4b701759869a00f95b2d1ee3893677f64d1f44958a06f24a20d4512bd4f.
+Evidencia native-v038.json, simulator-v038.json, ipa-v038-testflight-build1.json,
+testflight-v038.json, balance-v038.json y capturas native-v038/.
+Prueba física pendiente. App Store 1.0 PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
 
 ## Entrega anterior: 0.3.7 (1)
 
@@ -190,10 +202,10 @@ los bloqueos anteriores quedaron resueltos por autorización expresa. Envío pú
 y QA nativa de 0.3.3 completados, así como firma, subida y activación en TestFlight.
 Autorización permanente de próximas subidas guardada en AGENTS.md. App Store Connect por API.
 
-PR-031 sincronizada y verificada por GET, revisión 30, 2026-09-09T10:49:29.200Z.
-La ficha registra 0.3.7 (1) activa en TestFlight interno, cambios visuales, retirada
-del señuelo, 71 pruebas, capturas e IPA verificadas y balance pendiente de ensayo físico.
-Autorizaciones permanentes en AGENTS.md.
+PR-031 sincronizada y verificada por GET, revisión 33, 2026-09-09T11:25:02.288Z.
+La ficha registra 0.3.8 (1) activa en TestFlight interno, puntos corregidos, bumerán
+con carga, velocidad mayor y rareza ajustada; 79 pruebas, capturas e IPA verificadas.
+Prueba física pendiente; autorizaciones permanentes en AGENTS.md.
 Notas, releases y valores de tracking conservados. TestFlight Interno, ficha
 Creada en App Store Connect, anuncios No. Evidencia verification/library-sync.json.
 Historial: verification/ESTADO-v031.md y verification/VERIFICACION-v031.md.

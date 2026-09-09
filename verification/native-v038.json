@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-09-09",
+  "version": "0.3.8",
+  "build": "1",
+  "sourceCommit": "ad8f3aa75c6c874583e165e80543d51d3dc9a724",
+  "canonicalCodeCommit": "74cb58e",
+  "run": "34343923896",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34343923896",
+  "xcode": "26.3 (17C529)",
+  "sdk": "iphonesimulator26.2",
+  "nodeTests": 54,
+  "unitTests": 16,
+  "uiTests": 9,
+  "failures": 0,
+  "screenshots": "native-v038/",
+  "reviewed": ["18-boomerang-charging.png", "13-boomerang-outbound.png", "14-boomerang-return.png"],
+  "findings": [
+    "At half charge, a small golden two-blade shape and half progress arc sit in front of the cream arrow without hiding its silhouette",
+    "At release the charge indicator is absent and the full-sized golden projectile is separate from the moving player",
+    "The returning boomerang remains legible on its path toward the moved player",
+    "All ten pickup glyphs fit in the native landscape arena; the fixture score is ten for a single boomerang pickup"
+  ],
+  "engineAndAudioMatchCanonicalSource": true,
+  "physicalDeviceTest": "Pending",
+  "priorAttempt": {
+    "run": "34343555443",
+    "issue": "Incorrect indentation of MARKETING_VERSION prevented XcodeGen parsing before compilation",
+    "resolution": "Restored setting under target base; successful full native QA at the source commit above"
+  },
+  "purpose": "Native simulator QA before signed internal TestFlight delivery; physical handling and difficulty assessment remain pending"
+}

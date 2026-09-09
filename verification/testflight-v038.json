@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-09T11:24:38.329Z",
+  "appId": "6809193185",
+  "version": "0.3.8",
+  "build": "1",
+  "buildId": "ae14e9eb-f31b-4f14-8be7-a66e3fea3433",
+  "processingState": "VALID",
+  "expires": "2026-12-08T03:22:35-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "name": "Pruebas internas",
+    "isInternalGroup": true,
+    "publicLinkEnabled": null,
+    "testerCount": 1,
+    "onlyOwner": true
+  },
+  "assigned": true,
+  "notesVerified": true,
+  "notes": "0.3.8 (1) — Más velocidad, puntos corregidos y bumerán con carga\n\nVelocidad máxima normal del protagonista: 600, un 28 % más. Frenado algo más rápido al dejar la inclinación. El impulso de fuego conserva 1050.\nTodos los poderes dan 10 puntos al recogerlos; fuego deja de regalar 2000. Cada baja da 10 y los combos mantienen su bonus. El récord de estas reglas empieza de cero; el anterior se conserva aparte.\nBumerán: carga visible de 0,5 segundos en la punta, con movimiento libre. Sale desde tu posición y dirección al terminar. La carga no protege ni mata. Máximo tres entre cargando y volando; pausa y Reducir movimiento respetados.\nAgujero negro y fuego bajan del 7 % al 5 % cada uno. Bomba, onda e hielo 19 % cada uno; misiles 12 %, rayos 7 %, protección y bumerán 5 %, pinchos 4 %.\n\nSe conserva la curva difícil por tiempo: más densidad, formaciones más frecuentes y enemigos nuevos más rápidos. No depende de la puntuación.\nProbar velocidad, frenado, esquivas precisas, carga y orientación del bumerán, puntuación y explosiones encadenadas. Pendiente ensayo físico en iPhone.",
+  "appStoreVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API"
+}

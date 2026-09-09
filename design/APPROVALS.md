@@ -99,3 +99,13 @@ Capturas nativas revisadas: native-v037/11-spikes-over-shield.png,
 17-explosion-dissipation.png. Hallazgos concretos y hashes en verification/.
 QA 34340648343, 71 pruebas; entrega interna 34341910032, build d68c882f-3f34-4f36-9cf2-fe7882611f07.
 Capturas de fases reales del renderer, no una prueba física ni un vídeo.
+
+## Carga de bumerán encargada para 0.3.8 — 2026-09-09
+
+El usuario pide espera de medio segundo. Se reutilizan las cuchillas doradas
+aprobadas: crecen y giran en la punta con un arco de progreso. Movimiento libre
+y disparo en el rumbo final. Reducir movimiento evita giro; pausa congela el reloj.
+Capturas del renderer nativo revisadas: verification/native-v038/18-boomerang-charging.png,
+13-boomerang-outbound.png y 14-boomerang-return.png. Hallazgos y hashes en verification/.
+QA 34343923896, 79 pruebas. Entrega interna 34344923067, build ae14e9eb-f31b-4f14-8be7-a66e3fea3433.
+Capturas de simulador; ensayo físico de lectura, velocidad y sensor pendiente.
