@@ -186,3 +186,9 @@ proceden del encargo expreso del usuario. No se atribuyen a reglas verificadas d
 original. La nueva envolvente de colisión necesita evaluación en iPhone antes de
 concluir que los huecos y la presión sean adecuados. Los modos fácil/difícil y el
 rediseño de progresión siguen aplazados.
+
+El 2026-09-09 el usuario encarga además poderes creativos nuevos. Bumerán y señuelo
+son diseños propios para esta candidata, no mecánicas atribuidas al original.
+El aumento de fuerza del vórtice solo al jugador, alcance inicial eléctrico y
+probabilidades ajustadas proceden de sus pruebas y comentarios. DIRECTION.md
+conserva valores y reglas; no se afirma equivalencia de balance con Tilt to Live.

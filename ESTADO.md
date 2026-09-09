@@ -1,9 +1,18 @@
 # Tilt Arena — estado de producto
 
-Actualizado 2026-09-08. Krazel Games. Registro PR-031.
+Actualizado 2026-09-09. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Entrega actual: 0.3.5 (1)
+## Candidata en preparación: 0.3.6 (1)
+
+Más fuerza de vórtice solo sobre el jugador (+66,7 %), electricidad inicial 220,
+pinchos 4 %, protección 5 %. Nuevos bumerán de ida/vuelta y señuelo de 4 segundos,
+con arte nativo sobre la base de orbes aprobada. DIRECTION.md y notas v036 detallan
+reglas y probabilidades. 51 pruebas Node y sintaxis de 13 Swift pasan.
+Pendiente QA nativa, revisión de capturas, firma, subida y asignación interna.
+La entrega activa sigue siendo 0.3.5 hasta verificar la nueva por API.
+
+## Entrega anterior: 0.3.5 (1)
 
 Alcance de atracción del protagonista 300 conservando vórtice de radio 140.
 Pinchos hacen huir a puntos activos, giran sobre el escudo verde y parpadean

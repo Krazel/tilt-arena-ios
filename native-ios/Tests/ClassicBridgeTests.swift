@@ -2,6 +2,30 @@ import XCTest
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    func testNewPowersAndLongRangeElectricityDecodeAndHaveDistinctNativeArt() throws {
+        let bridge = try ClassicBridge()
+        let out = try bridge.newPowersFrame(left: 100, right: 1300)
+        let back = try bridge.newPowersFrame(left: 100, right: 1300, returning: true)
+        XCTAssertEqual(out.pickups.count, 11)
+        XCTAssertTrue(out.pickups.contains { $0.power == "boomerang" })
+        XCTAssertTrue(out.pickups.contains { $0.power == "decoy" })
+        XCTAssertEqual(out.fields.first?.kind, "decoy")
+        XCTAssertEqual(out.fields.first?.radius, 260)
+        XCTAssertEqual(out.projectiles.first?.kind, "boomerang")
+        XCTAssertEqual(out.projectiles.first?.angle, 0)
+        XCTAssertLessThan(back.projectiles.first?.angle ?? 0, -2)
+        XCTAssertLessThan(back.player.y, out.player.y)
+        let electric = try bridge.newPowersFrame(left: 100, right: 1300, electricity: true)
+        XCTAssertEqual(electric.kills, 4)
+        XCTAssertEqual(electric.events.first { $0.kind == "electricPulse" }?.radius, 220)
+        let bolt = try XCTUnwrap(electric.events.first { $0.kind == "lightning" })
+        XCTAssertEqual((bolt.toX ?? 0) - (bolt.x ?? 0), 200, accuracy: 0.0001)
+        for style in ["boomerang", "decoy", "boomerangShot", "decoyField"] {
+            let art = ClassicArt.node(style: style)
+            XCTAssertGreaterThan(art.children.count, 2)
+            XCTAssertGreaterThan(art.calculateAccumulatedFrame().width, 35)
+        }
+    }
     func testSpikesRemainReadableWithBubbleAndAnimateFromSimulationTime() throws {
         let bridge = try ClassicBridge()
         let active = try bridge.spikesVFXFrame(left: 100, right: 1300, warning: false)

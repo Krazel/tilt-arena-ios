@@ -1,0 +1,13 @@
+0.3.6 (1) — Bumerán, señuelo y poderes ajustados
+
+El agujero negro tira un 67 % más fuerte de tu flecha. Mantiene su tamaño pequeño y el alcance de atracción lejano; el arrastre de enemigos sigue igual.
+La electricidad inicia la descarga desde 220 unidades, antes 90, y luego salta entre enemigos próximos.
+Pinchos 4 % y protección 5 %: raros pero más habituales que antes.
+
+Nuevos poderes:
+Bumerán: cuchillas doradas que atraviesan enemigos, giran y vuelven hacia tu posición actual. Puedes moverte para dirigir su regreso. Si llegan a una pared vuelven antes.
+Señuelo: deja una copia luminosa de tu flecha durante cuatro segundos. Distrae a enemigos cercanos mientras te alejas. No te protege del contacto.
+
+Reparto por aparición: bomba/onda/hielo 16 % cada uno; misiles 12 %; fuego/rayos/agujero negro 7 % cada uno; protección/bumerán/señuelo 5 % cada uno; pinchos 4 %. No son cuotas garantizadas. Se conservan los dos poderes iniciales.
+
+Probar en iPhone: escape del agujero negro, primer salto eléctrico, recorrido de ida y vuelta del bumerán, alejarse del señuelo, pausa y caducidad. Sensor y rendimiento físico pendientes de esta prueba.

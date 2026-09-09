@@ -126,3 +126,35 @@ el reparto por grupos y pidió pinchos como el menos probable y protección just
 antes. Porcentajes elegidos como ajuste inicial, sin cuotas garantizadas.
 Los dos orbes de apertura siguen siendo bomba y misiles; el muestreo ponderado
 se aplica a nuevas apariciones y reposición inmediata del último orbe.
+
+## Nuevos poderes y ajuste para 0.3.6 — 2026-09-09
+
+El usuario encarga más atracción solo al protagonista, electricidad con mejor
+alcance inicial, pinchos raros sin llegar al 1 % y algunos poderes nuevos creativos.
+Fuerza del vórtice al jugador: 300 frente a 180 (+66,7 %); alcance 300, radio visual
+y de enemigos/orbes 140. No se toca su coeficiente de arrastre de puntos/orbes.
+El primer salto eléctrico alcanza 220 frente a 90; los siguientes conservan 90.
+Un aro breve y tenue marca el alcance inicial, con rayos segmentados existentes.
+
+Reparto: bomba/onda/hielo 16 % cada uno, misiles 12 %, fuego/rayos/vórtice 7 % cada
+uno, protección/bumerán/señuelo 5 % cada uno, pinchos 4 %. Los pinchos siguen
+siendo el menos probable, en promedio una vez cada 25 apariciones. Ni cuotas ni
+garantía por partida. Se conserva apertura y reposición inmediata del último orbe.
+
+Dos poderes originales encargados, sin atribuirlos al Tilt to Live de referencia:
+- Bumerán: dos cuchillas doradas, núcleo crema y estela breve. Avanza 0,55 s a
+  540 unidades/s en el rumbo de recogida; vuelve a la posición actual del jugador
+  a 680 unidades/s. Atraviesa y mata a ida/vuelta, retorna antes al llegar a pared,
+  desaparece al recogerse o tras 3 s. Máximo tres activos; la siguiente recogida
+  sustituye el más antiguo. Destellos distintos de giro y recuperación. Se puede
+  dirigir su regreso moviéndose; no modifica control, protección ni recogidas.
+- Señuelo: copia hueca verde menta de la flecha, doble contorno y arcos de señal.
+  Queda quieta en la posición de activación 4 s. Atrae a puntos a menos de 260,
+  incluidas formaciones, a su velocidad normal; al llegar se quedan en su centro.
+  No mata, protege ni arrastra orbes. Congelados y apariciones siguen sus reglas;
+  pinchos prevalecen y los hacen huir. Al caducar vuelven a perseguir al jugador.
+  Una nueva recogida reemplaza el anterior. Los arcos pulsan y se atenúan al final.
+
+Ambos reutilizan la base de orbe aprobada de ChatGPT Images con glifos nuevos y
+geometría SpriteKit. Reducir movimiento suprime giro/estela del bumerán y pulsación
+del señuelo. Reloj de simulación y pausa conservados; no se introduce otro modo.

@@ -43,6 +43,9 @@ final class ClassicScene: SKScene {
     private let turnFirePreview = ProcessInfo.processInfo.arguments.contains("--turn-fire-qa")
     private let spikesPreview = ProcessInfo.processInfo.arguments.contains("--spikes-vfx-qa")
     private let spikesWarningPreview = ProcessInfo.processInfo.arguments.contains("--spikes-warning-qa")
+    private let newPowersPreview = ProcessInfo.processInfo.arguments.contains("--new-powers-qa")
+    private let returningPreview = ProcessInfo.processInfo.arguments.contains("--returning-qa")
+    private let electricityPreview = ProcessInfo.processInfo.arguments.contains("--electricity-qa")
     private var previewStarted: Double?
     #endif
 
@@ -167,6 +170,7 @@ final class ClassicScene: SKScene {
                 #if DEBUG
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
+                if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, returning: returningPreview, electricity: electricityPreview) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
@@ -200,6 +204,12 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
+        if newPowersPreview {
+            // Rendered once by play(); don't replay transient events each frame.
+            if previewStarted == nil { previewStarted = currentTime }
+            if currentTime - (previewStarted ?? currentTime) >= 0.06 { effects.isPaused = true }
+            return
+        }
         if selectedVFXPreview || spikesPreview, let frame = gameFrame { render(frame); return }
         if visualPreview, let frame = gameFrame {
             render(frame)
@@ -316,6 +326,7 @@ final class ClassicScene: SKScene {
         if let sprite = node as? SKSpriteNode, let anchor = textureAnchors[style] { sprite.anchorPoint = anchor }
         node.name=style;world.addChild(node);objects[key]=node
         if style == "missileShot" { vfx.attachMissileTrail(to: node, reduced: reduceEffects) }
+        if style == "boomerangShot" { vfx.attachBoomerangTrail(to: node, reduced: reduceEffects) }
         return node
     }
     private func render(_ frame: ClassicFrame) {
@@ -335,17 +346,26 @@ final class ClassicScene: SKScene {
         }
         for shot in frame.projectiles {
             let key="p\(shot.id)";alive.insert(key)
-            let node=sprite(key:key,style:shot.kind == "wave" ? "waveShot" : "missileShot")
-            node.position=CGPoint(x:shot.x,y:shot.y);node.zRotation=shot.angle;node.zPosition=3
+            let style = shot.kind == "boomerang" ? "boomerangShot" : (shot.kind == "wave" ? "waveShot" : "missileShot")
+            let node=sprite(key:key,style:style)
+            node.position=CGPoint(x:shot.x,y:shot.y)
+            node.zRotation=shot.kind == "boomerang" && !reduceEffects ? frame.time * 14 : shot.angle
+            node.zPosition=3
         }
         for field in frame.fields {
             let key="f\(field.id)";alive.insert(key)
-            let node=sprite(key:key,style:field.kind == "vortex" ? "vortexField" : "fire")
+            let style = field.kind == "decoy" ? "decoyField" : (field.kind == "vortex" ? "vortexField" : "fire")
+            let node=sprite(key:key,style:style)
             node.position=CGPoint(x:field.x,y:field.y);node.zPosition=1
             node.alpha=min(field.kind == "fire" ? 1 : 0.85,field.remaining)
-            node.zRotation=field.kind == "fire" ? field.angle : (reduceEffects ? 0 : frame.time * -1.7)
+            node.zRotation=field.kind != "vortex" ? field.angle : (reduceEffects ? 0 : frame.time * -1.7)
             if field.kind == "vortex" { node.setScale(field.radius / 200) }
             if field.kind == "fire" { node.yScale = reduceEffects ? 1 : 0.9 + 0.1 * sin(frame.time * 12 + Double(field.id)) }
+            if field.kind == "decoy" {
+                node.zPosition=2
+                node.setScale(reduceEffects ? 1 : 1 + 0.07 * sin(frame.time * 5))
+                node.alpha=min(0.9,field.remaining)
+            }
         }
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
