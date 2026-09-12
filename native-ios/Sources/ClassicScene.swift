@@ -45,7 +45,8 @@ final class ClassicScene: SKScene {
     private let spikesPreview = ProcessInfo.processInfo.arguments.contains("--spikes-vfx-qa")
     private let spikesWarningPreview = ProcessInfo.processInfo.arguments.contains("--spikes-warning-qa")
     private let newPowersPreview = ProcessInfo.processInfo.arguments.contains("--new-powers-qa")
-    private let returningPreview = ProcessInfo.processInfo.arguments.contains("--returning-qa")
+    private let bouncingPreview = ProcessInfo.processInfo.arguments.contains("--bouncing-qa")
+    private let recaughtPreview = ProcessInfo.processInfo.arguments.contains("--recaught-qa")
     private let boomerangChargePreview = ProcessInfo.processInfo.arguments.contains("--boomerang-charge-qa")
     private let electricityPreview = ProcessInfo.processInfo.arguments.contains("--electricity-qa")
     private let explosionPreview = ProcessInfo.processInfo.arguments.contains("--explosion-vfx-qa")
@@ -174,7 +175,7 @@ final class ClassicScene: SKScene {
                 #if DEBUG
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
-                if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, returning: returningPreview, electricity: electricityPreview, charging: boomerangChargePreview) }
+                if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, bouncing: bouncingPreview, electricity: electricityPreview, charging: boomerangChargePreview, recaught: recaughtPreview) }
                 if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif

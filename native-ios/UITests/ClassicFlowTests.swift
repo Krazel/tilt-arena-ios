@@ -13,12 +13,13 @@ final class ClassicFlowTests: XCTestCase {
             app.terminate()
         }
     }
-    func testNewPowersOutboundReturnAndElectricRange() {
+    func testBoomerangChargeBounceRecatchAndElectricRange() {
         let app = XCUIApplication()
         for (name, flags) in [
             ("18-boomerang-charging", ["--boomerang-charge-qa"]),
             ("13-boomerang-outbound", [String]()),
-            ("14-boomerang-return", ["--returning-qa"]),
+            ("14-boomerang-wall-bounce", ["--bouncing-qa"]),
+            ("19-boomerang-recharged", ["--recaught-qa"]),
             ("15-electricity-range", ["--electricity-qa"])
         ] {
             app.launchArguments = ["--ui-testing", "--new-powers-qa"] + flags

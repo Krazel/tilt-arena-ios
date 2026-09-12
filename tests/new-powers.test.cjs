@@ -28,23 +28,19 @@ test('electricity begins farther away but retains chain gaps and harmless telegr
   }
 });
 
-test('boomerang pierces on the outbound and returns to the moved player through new enemies',()=>{
-  const g=fresh();g.player.angle=0;dot(g,610,320);dot(g,680,320);g.activate('boomerang');
-  run(g,0.9);assert.equal(g.kills,2);assert.equal(g.projectiles.length,1);
-  g.player.y=420;run(g,0.15);
-  const shot=g.projectiles[0];assert.equal(shot.returning,true);
-  const target=dot(g,(shot.x+g.player.x)/2,(shot.y+g.player.y)/2);
-  run(g,0.7);assert.equal(target.dead,true);assert.equal(g.kills,3);
-  assert.equal(g.projectiles.length,0);assert.equal(g.state,'running');
+test('boomerang travels much farther without homing or turning on a timer',()=>{
+  const g=fresh();g.resize(0,4000,0,2000);g.player.x=1000;g.player.y=1000;g.player.angle=0;
+  g.activate('boomerang');run(g,0.5);const shot=g.projectiles[0],x=shot.x;
+  g.player.y=1300;run(g,1.5);
+  assert.ok(Math.abs(shot.x-x-960)<1e-7);assert.equal(shot.y,1000);assert.equal(shot.bounces,0);
+  assert.equal(shot.vx,640);assert.equal(shot.vy,0);assert.equal(g.state,'running');
 });
 
-test('boomerangs turn at walls, cap repeated pickups, and cannot persist indefinitely',()=>{
-  const g=fresh();g.player.x=g.bounds.right-24;g.player.angle=0;
-  g.activate('boomerang');run(g,0.6);assert.equal(g.projectiles.length,0);
-  g.player.x=480;
+test('boomerangs cap pending and flying pickups and expire without being recovered',()=>{
+  const g=fresh();g.resize(0,5000,0,5000);g.player.x=1000;g.player.y=1000;g.player.angle=0;
   for(let i=0;i<20;i++)g.activate('boomerang');
   assert.equal(g.boomerangAt.length,3);assert.equal(g.projectiles.length,0);
-  run(g,3.6,{x:0,y:-1});assert.equal(g.projectiles.length,0);assert.equal(g.boomerangAt.length,0);
+  run(g,0.5);g.player.y=2000;run(g,4.6);assert.equal(g.projectiles.length,0);assert.equal(g.boomerangAt.length,0);
   assert.equal(g.state,'running');
 });
 
@@ -54,6 +50,6 @@ test('boomerangs pause exactly and behave consistently at 30/60/120 Hz',()=>{
     g.player.angle=0;g.activate('boomerang');run(g,0.3,undefined,fps);
     g.pause();const snapshot=g.snapshot();run(g,4,{x:1,y:1},fps);
     assert.deepEqual(g.snapshot(),snapshot);g.resume();run(g,0.9,{x:0,y:-0.4},fps);
-    assert.equal(g.projectiles[0].returning,true);return g.snapshot();
+    assert.ok(g.projectiles[0]);assert.equal(g.projectiles[0].bounces,0);return g.snapshot();
   });assert.deepEqual(states[0],states[1]);assert.deepEqual(states[0],states[2]);
 });

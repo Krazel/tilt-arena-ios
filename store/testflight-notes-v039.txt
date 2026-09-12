@@ -1,0 +1,5 @@
+Frenado anterior recuperado, manteniendo la velocidad máxima de 600.
+
+El bumerán llega más lejos y rebota en paredes y enemigos, sin volver automáticamente hacia ti. Mantiene la carga visual de medio segundo. Si lo interceptas, vuelve a cargarse y permite un lanzamiento adicional con el rumbo que tengas al salir. Cada vuelo termina tras seis impactos o 4,5 segundos; máximo tres entre cargas y vuelos.
+
+Probar frenado al dejar de inclinar, rebotes en esquinas y grupos de enemigos, interceptar el bumerán, orientar la segunda carga y pausar durante ella. Las recogidas, puntuación, probabilidades y progresión de enemigos se conservan.

@@ -27,6 +27,7 @@ struct ClassicFrame: Decodable {
         let x, y: Double
         let kind: String
         let angle: Double
+        let bounces, relaunches: Int?
     }
     struct Field: Decodable {
         let id: Int
@@ -100,7 +101,7 @@ final class ClassicBridge {
         guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
         return try decode(value)
     }
-    func newPowersFrame(left: Double, right: Double, returning: Bool = false, electricity: Bool = false, charging: Bool = false) throws -> ClassicFrame {
+    func newPowersFrame(left: Double, right: Double, bouncing: Bool = false, electricity: Bool = false, charging: Bool = false, recaught: Bool = false) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
           g.resize(\(left),\(right),52,592);
@@ -112,8 +113,18 @@ final class ClassicBridge {
             g.activate('boomerang');
             for(let i=0;i<\(charging ? 30 : 60);i++)g.advance(1/120,{x:0,y:0});
             for(let i=0;i<7;i++)g.addEnemy(g.player.x-150+i*48,390,{activeAt:0});
-            for(let i=0;i<\(charging ? 0 : (returning ? 84 : 36));i++)g.advance(1/120,{x:0,y:-0.5});
             g.events=[];
+            if(\(bouncing ? "true" : "false")) {
+              Object.assign(g.projectiles[0],{x:\(right)-24,y:300,vx:640,vy:0,travelled:100});
+              g.advance(1/120,{x:0,y:0});
+            } else if(\(recaught ? "true" : "false")) {
+              Object.assign(g.projectiles[0],{x:g.player.x+20,y:g.player.y,vx:-640,vy:0,travelled:200});
+              g.advance(1/120,{x:0,y:0});
+              for(let i=0;i<30;i++)g.advance(1/120,{x:0,y:0});
+              g.events=[];
+            } else {
+              for(let i=0;i<\(charging ? 0 : 36);i++)g.advance(1/120,{x:0,y:-0.5});g.events=[];
+            }
           }
           ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+60+i*(\(right)-\(left)-120)/(ClassicDiagnostics.POWERS.length-1),515));
           return JSON.stringify(g.snapshot());})()

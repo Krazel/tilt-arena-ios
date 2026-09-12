@@ -47,7 +47,7 @@ test('same input produces same motion at 30/60/120 Hz; speed stays isotropic',()
 test('motion brakes quickly and player stays in bounds',()=>{
   const g=fresh();run(g,4,{x:1,y:1});
   assert.equal(g.player.x,BOUNDS.right-TUNING.playerExtent);assert.equal(g.player.y,BOUNDS.top-TUNING.playerExtent);
-  run(g,0.25);assert.ok(Math.hypot(g.player.vx,g.player.vy)<2);
+  run(g,0.25);assert.ok(Math.abs(Math.hypot(g.player.vx,g.player.vy)-TUNING.speed*Math.exp(-22*0.25))<1e-8);
 });
 test('a red-dot collision ends the run once; no health or revival',()=>{
   const g=fresh();dot(g,480,320);g.advance(1/60);

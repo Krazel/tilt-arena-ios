@@ -9,11 +9,11 @@
   const length = (x, y) => Math.hypot(x, y);
   const distance = (a, b) => length(a.x - b.x, a.y - b.y);
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
-  const TUNING = Object.freeze({step: 1 / 120, speed: 600, response: 22, braking: 24,
+  const TUNING = Object.freeze({step: 1 / 120, speed: 600, response: 22, braking: 22,
     playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 300, vortexRadius: 140, vortexPlayerRadius: 300,
     lightningStartRadius: 220, lightningChainRadius: 90,
-    boomerangCharge: 0.5, boomerangOutTime: 0.55, boomerangOutSpeed: 540, boomerangReturnSpeed: 680, maxBoomerangs: 3,
+    boomerangCharge: 0.5, boomerangSpeed: 640, boomerangLife: 4.5, boomerangBounces: 6, maxBoomerangs: 3,
     fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050, waveCharge: 0.5});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang'];
   const SCORING = Object.freeze({pickup:10,kill:10,comboFactor:6});
@@ -27,6 +27,13 @@
     const d = dx * dx + dy * dy;
     const t = d ? clamp(((c.x - a.x) * dx + (c.y - a.y) * dy) / d, 0, 1) : 0;
     return length(a.x + t * dx - c.x, a.y + t * dy - c.y) <= radius;
+  }
+  function circleHitTime(x,y,vx,vy,cx,cy,radius) {
+    const dx=x-cx,dy=y-cy,c=dx*dx+dy*dy-radius*radius;
+    if(c<=0)return 0;
+    const a=vx*vx+vy*vy,b=dx*vx+dy*vy,disc=b*b-a*c;
+    if(a<1e-12 || b>=0 || disc<0)return Infinity;
+    return Math.max(0,(-b-Math.sqrt(disc))/a);
   }
   class RNG {
     constructor(seed) { this.state = (seed >>> 0) || 1; }
@@ -147,13 +154,14 @@
         const tip={x:clamp(p.x+Math.cos(p.angle)*24,this.bounds.left+22,this.bounds.right-22),
           y:clamp(p.y+Math.sin(p.angle)*24,this.bounds.bottom+22,this.bounds.top-22)};
         this.projectiles.push({id:charge.id,kind:'boomerang',...tip,
-          vx:Math.cos(p.angle)*TUNING.boomerangOutSpeed,vy:Math.sin(p.angle)*TUNING.boomerangOutSpeed,
-          angle:p.angle,radius:22,turnAt:this.time+TUNING.boomerangOutTime,returning:false,until:this.time+3});
+          vx:Math.cos(p.angle)*TUNING.boomerangSpeed,vy:Math.sin(p.angle)*TUNING.boomerangSpeed,
+          angle:p.angle,radius:22,bornAt:this.time,travelled:0,bounces:0,relaunches:charge.relaunches,
+          until:this.time+TUNING.boomerangLife});
         this.event('boomerangLaunch',{...tip,angle:p.angle,color:COLORS.boomerang});
       }
       this.boomerangAt=this.boomerangAt.filter(c=>this.time+1e-9<c.at);
       this.updateFields(dt);
-      this.updateProjectiles(dt);
+      this.updateProjectiles(dt,before);
       for(const e of this.enemies) {
         if(e.dead || this.time<e.activeAt) continue;
         const old = {x:e.x,y:e.y}, frozen = e.frozenUntil>this.time;
@@ -327,7 +335,7 @@
           occupied[0].dead=true;
           this.boomerangAt=this.boomerangAt.filter(c=>c.id!==occupied[0].id);
         }
-        this.boomerangAt.push({id:++this.id,at:this.time+TUNING.boomerangCharge});
+        this.boomerangAt.push({id:++this.id,at:this.time+TUNING.boomerangCharge,relaunches:1});
         break;
       }
       case 'lightning': {
@@ -393,22 +401,58 @@
         }
       }
     }
-    updateProjectiles(dt) {
+    updateBoomerang(m,dt,playerBefore) {
+      const b=this.bounds, start=m.bornAt===this.time?this.player:playerBefore;
+      m.x=clamp(m.x,b.left+22,b.right-22);m.y=clamp(m.y,b.bottom+22,b.top-22);
+      const pvx=(this.player.x-start.x)/dt,pvy=(this.player.y-start.y)/dt;
+      let used=0;
+      // Resolve earliest contacts, including corners and moving-player catches.
+      // The finite bounce budget also bounds work in dense overlapping groups.
+      while(used<dt-1e-10 && !m.dead) {
+        const left=dt-used;
+        const tx=m.vx>0?(b.right-22-m.x)/m.vx:m.vx<0?(b.left+22-m.x)/m.vx:Infinity;
+        const ty=m.vy>0?(b.top-22-m.y)/m.vy:m.vy<0?(b.bottom+22-m.y)/m.vy:Infinity;
+        const wall=Math.max(0,Math.min(tx,ty));
+        let at=left,kind='',enemy=null;
+        if(wall<=at){at=wall;kind='wall';}
+        for(const e of this.enemies)if(!e.dead&&this.time>=e.activeAt) {
+          const hit=circleHitTime(m.x,m.y,m.vx,m.vy,e.x,e.y,m.radius+TUNING.dotRadius);
+          if(hit<at){at=hit;kind='enemy';enemy=e;}
+        }
+        if(m.travelled>=64) {
+          const catchAt=circleHitTime(m.x,m.y,m.vx-pvx,m.vy-pvy,start.x+pvx*used,start.y+pvy*used,18);
+          if(catchAt<=at){at=catchAt;kind='catch';}
+        }
+        m.x+=m.vx*at;m.y+=m.vy*at;used+=at;m.travelled+=TUNING.boomerangSpeed*at;
+        if(!kind)break;
+        if(kind==='catch') {
+          m.dead=true;this.event('boomerangCatch',{x:m.x,y:m.y,color:COLORS.boomerang});
+          // One earned rethrow, not another pickup: no points or endless relay.
+          if(m.relaunches>0)this.boomerangAt.push({id:m.id,at:this.time+TUNING.boomerangCharge,relaunches:0});
+          break;
+        }
+        if(kind==='wall') {
+          if(Math.abs(tx-wall)<1e-8)m.vx=-m.vx;
+          if(Math.abs(ty-wall)<1e-8)m.vy=-m.vy;
+        } else {
+          this.kill(enemy,'dot');
+          const d=distance(m,enemy);
+          let nx=d>1e-8?(m.x-enemy.x)/d:-m.vx/TUNING.boomerangSpeed;
+          let ny=d>1e-8?(m.y-enemy.y)/d:-m.vy/TUNING.boomerangSpeed;
+          if(m.vx*nx+m.vy*ny>=0){nx=-m.vx/TUNING.boomerangSpeed;ny=-m.vy/TUNING.boomerangSpeed;}
+          const dot=m.vx*nx+m.vy*ny;m.vx-=2*dot*nx;m.vy-=2*dot*ny;
+        }
+        m.angle=Math.atan2(m.vy,m.vx);m.bounces++;
+        this.event('boomerangBounce',{x:m.x,y:m.y,color:COLORS.boomerang});
+        if(m.bounces>=TUNING.boomerangBounces)m.dead=true;
+        m.x=clamp(m.x,b.left+22,b.right-22);m.y=clamp(m.y,b.bottom+22,b.top-22);
+      }
+    }
+    updateProjectiles(dt,playerBefore=this.player) {
       for(const m of this.projectiles) {
         if(m.dead||m.until<=this.time)continue;
+        if(m.kind==='boomerang'){this.updateBoomerang(m,dt,playerBefore);continue;}
         const before={x:m.x,y:m.y};
-        if(m.kind==='boomerang') {
-          const b=this.bounds, nx=m.x+m.vx*dt, ny=m.y+m.vy*dt;
-          if(!m.returning && (this.time+1e-9>=m.turnAt || nx<b.left+22 || nx>b.right-22 || ny<b.bottom+22 || ny>b.top-22)) {
-            m.returning=true;
-            this.event('boomerangTurn',{x:m.x,y:m.y,color:COLORS.boomerang});
-          }
-          if(m.returning) {
-            const d=distance(m,this.player), speed=Math.min(TUNING.boomerangReturnSpeed,d/dt);
-            m.angle=Math.atan2(this.player.y-m.y,this.player.x-m.x);
-            m.vx=Math.cos(m.angle)*speed;m.vy=Math.sin(m.angle)*speed;
-          }
-        }
         if(m.kind==='missile') {
           let target=this.enemies.find(e=>e.id===m.target&&!e.dead&&this.time>=e.activeAt);
           if(!target) {
@@ -442,9 +486,6 @@
             this.kill(e,'dot');
           }
         }
-        if(m.kind==='boomerang' && m.returning && swept(before,m,this.player,18)) {
-          m.dead=true;this.event('boomerangCatch',{x:this.player.x,y:this.player.y,color:COLORS.boomerang});
-        }
       }
     }
     snapshot() {
@@ -462,7 +503,7 @@
         enemies:this.enemies.map(e=>({id:e.id,x:e.x,y:e.y,telegraph:this.time<e.activeAt,
           frozen:this.time<e.frozenUntil,thawing:e.frozenUntil>this.time&&e.frozenUntil-this.time<1})),
         pickups:this.pickups.map(o=>({id:o.id,x:o.x,y:o.y,power:o.power,remaining:o.until-this.time})),
-        projectiles:this.projectiles.map(o=>({id:o.id,x:o.x,y:o.y,kind:o.kind,angle:o.angle})),
+        projectiles:this.projectiles.map(o=>({id:o.id,x:o.x,y:o.y,kind:o.kind,angle:o.angle,bounces:o.bounces,relaunches:o.relaunches})),
         fields:this.fields.map(f=>({id:f.id,x:f.x,y:f.y,kind:f.kind,angle:f.angle||0,radius:f.radius||TUNING.vortexRadius,remaining:f.until-this.time})),
         events:this.events.slice()};
     }
