@@ -1,0 +1,26 @@
+name: Capture native gameplay for marketing
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: sudo xcode-select -s /Applications/Xcode_26.3.app/Contents/Developer
+      - run: brew install xcodegen
+      - run: node capture/preflight.cjs
+      - run: python3 capture/prepare.py
+      - run: python3 capture/record.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: TiltArena-gameplay-v039-${{ github.sha }}
+          path: |
+            artifacts/gameplay-capture/
+            artifacts/capture-preflight/
+          retention-days: 14
