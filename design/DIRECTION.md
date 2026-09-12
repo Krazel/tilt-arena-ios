@@ -204,3 +204,23 @@ Reparto: bomba/onda/hielo 19 % cada uno, misiles 12 %, rayos 7 %, fuego/vórtice
 protección/bumerán 5 % cada uno, pinchos 4 %. Son pesos aleatorios sin cuotas.
 La curva por tiempo permanece agresiva; mayor movilidad y menor fuego/vórtice
 cambian la sensación, pendiente de partidas físicas para ajustar con datos.
+
+## Bumerán con rebotes y frenado anterior — 0.3.9, 2026-09-12
+
+Confirmación del usuario: restaurar frenado neutral 22 conservando velocidad 600.
+Recupera el coeficiente previo a 0.3.8; a mayor velocidad la distancia absoluta de
+parada sigue siendo mayor. Respuesta al inclinar 22 e impulso de fuego 1050 iguales.
+
+Bumerán: carga visual de 0,5 s y salida en rumbo actual conservadas. Vuela a 640
+unidades/s sin perseguir al protagonista ni girar por temporizador. Refleja la
+dirección al tocar paredes o enemigos activos; mata al enemigo del primer contacto.
+Una esquina cuenta como un impacto. Termina tras seis impactos o 4,5 segundos;
+alcance máximo teórico 2.880 unidades por vuelo si no agota antes los impactos.
+Los enemigos aún en aviso no lo hacen rebotar. Interceptarlo después de recorrer
+64 unidades evita autorrecogerlo al salir, y concede exactamente una carga extra
+de 0,5 s; después sale en el rumbo actual. No concede puntos de recogida ni cadena
+infinita. La segunda interceptación lo termina. Máximo tres entre cargas y vuelos,
+con el mismo límite durante las recargas. Pausa congela vuelo y carga.
+Se conservan cuchillas doradas, estela y animación de carga; cada rebote usa un
+destello dorado. Pruebas cubren esquinas, contactos ordenados, interceptación en
+movimiento, grupos superpuestos, límite, caducidad y equivalencia 30/60/120 Hz.

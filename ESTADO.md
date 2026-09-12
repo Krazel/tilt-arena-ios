@@ -1,9 +1,20 @@
 # Tilt Arena — estado de producto
 
-Actualizado 2026-09-09. Krazel Games. Registro PR-031.
+Actualizado 2026-09-12. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Entrega actual: 0.3.8 (1)
+## Candidata en verificación: 0.3.9 (1)
+
+El usuario confirma recuperar el frenado anterior: coeficiente 22, conservando
+velocidad máxima 600. Bumerán a 640 unidades/s, sin retorno automático; rebota en
+paredes y enemigos hasta seis impactos o 4,5 s. Interceptarlo concede una segunda
+carga de 0,5 s y un único lanzamiento adicional, con rumbo actual al terminar.
+Máximo tres entre cargas y vuelos; interceptar no da puntos de recogida.
+Pasan 60 pruebas Node y sintaxis de 15 Swift. QA nativa, firma y entrega pendientes.
+La autorización permanente cubre esta corrección encargada de iOS; no se inicia
+un port PC/Steam. La entrega verificada sigue siendo 0.3.8 (1).
+
+## Entrega anterior: 0.3.8 (1)
 
 Recogidas uniformes de 10 puntos; bajas 10 y bonus de combo 6 × bajas². Récord
 nuevo con el anterior conservado. Bumerán con carga visual de 0,5 s en la punta,
