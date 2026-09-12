@@ -3,6 +3,13 @@
 12 de septiembre de 2026. Responsable de producto: 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 Revisión de código, artefactos y API; no implementación ni compilación de un port.
 
+**Actualización de entrega, 19:06 UTC:** 0.3.9 (1) ya está VALID e
+IN_BETA_TESTING, solo titular. Evidencia testflight-v039.json, build Apple
+88f7f95e-aeaa-40ab-bae8-456a4d829471. Frenado anterior y bumerán con rebotes/recaptura
+entregados; 85 pruebas aprobadas y 20 capturas Debug en native-v039/. Estas siguen
+siendo pruebas de iOS simulado, no de PC. D1 revisión 38 conserva marketing.
+El inventario y los datos de 0.3.8 que siguen se conservan como base de esta auditoría.
+
 ## Versión comprobada y distribución
 
 La entrega verificada al iniciar esta auditoría es **0.3.8 (1)**. Apple confirma

@@ -1,8 +1,8 @@
 {
   "id": "PR-031",
-  "revision": 36,
-  "updatedAt": "2026-09-12T18:43:09.151Z",
-  "version": "0.3.8 (candidata TestFlight interno)",
+  "revision": 38,
+  "updatedAt": "2026-09-12T19:06:40.024Z",
+  "version": "0.3.9 (candidata TestFlight interno)",
   "build": 1,
   "tracking": {
     "testflight": "Interno",
@@ -11,8 +11,8 @@
     "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
     "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
   },
-  "candidate": "0.3.9 (1)",
-  "qa": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34711942552",
-  "notesPreserved": true,
-  "verifiedBy": "Authorized GET after revision-checked PUT"
+  "published": "No",
+  "verifiedBy": "Authorized GET after revision-checked PUT; all unchanged fields preserved",
+  "marketingPreserved": true,
+  "physicalTestPending": true
 }

@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-09-12T19:06:15.429Z",
+  "appId": "6809193185",
+  "version": "0.3.9",
+  "build": "1",
+  "buildId": "88f7f95e-aeaa-40ab-bae8-456a4d829471",
+  "processingState": "VALID",
+  "expires": "2026-12-11T11:03:54-08:00",
+  "betaState": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "f188cdd9-6415-456e-8054-9925c02bead5",
+    "name": "Pruebas internas",
+    "isInternalGroup": true,
+    "publicLinkEnabled": null,
+    "testerCount": 1,
+    "onlyOwner": true
+  },
+  "assigned": true,
+  "notesVerified": true,
+  "notes": "Frenado anterior recuperado, manteniendo la velocidad máxima de 600.\n\nEl bumerán llega más lejos y rebota en paredes y enemigos, sin volver automáticamente hacia ti. Mantiene la carga visual de medio segundo. Si lo interceptas, vuelve a cargarse y permite un lanzamiento adicional con el rumbo que tengas al salir. Cada vuelo termina tras seis impactos o 4,5 segundos; máximo tres entre cargas y vuelos.\n\nProbar frenado al dejar de inclinar, rebotes en esquinas y grupos de enemigos, interceptar el bumerán, orientar la segunda carga y pausar durante ella. Las recogidas, puntuación, probabilidades y progresión de enemigos se conservan.",
+  "appStoreVersions": [
+    {
+      "version": "1.0",
+      "state": "PREPARE_FOR_SUBMISSION"
+    }
+  ],
+  "appStoreRecord": "https://appstoreconnect.apple.com/apps/6809193185/distribution",
+  "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+  "verifiedVia": "Official App Store Connect API"
+}

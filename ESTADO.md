@@ -3,18 +3,28 @@
 Actualizado 2026-09-12. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
-## Candidata en verificación: 0.3.9 (1)
+## Entrega actual: 0.3.9 (1)
 
-El usuario confirma recuperar el frenado anterior: coeficiente 22, conservando
-velocidad máxima 600. Bumerán a 640 unidades/s, sin retorno automático; rebota en
-paredes y enemigos hasta seis impactos o 4,5 s. Interceptarlo concede una segunda
-carga de 0,5 s y un único lanzamiento adicional, con rumbo actual al terminar.
-Máximo tres entre cargas y vuelos; interceptar no da puntos de recogida.
-Pasan 85 pruebas: 60 Node, 16 XCTest y 9 XCUITest; sintaxis de 15 Swift correcta.
-QA 34711942552 aprobada, capturas de carga/salida/rebote/recarga revisadas y
-motor/audio del binario comprobados. Firma y subida en curso: 34712768490.
-La autorización permanente cubre esta corrección encargada de iOS; no se inicia
-un port PC/Steam. La entrega verificada sigue siendo 0.3.8 (1).
+Frenado anterior recuperado (22), velocidad máxima 600 conservada. Bumerán a 640
+unidades/s, sin retorno automático: rebota en paredes y enemigos hasta seis
+impactos o 4,5 s. Interceptarlo concede una carga extra de 0,5 s y un lanzamiento
+adicional con rumbo actual al terminar. Máximo tres entre cargas y vuelos;
+recapturar no da puntos. Curva de enemigos, probabilidades y puntos conservados.
+
+85 pruebas aprobadas: 60 Node, 16 XCTest y 9 XCUITest; sintaxis de 15 Swift correcta.
+QA 34711942552, Xcode 26.3 (17C529), SDK iOS Simulator 26.2.
+Capturas nativas de carga, salida, rebote y recarga revisadas. Fuente pública
+c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6, canónico a550e7c.
+Firma/subida 34712768490; Apple build 88f7f95e-aeaa-40ab-bae8-456a4d829471, VALID e IN_BETA_TESTING.
+Grupo interno solo del titular y notas es-ES releídas por API. IPA Release ARM64,
+SDK iOS 26.2, 4769470 bytes; firma CI, CRC, perfil y motor/audio comprobados.
+Archivo artifacts/TiltArena-0.3.9-build1-TestFlight.ipa.
+SHA-256: 47cf7f63273f6b3031508885d6ede0ada0084bc39ba7a50b5653ef359b11e67b.
+Evidencia native-v039.json, simulator-v039.json, ipa-v039-testflight-build1.json,
+testflight-v039.json, balance-v039.json y capturas native-v039/.
+Prueba física pendiente. App Store 1.0 PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
+PR-031 sincronizada y verificada por GET, revisión 38, 2026-09-12T19:06:40.024Z.
+Marketing conservado; auditoría PC en verification/marketing-pc-audit-2026-09-12.md.
 
 ## Entrega anterior: 0.3.8 (1)
 

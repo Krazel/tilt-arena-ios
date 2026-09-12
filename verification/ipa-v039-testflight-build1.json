@@ -1,0 +1,30 @@
+{
+  "app": "Tilt Arena",
+  "purpose": "TestFlight",
+  "version": "0.3.9",
+  "build": "1",
+  "bundleId": "com.dmkr.tiltarena",
+  "appId": "6809193185",
+  "commit": "c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6",
+  "run": "34712768490",
+  "sha256": "47cf7f63273f6b3031508885d6ede0ada0084bc39ba7a50b5653ef359b11e67b",
+  "bytes": 4769470,
+  "sdk": "iphoneos26.2",
+  "signatureVerified": true,
+  "uploadAccepted": true,
+  "zipCRCValid": true,
+  "verifiedMachOPlatform": "iOS",
+  "verifiedArchitecture": "arm64",
+  "encrypted": false,
+  "engineAndAudioMatchCanonicalSource": true,
+  "resourceSHA256": {
+    "classic-core.js": "16c623a57fbc61f32c737587a750a689143a3dd218e5dcf3bdcd7426b70a086b",
+    "classic-loop.wav": "207fcf403b3f7038be23ce18d730fc838535d59ae7328421f7dc01702d1e43ed",
+    "death.wav": "f4b0efe694255297fbb554d171288d67d9bde699799774aef44ce3b140b44988",
+    "hit.wav": "9d72ca5560742d29d2d648185d6f8f4a0cd4305432bf22e15b530a2f06e3b6e2",
+    "pickup.wav": "ab41f87aa2927894f8bf3ee23f6992dfd8f0eabaf2cf652fe4cce53b48d6cb9c"
+  },
+  "embeddedProvisioningProfile": true,
+  "signatureVerificationSource": "codesign --verify --deep --strict in CI before export; exported IPA validated by altool",
+  "physicalDeviceTest": "Pending"
+}

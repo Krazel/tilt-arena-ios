@@ -1,4 +1,39 @@
-# Verificación — 0.3.8 (1)
+# Verificación — 0.3.9 (1)
+
+## Entrega actual: 0.3.9 (1)
+
+Frenado anterior recuperado (22), velocidad máxima 600 conservada. Bumerán a 640
+unidades/s, sin retorno automático: rebota en paredes y enemigos hasta seis
+impactos o 4,5 s. Interceptarlo concede una carga extra de 0,5 s y un lanzamiento
+adicional con rumbo actual al terminar. Máximo tres entre cargas y vuelos;
+recapturar no da puntos. Curva de enemigos, probabilidades y puntos conservados.
+
+85 pruebas aprobadas: 60 Node, 16 XCTest y 9 XCUITest; sintaxis de 15 Swift correcta.
+QA 34711942552, Xcode 26.3 (17C529), SDK iOS Simulator 26.2.
+Capturas nativas de carga, salida, rebote y recarga revisadas. Fuente pública
+c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6, canónico a550e7c.
+Firma/subida 34712768490; Apple build 88f7f95e-aeaa-40ab-bae8-456a4d829471, VALID e IN_BETA_TESTING.
+Grupo interno solo del titular y notas es-ES releídas por API. IPA Release ARM64,
+SDK iOS 26.2, 4769470 bytes; firma CI, CRC, perfil y motor/audio comprobados.
+Archivo artifacts/TiltArena-0.3.9-build1-TestFlight.ipa.
+SHA-256: 47cf7f63273f6b3031508885d6ede0ada0084bc39ba7a50b5653ef359b11e67b.
+Evidencia native-v039.json, simulator-v039.json, ipa-v039-testflight-build1.json,
+testflight-v039.json, balance-v039.json y capturas native-v039/.
+Prueba física pendiente. App Store 1.0 PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
+PR-031 sincronizada y verificada por GET, revisión 38, 2026-09-12T19:06:40.024Z.
+Marketing conservado; auditoría PC en verification/marketing-pc-audit-2026-09-12.md.
+
+Pruebas nuevas: cuatro paredes/esquinas, orden del primer enemigo, avisos sin daño,
+interceptación del jugador en movimiento, un único relanzamiento y cero puntos
+por recaptura, protección contra recogida inmediata al salir, límite de impactos
+en enemigos superpuestos, pausa y equivalencia 30/60/120 Hz. XCTest comprueba
+rebote y recarga a través de JavaScriptCore; XCUITest captura los estados nativos.
+Pruebas de simulador: no acreditan sensación del sensor ni balance definitivo.
+
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34711942552
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34712768490
+
+# Historial de verificación — 0.3.8 (1)
 
 ## Entrega actual: 0.3.8 (1)
 

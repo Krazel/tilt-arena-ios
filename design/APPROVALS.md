@@ -109,3 +109,11 @@ Capturas del renderer nativo revisadas: verification/native-v038/18-boomerang-ch
 13-boomerang-outbound.png y 14-boomerang-return.png. Hallazgos y hashes en verification/.
 QA 34343923896, 79 pruebas. Entrega interna 34344923067, build ae14e9eb-f31b-4f14-8be7-a66e3fea3433.
 Capturas de simulador; ensayo físico de lectura, velocidad y sensor pendiente.
+
+## Bumerán con rebotes y recarga — 0.3.9, 2026-09-12
+
+Encargo del usuario: rebotes, mayor recorrido y un lanzamiento adicional al
+interceptarlo. Conserva cuchillas doradas y carga de 0,5 s. Revisión nativa en
+verification/native-v039/: 18-boomerang-charging.png, 13-boomerang-outbound.png,
+14-boomerang-wall-bounce.png y 19-boomerang-recharged.png. QA 34711942552, 85 pruebas.
+Entrega interna 34712768490; prueba física pendiente.
