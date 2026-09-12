@@ -10,7 +10,9 @@ velocidad máxima 600. Bumerán a 640 unidades/s, sin retorno automático; rebot
 paredes y enemigos hasta seis impactos o 4,5 s. Interceptarlo concede una segunda
 carga de 0,5 s y un único lanzamiento adicional, con rumbo actual al terminar.
 Máximo tres entre cargas y vuelos; interceptar no da puntos de recogida.
-Pasan 60 pruebas Node y sintaxis de 15 Swift. QA nativa, firma y entrega pendientes.
+Pasan 85 pruebas: 60 Node, 16 XCTest y 9 XCUITest; sintaxis de 15 Swift correcta.
+QA 34711942552 aprobada, capturas de carga/salida/rebote/recarga revisadas y
+motor/audio del binario comprobados. Firma y subida en curso: 34712768490.
 La autorización permanente cubre esta corrección encargada de iOS; no se inicia
 un port PC/Steam. La entrega verificada sigue siendo 0.3.8 (1).
 

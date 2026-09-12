@@ -1,0 +1,28 @@
+{
+  "checkedAt": "2026-09-12",
+  "version": "0.3.9",
+  "build": "1",
+  "sourceCommit": "c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6",
+  "canonicalCodeCommit": "a550e7c",
+  "run": "34711942552",
+  "runUrl": "https://github.com/Krazel/tilt-arena-ios/actions/runs/34711942552",
+  "xcode": "26.3 (17C529)",
+  "sdk": "iphonesimulator26.2",
+  "nodeTests": 60,
+  "unitTests": 16,
+  "uiTests": 9,
+  "failures": 0,
+  "screenshots": "native-v039/",
+  "reviewed": ["18-boomerang-charging.png", "13-boomerang-outbound.png", "14-boomerang-wall-bounce.png", "19-boomerang-recharged.png"],
+  "findings": [
+    "Half charge shows golden blades and a half progress arc at the player tip without hiding the arrow",
+    "Outbound boomerang stays separate from the freely moving player",
+    "Wall-bounce fixture shows a legible full golden projectile contained by the right arena boundary; native unit tests verify the reflected direction and bounce count",
+    "Intercepted projectile is replaced by the same readable half-charge indicator; displayed score remains ten",
+    "All ten power glyphs fit in the landscape native arena"
+  ],
+  "engineAndAudioMatchCanonicalSource": true,
+  "physicalDeviceTest": "Pending",
+  "priorDispatch": {"run":"34711905906", "sourceCommit":"da22451b64b370fdcc9a55e339bfa6ca76ec9ab1", "excluded":true, "reason":"Cancelled stale-source dispatch after sandbox ownership prevented the preceding Git push; replaced by this successful exact-candidate run"},
+  "purpose": "Native simulator QA of restored braking and ricochet/recatch boomerang before internal TestFlight; physical sensor feel and balance still require device play"
+}

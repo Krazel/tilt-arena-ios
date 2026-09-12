@@ -1,8 +1,9 @@
-# Balance medido — candidata 0.3.8
+# Balance medido — candidata 0.3.9
 
-Inspección del motor de producción y medición reproducible del 9 de septiembre
-de 2026: `verification/balance-v038.json`. Esta versión corrige la puntuación,
-aumenta la movilidad y retrasa el bumerán. Conserva la progresión difícil.
+Inspección del motor de producción y medición reproducible del 12 de septiembre
+de 2026: `verification/balance-v039.json`. Conserva puntuación, velocidad máxima,
+probabilidades y progresión de 0.3.8; recupera frenado previo y cambia el bumerán
+por rebotes y un lanzamiento extra al interceptarlo.
 
 ## Dificultad por tiempo
 
@@ -74,9 +75,13 @@ conservado bajo su clave histórica, sin mezclar puntuaciones incompatibles.
 La puntuación no incrementa la dificultad.
 
 El bumerán carga 0,5 s sin inmovilizar ni proteger; sale desde la punta y rumbo
-actuales, después conserva su vuelo y retorno. El máximo de tres incluye cargas.
-La mayor velocidad normal conserva frenado rápido (coeficiente 24 en neutral,
-respuesta al inclinar 22). El fuego impulsor conserva velocidad 1.050.
+actuales a 640 unidades/s. Rebota en paredes/enemigos hasta seis impactos o 4,5 s,
+sin perseguir al protagonista. Interceptarlo concede un único lanzamiento extra
+tras otra carga, sin puntos por recaptura. El máximo de tres incluye cargas.
+La velocidad normal 600 recupera el frenado anterior (coeficiente 22 en neutral
+y respuesta al inclinar 22). El fuego impulsor conserva velocidad 1.050. La curva
+y probabilidades de 0.3.8 permanecen iguales; el alcance extra del bumerán puede
+alterar su utilidad y requiere partidas físicas antes de dar el balance por cerrado.
 
 La curva actual es agresiva por densidad, con oferta programada de poderes
 constante y dependencia del azar y la ruta de recogida. No está demostrado que

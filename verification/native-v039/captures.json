@@ -1,0 +1,142 @@
+[
+  {
+    "file": "verification\\native-v039\\15-electricity-range.png",
+    "test": "ClassicFlowTests/testBoomerangChargeBounceRecatchAndElectricRange()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "7adae28f7391bc15f3cb7f4d11ccdb491768688eed772007652e6372be8a0050"
+  },
+  {
+    "file": "verification\\native-v039\\19-boomerang-recharged.png",
+    "test": "ClassicFlowTests/testBoomerangChargeBounceRecatchAndElectricRange()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "c755a121043865323f5dac6f0853df5c33ec7aa12b6922d9ae28de667c2b1598"
+  },
+  {
+    "file": "verification\\native-v039\\14-boomerang-wall-bounce.png",
+    "test": "ClassicFlowTests/testBoomerangChargeBounceRecatchAndElectricRange()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "6ee89470365000c6d271b10b5ae186424390e82208b59b44a3c65dc95b3d565e"
+  },
+  {
+    "file": "verification\\native-v039\\13-boomerang-outbound.png",
+    "test": "ClassicFlowTests/testBoomerangChargeBounceRecatchAndElectricRange()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "cb2608de78a78f087667ade46df349f2184bb67587aebed72aeca8e848abc1c7"
+  },
+  {
+    "file": "verification\\native-v039\\18-boomerang-charging.png",
+    "test": "ClassicFlowTests/testBoomerangChargeBounceRecatchAndElectricRange()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "600e41dff17608f3ae127bdf02ba079d05a708afcf32826498ce486e0c4d5e3f"
+  },
+  {
+    "file": "verification\\native-v039\\00-default-calibration.png",
+    "test": "ClassicFlowTests/testDefaultCalibrationAndSavedResume()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "7d7f253032f6ad4bc5d7ebd755d67b8402e12968490407e0ca32d910d0d9e14e"
+  },
+  {
+    "file": "verification\\native-v039\\17-explosion-dissipation.png",
+    "test": "ClassicFlowTests/testExplosionHotCoreAndDissipation()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "2f47b0cdebe9bdf57c7ebb930acc167d621ea390dd544524e0e6793b626656d2"
+  },
+  {
+    "file": "verification\\native-v039\\16-explosion-hot-core.png",
+    "test": "ClassicFlowTests/testExplosionHotCoreAndDissipation()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "5aa889360cd24b296487ab076f933df6565788d39b2eaa983b0feccf77c5ac7e"
+  },
+  {
+    "file": "verification\\native-v039\\04-native-art-and-vfx-fixture.png",
+    "test": "ClassicFlowTests/testNativeGeneratedOrbsAndEffectsFixture()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "2bdc242f17a0728c119481c80f2c8c6a7db3cb34bd18f7df3d99c277881a2d35"
+  },
+  {
+    "file": "verification\\native-v039\\05-native-ice-and-blast.png",
+    "test": "ClassicFlowTests/testNativeIceAndBlastAtPeak()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "858b7688d516f8fe790fac40c5f23e7bf9bbe35b10671220cfbce5f0c12f1f52"
+  },
+  {
+    "file": "verification\\native-v039\\03-custom-saved.png",
+    "test": "ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "ddd527c9059a13002e17711b7e6e82bbc8a5f06ea94063bd45bfe11b71ff11ed"
+  },
+  {
+    "file": "verification\\native-v039\\02-pause.png",
+    "test": "ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "d389d1a274c4860520435970da34573f241d6bf1713fe87352a8dbaa1ee51e73"
+  },
+  {
+    "file": "verification\\native-v039\\01-menu-wide.png",
+    "test": "ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "d75f36c7fb2689cd3a7a633f196661b2bb36101916164c2b2ae4ad79fb6f1a8a"
+  },
+  {
+    "file": "verification\\native-v039\\07-selected-vfx-fire-trail.png",
+    "test": "ClassicFlowTests/testSelectedVFXChargeAndLaunch()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "de29c6f50d4aadfff203dd0019b9055c5f6df241c31804975df143d93eeea6a9"
+  },
+  {
+    "file": "verification\\native-v039\\06-selected-vfx-charge.png",
+    "test": "ClassicFlowTests/testSelectedVFXChargeAndLaunch()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "f280d5678cd20a8cf8cd5416ee68c71e08f5d99ab296b3b0dfac2640bae0ebeb"
+  },
+  {
+    "file": "verification\\native-v039\\12-spikes-expiry-warning.png",
+    "test": "ClassicFlowTests/testSpikesOverGreenShieldAndExpiryWarning()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "a4b217659c5f627abad82a835b5cf797da357af7bf3c82bece6f1a0e5803d9d2"
+  },
+  {
+    "file": "verification\\native-v039\\11-spikes-over-shield.png",
+    "test": "ClassicFlowTests/testSpikesOverGreenShieldAndExpiryWarning()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "699b50fa2b03b57c1c4c2deabd1eb948331407785cf340a7ab4679218cf4ff1c"
+  },
+  {
+    "file": "verification\\native-v039\\10-fire-steering.png",
+    "test": "ClassicFlowTests/testWaveTipChargeAndFireSteering()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "239cc8635611ed10f17c6cb72a61e245eb5ce8165055c816c4f07ce704673c22"
+  },
+  {
+    "file": "verification\\native-v039\\09-wave-released.png",
+    "test": "ClassicFlowTests/testWaveTipChargeAndFireSteering()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "39ff3685f9d05427dfd091c7c0fd17599596e0b89eb243af42f260cd42092602"
+  },
+  {
+    "file": "verification\\native-v039\\08-wave-tip-charge.png",
+    "test": "ClassicFlowTests/testWaveTipChargeAndFireSteering()",
+    "device": "iPhone 16 Pro",
+    "failure": false,
+    "sha256": "a1e2bef39a865a7ec55861a3724f6d8a52fa600c85cea5e2b469e6ceda5e67ec"
+  }
+]

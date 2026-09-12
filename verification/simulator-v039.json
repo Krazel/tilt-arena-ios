@@ -1,0 +1,21 @@
+{
+  "version": "0.3.9",
+  "build": "1",
+  "bundle": "com.dmkr.tiltarena",
+  "platform": [
+    "iPhoneSimulator"
+  ],
+  "sdk": "iphonesimulator26.2",
+  "xcode": "17C529",
+  "archive": "artifacts\\native-v039-download\\TiltArena-simulator-c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6\\TiltArena-0.3.9-build1-simulator.tar.gz",
+  "archiveSHA256": "0104cd7e8d1396a2c802a44c2961770b24f1cbb3cbaa77de25bf7be8967983cd",
+  "engineSHA256": "16c623a57fbc61f32c737587a750a689143a3dd218e5dcf3bdcd7426b70a086b",
+  "sounds": {
+    "classic-loop": "207fcf403b3f7038be23ce18d730fc838535d59ae7328421f7dc01702d1e43ed",
+    "pickup": "ab41f87aa2927894f8bf3ee23f6992dfd8f0eabaf2cf652fe4cce53b48d6cb9c",
+    "hit": "9d72ca5560742d29d2d648185d6f8f4a0cd4305432bf22e15b530a2f06e3b6e2",
+    "death": "f4b0efe694255297fbb554d171288d67d9bde699799774aef44ce3b140b44988"
+  },
+  "physicalDeviceBuild": false,
+  "signedIPA": false
+}
