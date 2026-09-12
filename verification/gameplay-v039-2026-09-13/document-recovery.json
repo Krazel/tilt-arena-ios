@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-09-12T23:49:23Z",
+  "normalTerminalRead": "passed",
+  "backups": "artifacts/document-recovery-2026-09-13/",
+  "method": "Git state plus delivery.json, capture provenance and replay verification; only two damaged documents restored",
+  "checks": [
+    {
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\ESTADO.md",
+      "bytes": 17192,
+      "zeroBytes": 0,
+      "sha256": "7ad0b0604e550d04d2225e2ac3f6a959f2ae3d3621b421fb834e55381c139436"
+    },
+    {
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\verification\\gameplay-v039-2026-09-13\\README.md",
+      "bytes": 1593,
+      "zeroBytes": 0,
+      "sha256": "e875887e3639095d8dec9511ee177a47251f921f965cd0671e5a51406d3b0f52"
+    },
+    {
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\verification\\itchio-compatibility-2026-09-13.md",
+      "bytes": 2765,
+      "zeroBytes": 0,
+      "sha256": "5c5653f2c057292d36ad5d6486399e8f5cce2230757e06f27a5f609014f97402"
+    }
+  ],
+  "videoAndStillHashesMatch": true,
+  "currentDelivery": "0.3.9 (1), internal TestFlight",
+  "newAppleCandidate": false,
+  "itchPackageAvailable": false,
+  "itchDraftStatus": "Owned by marketing; no verified URL supplied to development yet"
+}

@@ -1,0 +1,16 @@
+{
+  "id": "PR-031",
+  "revision": 42,
+  "updatedAt": "2026-09-12T23:51:05.639Z",
+  "detail": "0.3.9 (1) activa en TestFlight interno solo al titular; 85 pruebas e IPA verificadas. Metraje nativo de 65/49 s y PNG entregados a 2622x1206; 6.832 entradas coinciden con el motor real. iPhone simulado y control automatizado, sin fixtures. itch.io: sin paquete jugable web/PC vigente; Draft informativo a cargo de marketing. Un port requiere encargo propio. MP4 v1 interno para auditoria de cadencia y montaje. Sin nueva subida a Apple.",
+  "version": "0.3.9 (candidata TestFlight interno)",
+  "tracking": {
+    "testflight": "Interno",
+    "appStore": "Creada en App Store Connect",
+    "ads": "No",
+    "testflightUrl": "https://appstoreconnect.apple.com/apps/6809193185/testflight",
+    "appStoreUrl": "https://appstoreconnect.apple.com/apps/6809193185/distribution"
+  },
+  "nextAndMarketingPreserved": true,
+  "verifiedBy": "GET after revision-checked PUT; all other fields compared"
+}

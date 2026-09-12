@@ -1,6 +1,6 @@
 # Tilt Arena — estado de producto
 
-Actualizado 2026-09-12. Krazel Games. Registro PR-031.
+Actualizado 2026-09-13. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
 ## Entrega actual: 0.3.9 (1)
@@ -25,6 +25,36 @@ testflight-v039.json, balance-v039.json y capturas native-v039/.
 Prueba física pendiente. App Store 1.0 PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
 PR-031 sincronizada y verificada por GET, revisión 38, 2026-09-12T19:06:40.024Z.
 Marketing conservado; auditoría PC en verification/marketing-pc-audit-2026-09-12.md.
+
+## Captura nativa para marketing - 2026-09-13
+
+Entregadas dos tomas bajo reglas reales de 0.3.9: 65,02 s y 49,67 s de juego,
+con resultado vivo y muerte final. Copias horizontales 2622x1206 en
+artifacts/TiltArena-0.3.9-native-gameplay-seed2.mp4 y seed7.mp4; archivos completos
+70,37 s y 54,23 s con menu inicial, sin audio ni rotulos. Musica propia disponible
+para montaje: native-ios/Resources/classic-loop.wav. Brutos preservados.
+Captura iPhone 16 Pro simulado, control automatizado, CI 34723559098 aprobada.
+Motor/renderer de produccion; herramienta aislada, spawning true, sin fixtures.
+Las 6.832 entradas/dt repetidas contra el motor original coinciden en estados,
+eventos, bajas, puntos y posiciones (error maximo 1,3e-13). Revision por muestreo
+y decodificacion completa. Siete PNG nativos y cuatro fotogramas horizontales;
+manifiestos en verification/gameplay-v039-2026-09-13/. No se recogio bumeran en
+las tomas reales. Marketing confirmo que bastaban; no nueva captura.
+MP4 v1 de marketing queda interno para auditar cadencia y montaje. No equivale
+a prueba fisica ni PC. Responsable montaje: 01a096e2-3ee6-7850-bb27-abb8614c7c52.
+
+## Destino itch.io - viabilidad 2026-09-13
+
+Steam en pausa. Marketing prepara una unica ficha Draft Tilt Arena / KrazelGames.
+No existe paquete jugable HTML5 o desktop de la version vigente. La IPA de App
+Store/TestFlight no es una descarga iOS instalable directamente desde itch.io;
+el .app de simulador tampoco es release macOS. qa/ es un laboratorio; la web
+heredada no sustituye al producto. No se suben estos archivos como juego PC/web.
+Bloqueo: adaptar renderer, menus, controles, audio y guardado para web/desktop
+requiere un port expresamente encargado; no es empaquetar la IPA en ZIP.
+La ficha Draft puede avanzar con material iOS claramente etiquetado y sin venta
+ni archivo jugable. No hay enlace publico de TestFlight: solo titular interno.
+Evidencia: verification/itchio-compatibility-2026-09-13.md. Sin nueva build Apple.
 
 ## Entrega anterior: 0.3.8 (1)
 

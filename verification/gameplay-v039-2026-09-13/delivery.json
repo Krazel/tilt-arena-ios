@@ -1,0 +1,82 @@
+{
+  "version": "0.3.9",
+  "build": "1",
+  "ci": "34723559098",
+  "source": "c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6",
+  "captureSource": "692a5accabf509adc363a1a26ae29d81c43c4ca4",
+  "engineSHA256": "16c623a57fbc61f32c737587a750a689143a3dd218e5dcf3bdcd7426b70a086b",
+  "videos": [
+    {
+      "seed": 2,
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\artifacts\\TiltArena-0.3.9-native-gameplay-seed2.mp4",
+      "sha256": "2922bfa17ed9baeed73fc5469635415ee2dc1e6962afc639a69254187163c0e2",
+      "bytes": 22129623,
+      "videoSeconds": 70.37,
+      "gameplaySeconds": 65.01666666666448,
+      "size": [
+        2622,
+        1206
+      ],
+      "audio": false,
+      "original": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\artifacts\\gameplay-capture-download\\TiltArena-gameplay-v039-692a5accabf509adc363a1a26ae29d81c43c4ca4\\gameplay-capture\\seed-2\\gameplay-raw.mp4",
+      "originalSHA256": "81603147cafef649c988fe04d1a89501add03b665b8e09f09aa39b071e8b75b5",
+      "transformation": "90 degrees counterclockwise only; libx264 CRF18 fast, yuv420p, faststart; no cut/crop/overlay/speed change",
+      "decodeVerified": "Entire original decoded during successful horizontal transcode"
+    },
+    {
+      "seed": 7,
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\artifacts\\TiltArena-0.3.9-native-gameplay-seed7.mp4",
+      "sha256": "057b02f3c39c6b439d301e89d70fb50cfda71e7c58ba229ef503923d498a5e0b",
+      "bytes": 15775859,
+      "videoSeconds": 54.23,
+      "gameplaySeconds": 49.67499999999782,
+      "size": [
+        2622,
+        1206
+      ],
+      "audio": false,
+      "original": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\artifacts\\gameplay-capture-download\\TiltArena-gameplay-v039-692a5accabf509adc363a1a26ae29d81c43c4ca4\\gameplay-capture\\seed-7\\gameplay-raw.mp4",
+      "originalSHA256": "a242dea604922f7891dd9d7bab20278cb8013b89d226504e85b22d5813d5a9ca",
+      "transformation": "90 degrees counterclockwise only; libx264 CRF18 fast, yuv420p, faststart; no cut/crop/overlay/speed change",
+      "decodeVerified": "Entire original decoded during successful horizontal transcode"
+    }
+  ],
+  "stills": [
+    {
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\verification\\gameplay-v039-2026-09-13\\seed-2-video-30s.png",
+      "videoSeed": 2,
+      "videoSecond": 30,
+      "sha256": "9d1279deffa9226e1da6a42d24d977af4dc8676db9659bc14915713efadc5760"
+    },
+    {
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\verification\\gameplay-v039-2026-09-13\\seed-2-video-40s.png",
+      "videoSeed": 2,
+      "videoSecond": 40,
+      "sha256": "e7df6c716bb307f98d508fca1db5ecfa85f03bb99ac9eafa548288e92d40dbe3"
+    },
+    {
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\verification\\gameplay-v039-2026-09-13\\seed-2-video-48s.png",
+      "videoSeed": 2,
+      "videoSecond": 48,
+      "sha256": "27e3901588cd4ff141cbe71ca6c2fd622191c6067248263f3f309a44b17fce23"
+    },
+    {
+      "path": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\verification\\gameplay-v039-2026-09-13\\seed-7-video-44s.png",
+      "videoSeed": 7,
+      "videoSecond": 44,
+      "sha256": "12052a786a3f21ef7208fd27dd09d7ef259f58a7f3ebc0fc52ab0ea349582305"
+    }
+  ],
+  "rawNativePNGs": 7,
+  "replayMatches": true,
+  "frameCount": 6832,
+  "greatestPositionError": 1.2710574864626038e-13,
+  "boomerangPickupCaptured": false,
+  "extraCaptureCancelled": "Marketing confirmed existing footage sufficient on 2026-09-13; no extra CI launched",
+  "device": "iPhone 16 Pro simulator, iOS26.2, Xcode26.3",
+  "fixtures": false,
+  "productionRulesUnchanged": true,
+  "audioSource": "C:\\Users\\dmkra\\Documents\\Codex Apps\\TiltArena\\native-ios\\Resources\\classic-loop.wav",
+  "audioSHA256": "207fcf403b3f7038be23ce18d730fc838535d59ae7328421f7dc01702d1e43ed",
+  "note": "Raw/native HUD includes simulated Dynamic Island mask outside arena. Music may be added as an editorial soundtrack, not synchronized live effects."
+}

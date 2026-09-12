@@ -1,0 +1,87 @@
+{
+  "version": "0.3.9",
+  "build": "1",
+  "baseProductionCommit": "c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6",
+  "captureCommit": "692a5accabf509adc363a1a26ae29d81c43c4ca4",
+  "run": "34723559098",
+  "device": "D8F1484E-2475-4903-9477-F9B9D369E476",
+  "deviceName": "iPhone 16 Pro",
+  "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-26-2",
+  "xcode": "Xcode 26.3\nBuild version 17C529",
+  "renderer": "Production SwiftUI/SpriteKit, temporary input and telemetry overlay only",
+  "engine": "Unmodified production JavaScriptCore resource",
+  "spawning": true,
+  "fixtures": false,
+  "input": "Snapshot-only CaptureDriver, no state mutation",
+  "audio": "simctl raw video; supply original music separately for marketing edit",
+  "physicalDevice": false,
+  "pcBuild": false,
+  "appleUpload": false,
+  "takes": [
+    {
+      "seed": 2,
+      "video": "seed-2/gameplay-raw.mp4",
+      "recordCommand": [
+        "xcrun",
+        "simctl",
+        "io",
+        "D8F1484E-2475-4903-9477-F9B9D369E476",
+        "recordVideo",
+        "--codec=h264",
+        "/Users/runner/work/tilt-arena-ios/tilt-arena-ios/artifacts/gameplay-capture/seed-2/gameplay-raw.mp4"
+      ],
+      "launchCommand": [
+        "xcrun",
+        "simctl",
+        "launch",
+        "D8F1484E-2475-4903-9477-F9B9D369E476",
+        "com.dmkr.tiltarena",
+        "--capture-gameplay",
+        "--capture-seed=2"
+      ],
+      "recordProcessStartedWall": 1789253306.5879302,
+      "sha256": "81603147cafef649c988fe04d1a89501add03b665b8e09f09aa39b071e8b75b5",
+      "done": {
+        "endedWall": 1789253377.0301208,
+        "state": "running",
+        "score": 46474,
+        "gameTime": 65.01666666666448,
+        "kills": 147,
+        "elapsedWall": 66.20771169662476
+      }
+    },
+    {
+      "seed": 7,
+      "video": "seed-7/gameplay-raw.mp4",
+      "recordCommand": [
+        "xcrun",
+        "simctl",
+        "io",
+        "D8F1484E-2475-4903-9477-F9B9D369E476",
+        "recordVideo",
+        "--codec=h264",
+        "/Users/runner/work/tilt-arena-ios/tilt-arena-ios/artifacts/gameplay-capture/seed-7/gameplay-raw.mp4"
+      ],
+      "launchCommand": [
+        "xcrun",
+        "simctl",
+        "launch",
+        "D8F1484E-2475-4903-9477-F9B9D369E476",
+        "com.dmkr.tiltarena",
+        "--capture-gameplay",
+        "--capture-seed=7"
+      ],
+      "recordProcessStartedWall": 1789253390.472409,
+      "sha256": "a242dea604922f7891dd9d7bab20278cb8013b89d226504e85b22d5813d5a9ca",
+      "done": {
+        "endedWall": 1789253444.7305598,
+        "elapsedWall": 49.82090878486633,
+        "gameTime": 49.67499999999782,
+        "kills": 117,
+        "score": 31874,
+        "state": "gameOver"
+      }
+    }
+  ],
+  "engineSHA256": "16c623a57fbc61f32c737587a750a689143a3dd218e5dcf3bdcd7426b70a086b"
+}
