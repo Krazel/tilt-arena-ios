@@ -75,7 +75,7 @@ final class ClassicFlowTests: XCTestCase {
         app.launchArguments = ["--ui-testing", "--fresh-controls-qa"]; app.launch()
         XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["posture-custom"].isSelected)
-        XCTAssertEqual(app.buttons["play"].label, "Calibrar y jugar")
+        XCTAssert(["Calibrate & play", "Calibrar y jugar"].contains(app.buttons["play"].label))
         capture("00-default-calibration", app: app)
         app.buttons["play"].tap()
         XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
@@ -84,7 +84,7 @@ final class ClassicFlowTests: XCTestCase {
         XCTAssertFalse(app.staticTexts["Tu postura"].exists)
         app.terminate(); app.launchArguments = ["--ui-testing"]; app.launch()
         XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
-        XCTAssertEqual(app.buttons["play"].label, "Jugar")
+        XCTAssert(["Play", "Jugar"].contains(app.buttons["play"].label))
         XCTAssertTrue(app.buttons["posture-custom"].isSelected)
     }
     func testNativeIceAndBlastAtPeak() {
@@ -115,8 +115,10 @@ final class ClassicFlowTests: XCTestCase {
         capture("02-pause", app: app)
         app.buttons["resume"].tap()
         XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 3))
-        XCTAssertFalse(app.staticTexts["Tu postura"].exists)
-        app.buttons["pause"].tap(); app.buttons["Recalibrar"].tap()
+        XCTAssertFalse(app.staticTexts["Your posture"].exists || app.staticTexts["Tu postura"].exists)
+        app.buttons["pause"].tap()
+        let recalibrate = app.buttons["Recalibrate"].exists ? app.buttons["Recalibrate"] : app.buttons["Recalibrar"]
+        recalibrate.tap()
         // Simulator calibration completes automatically. The saved profile is reusable.
         XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
         app.buttons["pause"].tap()

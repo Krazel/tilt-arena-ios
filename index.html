@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="es">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -14,59 +14,58 @@
   </head>
   <body>
     <main class="game-shell">
-      <canvas id="gameCanvas" aria-label="Arena de juego"></canvas>
+      <canvas id="gameCanvas" aria-label="Game arena" data-i18n-aria="arena"></canvas>
 
       <header class="hud hud-top">
         <div class="brand">
           <span class="brand-mark" aria-hidden="true"></span>
           <div>
             <strong>Tilt Arena</strong>
-            <small id="controlText">Teclado / raton</small>
+            <small id="controlText">Keyboard / mouse</small>
           </div>
         </div>
-        <button id="pauseButton" class="icon-button" type="button" aria-label="Pausar"></button>
+        <button id="pauseButton" class="icon-button" type="button" aria-label="Pause" data-i18n-aria="pause"></button>
       </header>
 
       <section class="hud scorebar" aria-live="polite">
-        <div><span>Score</span><strong id="scoreText">0</strong></div>
-        <div><span>Combo</span><strong id="comboText">x1</strong></div>
-        <div><span>Time</span><strong id="timeText">0:00</strong></div>
-        <div><span>Record</span><strong id="bestText">0</strong></div>
+        <div><span data-i18n="score">Score</span><strong id="scoreText">0</strong></div>
+        <div><span data-i18n="combo">Combo</span><strong id="comboText">x1</strong></div>
+        <div><span data-i18n="time">Time</span><strong id="timeText">0:00</strong></div>
+        <div><span data-i18n="best">Best</span><strong id="bestText">0</strong></div>
       </section>
 
-      <section class="hud powerbar" id="powerBar" aria-label="Power-ups activos"></section>
+      <section class="hud powerbar" id="powerBar" aria-label="Active powers" data-i18n-aria="activePowers"></section>
 
       <section id="startPanel" class="panel start-panel">
         <span class="eyebrow">Tilt Arena</span>
-        <h1>Evita los puntos</h1>
+        <h1 data-i18n="startTitle">Dodge the dots</h1>
         <p>
-          Inclina el movil o arrastra para mover la flecha. Un toque con un enemigo acaba la partida.
-          Recoge circulos para activar poderes.
+          <span data-i18n="startCopy">Tilt the phone or drag to move the arrow. Touching an enemy ends the run. Collect orbs to activate powers.</span>
         </p>
         <div class="actions">
-          <button id="startButton" class="primary" type="button" onclick="window.queueTiltArenaStart?.()">Empezar</button>
-          <button id="tiltButton" class="secondary" type="button" onclick="window.enableTiltArena?.()">Activar inclinacion</button>
+          <button id="startButton" class="primary" type="button" onclick="window.queueTiltArenaStart?.()" data-i18n="start">Start</button>
+          <button id="tiltButton" class="secondary" type="button" onclick="window.enableTiltArena?.()" data-i18n="enableTilt">Enable tilt</button>
         </div>
       </section>
 
       <section id="pausePanel" class="panel pause-panel" hidden>
-        <span class="eyebrow">Pausa</span>
-        <h2>Run detenida</h2>
+        <span class="eyebrow" data-i18n="pause">Pause</span>
+        <h2 data-i18n="runPaused">Run paused</h2>
         <div class="actions">
-          <button id="resumeButton" class="primary" type="button" onclick="window.resumeTiltArena?.()">Continuar</button>
-          <button id="newRunButton" class="secondary" type="button" onclick="window.startTiltArena?.()">Reiniciar</button>
+          <button id="resumeButton" class="primary" type="button" onclick="window.resumeTiltArena?.()" data-i18n="resume">Resume</button>
+          <button id="newRunButton" class="secondary" type="button" onclick="window.startTiltArena?.()" data-i18n="restart">Restart</button>
         </div>
       </section>
 
       <section id="gameOverPanel" class="panel game-over-panel" hidden>
-        <span class="eyebrow">Fin de partida</span>
-        <h2 id="finalTitle">Has caido</h2>
+        <span class="eyebrow" data-i18n="gameOver">Game over</span>
+        <h2 id="finalTitle" data-i18n="fallen">You fell</h2>
         <div class="summary">
-          <div><span>Puntos</span><strong id="finalScore">0</strong></div>
-          <div><span>Combo max</span><strong id="finalCombo">x1</strong></div>
-          <div><span>Tiempo</span><strong id="finalTime">0:00</strong></div>
+          <div><span data-i18n="points">Points</span><strong id="finalScore">0</strong></div>
+          <div><span data-i18n="maxCombo">Max combo</span><strong id="finalCombo">x1</strong></div>
+          <div><span data-i18n="time">Time</span><strong id="finalTime">0:00</strong></div>
         </div>
-        <button id="restartButton" class="primary" type="button" onclick="window.startTiltArena?.()">Otra partida</button>
+        <button id="restartButton" class="primary" type="button" onclick="window.startTiltArena?.()" data-i18n="playAgain">Play again</button>
       </section>
 
       <div class="tilt-pad" id="tiltPad" aria-hidden="true">

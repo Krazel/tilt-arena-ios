@@ -55,7 +55,7 @@ final class GameSession: ObservableObject {
     }
     func fail(_ error: Error) {
         scene.halt()
-        message = "No se ha podido iniciar el juego. Vuelve al menú para intentarlo de nuevo."
+        message = GameText.startFailure
         phase = .failed
         #if DEBUG
         print("Classic: \(error)")
@@ -77,7 +77,7 @@ struct GameView: View {
     var body: some View {
         ZStack {
             ArenaView(scene: game.scene).ignoresSafeArea()
-                .accessibilityLabel("Arena clásica. Inclina el iPhone para esquivar puntos y recoger armas.")
+                .accessibilityLabel(GameText.arenaAccessibility)
             GeometryReader { geometry in
                 if game.phase == .running {
                     VStack {
@@ -86,7 +86,7 @@ struct GameView: View {
                             Button { game.scene.pauseRun() } label: {
                                 Image(systemName: "pause.fill").font(.headline)
                                     .frame(width: 44, height: 44).background(.black.opacity(0.35), in: Circle())
-                            }.accessibilityLabel("Pausar partida").accessibilityIdentifier("pause")
+                            }.accessibilityLabel(GameText.pauseAccessibility).accessibilityIdentifier("pause")
                         }
                         Spacer()
                     }.padding(.horizontal, 12)
@@ -126,43 +126,43 @@ struct GameView: View {
             Text("KRAZEL GAMES").font(.system(size: 10, weight: .bold, design: .rounded)).tracking(4).foregroundColor(accent)
             switch game.phase {
             case .menu:
-                Text("CLÁSICO").font(.system(size: 38, weight: .black, design: .rounded))
-                Text("Esquiva. Recoge. Encadena.").font(.subheadline).foregroundColor(.white.opacity(0.7))
-                Text("RÉCORD  \(game.best.formatted())").font(.system(.callout, design: .monospaced))
-                primary(game.posture == .custom && !game.hasCustom ? "Calibrar y jugar" : "Jugar", id: "play") { game.scene.play(restart: true) }
+                Text(GameText.menuTitle).font(.system(size: 38, weight: .black, design: .rounded))
+                Text(GameText.tagline).font(.subheadline).foregroundColor(.white.opacity(0.7))
+                Text("\(GameText.best)  \(game.best.formatted())").font(.system(.callout, design: .monospaced))
+                primary(game.posture == .custom && !game.hasCustom ? GameText.calibrateAndPlay : GameText.play, id: "play") { game.scene.play(restart: true) }
                 if game.hasCustom || game.posture != .custom {
-                    secondary("Calibrar postura") { game.scene.calibrate(restart: true) }
+                    secondary(GameText.calibratePosture) { game.scene.calibrate(restart: true) }
                 }
             case .calibrating:
                 Image(systemName: "scope").font(.system(size: 38)).foregroundColor(accent)
-                Text("Tu postura").font(.title.bold())
+                Text(GameText.postureHeading).font(.title.bold())
                 Text(game.message).multilineTextAlignment(.center)
                 ProgressView().tint(accent)
-                secondary("Cancelar") { game.scene.cancelCalibration() }
+                secondary(GameText.cancel) { game.scene.cancelCalibration() }
             case .paused:
-                Text("PAUSA").font(.system(size: 38, weight: .black, design: .rounded))
-                Text(game.message.isEmpty ? "La arena te espera." : game.message)
+                Text(GameText.pause).font(.system(size: 38, weight: .black, design: .rounded))
+                Text(game.message.isEmpty ? GameText.arenaWaits : game.message)
                     .font(.subheadline).multilineTextAlignment(.center).foregroundColor(.white.opacity(0.7))
-                primary("Reanudar", id: "resume") { game.scene.play(restart: false) }
-                secondary("Recalibrar") { game.scene.calibrate(restart: false) }
-                Button("Terminar partida") { game.scene.finishPausedRun() }.font(.footnote).foregroundColor(.white.opacity(0.65))
+                primary(GameText.resume, id: "resume") { game.scene.play(restart: false) }
+                secondary(GameText.recalibrate) { game.scene.calibrate(restart: false) }
+                Button(GameText.finishRun) { game.scene.finishPausedRun() }.font(.footnote).foregroundColor(.white.opacity(0.65))
             case .gameOver:
-                Text("Por un punto…").font(.title.bold())
+                Text(GameText.resultTitle).font(.title.bold())
                 Text(game.resultScore.formatted()).font(.system(size: 38, weight: .black, design: .rounded)).foregroundColor(accent)
                 Text("COMBO ×\(game.resultCombo)   ·   \(game.resultTime) s").font(.system(.callout, design: .monospaced))
-                primary("Otra partida", id: "replay") { game.scene.play(restart: true) }
-                secondary("Menú") { game.scene.menu() }
+                primary(GameText.replay, id: "replay") { game.scene.play(restart: true) }
+                secondary(GameText.menu) { game.scene.menu() }
             case .failed:
-                Text("Un momento…").font(.title2.bold())
+                Text(GameText.moment).font(.title2.bold())
                 Text(game.message).multilineTextAlignment(.center)
-                primary("Menú", id: "menu") { game.scene.menu() }
+                primary(GameText.menu, id: "menu") { game.scene.menu() }
             case .running: EmptyView()
             }
         }.frame(maxWidth: .infinity)
     }
     private var settings: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("POSTURA DE CONTROL").font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
+            Text(GameText.controlPosture).font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
             HStack(spacing: 7) {
                 ForEach(TiltPosture.allCases) { posture in
                     Button { game.posture = posture } label: {
@@ -179,16 +179,16 @@ struct GameView: View {
             }
             Text(game.posture.description).font(.system(size: 12)).foregroundColor(.white.opacity(0.7)).frame(minHeight: 34, alignment: .top)
             if game.posture == .custom {
-                Text(game.hasCustom ? "Postura guardada · lista para jugar" : "Pulsa Calibrar para guardar tu postura")
+                Text(game.hasCustom ? GameText.savedPosture : GameText.customHint)
                     .font(.system(size: 11, weight: .semibold)).foregroundColor(accent)
             }
             HStack {
-                Text("Sonido").font(.system(size: 12)).foregroundColor(.white.opacity(0.65))
+                Text(GameText.sound).font(.system(size: 12)).foregroundColor(.white.opacity(0.65))
                 Spacer()
                 Button { game.muted.toggle() } label: {
-                    Label(game.muted ? "Desactivado" : "Activado", systemImage: game.muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                    Label(game.muted ? GameText.disabled : GameText.enabled, systemImage: game.muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                         .font(.system(size: 12)).frame(minHeight: 36)
-                }.accessibilityLabel(game.muted ? "Activar sonido" : "Silenciar sonido")
+                }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
             }
         }
     }

@@ -9,7 +9,7 @@ runtime = next(r['identifier'] for r in json.loads(run('xcrun','simctl','list','
 device = run('xcrun','simctl','create','Tilt Arena Capture','com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro',runtime)
 metadata = dict(version='0.3.9',build='1',baseProductionCommit='c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6',
     captureCommit=os.environ.get('GITHUB_SHA'),run=os.environ.get('GITHUB_RUN_ID'),device=device,
-    deviceName='iPhone 16 Pro',runtime=runtime,xcode=run('xcodebuild','-version'),
+    deviceName='iPhone 16 Pro',runtime=runtime,xcode=run('xcodebuild','-version'),language=os.environ.get('CAPTURE_LANGUAGE','en-US'),
     renderer='Production SwiftUI/SpriteKit, temporary input and telemetry overlay only',
     engine='Unmodified production JavaScriptCore resource',spawning=True,fixtures=False,
     input='Snapshot-only CaptureDriver, no state mutation',audio='simctl raw video; supply original music separately for marketing edit',
@@ -18,6 +18,11 @@ metadata = dict(version='0.3.9',build='1',baseProductionCommit='c733e9ed4c05070c
 try:
     run('xcrun','simctl','boot',device)
     run('xcrun','simctl','bootstatus',device,'-b',timeout=420)
+    # Store captures in the primary App Store locale by default; override with CAPTURE_LANGUAGE.
+    language=os.environ.get('CAPTURE_LANGUAGE','en-US')
+    locale=language.replace('-','_')
+    run('xcrun','simctl','spawn',device,'defaults','write','.GlobalPreferences','AppleLanguages','-array',language)
+    run('xcrun','simctl','spawn',device,'defaults','write','.GlobalPreferences','AppleLocale',locale)
     target = root/'artifacts/capture-target/native-ios'
     run('xcodegen','generate',cwd=target)
     with (out/'build.log').open('w') as log:

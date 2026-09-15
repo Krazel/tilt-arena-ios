@@ -23,7 +23,7 @@
   <key>UILaunchScreen</key>
   <dict/>
   <key>NSMotionUsageDescription</key>
-  <string>La inclinación del iPhone mueve la flecha. La postura personalizada se guarda solo en este dispositivo; no se envían datos de movimiento.</string>
+  <string>Tilt the iPhone to move the arrow. Your custom posture stays on this device; motion data is never sent.</string>
   <key>UIRequiresFullScreen</key>
   <true/>
   <key>UISupportedInterfaceOrientations</key>

@@ -104,12 +104,12 @@ final class ClassicScene: SKScene {
         samples = []; calibrationFrames = 0; motionTimestamp = -1
         calibrationStart = ProcessInfo.processInfo.systemUptime
         calibratedOrientation = view?.window?.windowScene?.interfaceOrientation ?? .landscapeLeft
-        session.message = "Mantén el iPhone quieto y cómodo un instante."
+        session.message = GameText.calibrationHold
         #if targetEnvironment(simulator)
-        session.message = "Simulador: arrastra desde cualquier punto para mover la flecha."
+        session.message = GameText.simulatorDrag
         #else
         guard motion.isDeviceMotionAvailable else {
-            session.message = "Este dispositivo no ofrece el sensor de movimiento necesario."
+            session.message = GameText.noMotionSensor
             session.phase = .failed; return
         }
         #endif
@@ -139,8 +139,8 @@ final class ClassicScene: SKScene {
         }
         if now - calibrationStart > 12 {
             session?.message = samples.isEmpty
-                ? "No llega información del sensor. Revisa los permisos de movimiento en Ajustes y vuelve a intentarlo."
-                : "No se ha podido fijar una postura estable. Apoya los brazos y vuelve a intentarlo."
+                ? GameText.sensorPermission
+                : GameText.unstablePosture
             session?.phase = .failed
         }
         #endif
@@ -247,7 +247,7 @@ final class ClassicScene: SKScene {
         let orientation = view?.window?.windowScene?.interfaceOrientation ?? calibratedOrientation
         if orientation != calibratedOrientation {
             calibratedOrientation = orientation
-            pauseRun(message: "Has girado el iPhone. Pulsa Reanudar cuando estés cómodo."); return
+            pauseRun(message: GameText.rotatedPhone); return
         }
         let dt = lastTime.map { currentTime - $0 } ?? 0; lastTime = currentTime
         do {
@@ -257,7 +257,7 @@ final class ClassicScene: SKScene {
             #else
             guard let m = motion.deviceMotion, ProcessInfo.processInfo.systemUptime - m.timestamp < 0.5 else {
                 if ProcessInfo.processInfo.systemUptime < sensorGraceUntil { lastTime = nil; return }
-                pauseRun(message: "Esperando al sensor. Pulsa Reanudar para volver a intentarlo."); return
+                pauseRun(message: GameText.waitingForSensor); return
             }
             let delta = session.activeProfile.motionDelta(x: m.gravity.x, y: m.gravity.y, z: m.gravity.z,
                                                          landscapeRight: orientation == .landscapeRight)
@@ -311,9 +311,9 @@ final class ClassicScene: SKScene {
         }
         scoreLabel.position=CGPoint(x:30,y:615);scoreLabel.horizontalAlignmentMode = .left;scoreLabel.text="0"
         bestLabel.position=CGPoint(x:930,y:615);bestLabel.horizontalAlignmentMode = .right
-        bestLabel.fontSize=16;bestLabel.text="RÉCORD  \(session?.best ?? 0)"
+        bestLabel.fontSize=16;bestLabel.text="\(GameText.best)  \(session?.best ?? 0)"
         comboLabel.position=CGPoint(x:30,y:28);comboLabel.horizontalAlignmentMode = .left;comboLabel.fontSize=18
-        comboLabel.text="ENLAZA LAS ARMAS"
+        comboLabel.text=GameText.chainPowers
         comboBar.anchorPoint=CGPoint(x:0,y:0.5);comboBar.position=CGPoint(x:30,y:12);hud.addChild(comboBar)
         layoutHUD()
     }
@@ -386,8 +386,8 @@ final class ClassicScene: SKScene {
         waveCharge.update(progress: frame.player.waveChargeProgress, active: frame.player.waveCharging, reduced: reduceEffects)
         boomerangCharge.update(progress: frame.player.boomerangChargeProgress, active: frame.player.boomerangCharging, reduced: reduceEffects)
         scoreLabel.text="\(frame.score.formatted())"
-        comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : "ENLAZA LAS ARMAS"
-        comboBar.xScale=frame.comboRemaining;bestLabel.text="RÉCORD  \(max(session?.best ?? 0,frame.score).formatted())"
+        comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : GameText.chainPowers
+        comboBar.xScale=frame.comboRemaining;bestLabel.text="\(GameText.best)  \(max(session?.best ?? 0,frame.score).formatted())"
         var particles=0
         for event in frame.events {
             if event.kind == "kill" { if particles<12 { showEffect(event);particles+=1 } }

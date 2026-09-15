@@ -4,16 +4,20 @@ enum TiltPosture: String, CaseIterable, Identifiable {
     case custom, normal, inclined
     var id: String { rawValue }
     var title: String {
-        switch self { case .normal: return "Normal"; case .inclined: return "Inclinado"; case .custom: return "Calibrar" }
+        switch self {
+        case .normal: return GameLanguage.current == .spanish ? "Normal" : "Normal"
+        case .inclined: return GameLanguage.current == .spanish ? "Inclinado" : "Inclined"
+        case .custom: return GameLanguage.current == .spanish ? "Calibrar" : "Calibrate"
+        }
     }
     var symbol: String {
         switch self { case .normal: return "iphone.gen3"; case .inclined: return "iphone.gen3.radiowaves.left.and.right"; case .custom: return "scope" }
     }
     var description: String {
         switch self {
-        case .normal: return "Sujeta el iPhone a unos 45° sobre la mesa."
-        case .inclined: return "iPhone plano, pantalla hacia arriba, como sobre una mesa."
-        case .custom: return "Guarda el ángulo que te resulte más cómodo."
+        case .normal: return GameLanguage.current == .spanish ? "Sujeta el iPhone a unos 45° sobre la mesa." : "Hold the iPhone at about 45° above the table."
+        case .inclined: return GameLanguage.current == .spanish ? "iPhone plano, pantalla hacia arriba, como sobre una mesa." : "Keep the iPhone flat, screen up, like it is on a table."
+        case .custom: return GameLanguage.current == .spanish ? "Guarda el ángulo que te resulte más cómodo." : "Save the angle that feels most comfortable."
         }
     }
 }

@@ -1,6 +1,6 @@
 # Tilt Arena — estado de producto
 
-Actualizado 2026-09-13. Krazel Games. Registro PR-031.
+Actualizado 2026-09-15. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
 ## Entrega actual: 0.3.9 (1)
@@ -25,6 +25,16 @@ testflight-v039.json, balance-v039.json y capturas native-v039/.
 Prueba física pendiente. App Store 1.0 PREPARE_FOR_SUBMISSION; sin beta externa ni anuncios.
 PR-031 sincronizada y verificada por GET, revisión 38, 2026-09-12T19:06:40.024Z.
 Marketing conservado; auditoría PC en verification/marketing-pc-audit-2026-09-12.md.
+
+## Localización solicitada - 2026-09-15
+
+La interfaz nativa ya dispone de inglés como fallback y castellano para cualquier
+preferencia `es-*` del dispositivo. Se cubren menú, pausa/reanudación, calibración,
+posturas Normal/Inclined/Custom, HUD, sonido, mensajes del sensor, game over y
+accesibilidad. La web heredada usa la misma regla de idioma para su UI y poderes.
+La comprobación de selección de idioma está en `native-ios/Tests/LocalizationTests.swift`.
+Falta compilar una nueva candidata y revisar el texto en ambos idiomas en el
+dispositivo antes de subirla a TestFlight.
 
 ## Captura nativa para marketing - 2026-09-13
 

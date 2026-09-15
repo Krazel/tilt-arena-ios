@@ -155,7 +155,8 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertEqual(defaults.double(forKey: "classic.neutralY"), -0.35)
         defaults.set(2, forKey: "classic.postureRevision")
         XCTAssertEqual(TiltProfile.initialPosture(defaults: defaults), .inclined)
-        XCTAssertEqual(TiltPosture.allCases.map(\.title), ["Calibrar", "Normal", "Inclinado"])
+        let expectedTitles = GameLanguage.current == .spanish ? ["Calibrar", "Normal", "Inclinado"] : ["Calibrate", "Normal", "Inclined"]
+        XCTAssertEqual(TiltPosture.allCases.map(\.title), expectedTitles)
     }
     @MainActor func testSceneFillsWideDisplayAndResumeDoesNotCalibrate() {
         let session = GameSession()

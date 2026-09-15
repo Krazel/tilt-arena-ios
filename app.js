@@ -25,6 +25,40 @@ const ui = {
   finalTime: document.querySelector("#finalTime")
 };
 
+const webSpanish = /^es(?:-|$)/i.test(navigator.language || navigator.userLanguage || "");
+const webCopy = {
+  score: ["Score", "Puntos"], combo: ["Combo", "Combo"], time: ["Time", "Tiempo"], best: ["Best", "Récord"],
+  activePowers: ["Active powers", "Poderes activos"], arena: ["Game arena", "Arena de juego"], pause: ["Pause", "Pausar"],
+  startTitle: ["Dodge the dots", "Evita los puntos"],
+  startCopy: ["Tilt the phone or drag to move the arrow. Touching an enemy ends the run. Collect orbs to activate powers.", "Inclina el móvil o arrastra para mover la flecha. Tocar un enemigo acaba la partida. Recoge círculos para activar poderes."],
+  start: ["Start", "Empezar"], enableTilt: ["Enable tilt", "Activar inclinación"], runPaused: ["Run paused", "Partida pausada"],
+  resume: ["Resume", "Continuar"], restart: ["Restart", "Reiniciar"], gameOver: ["Game over", "Fin de partida"], fallen: ["You fell", "Has caído"],
+  points: ["Points", "Puntos"], maxCombo: ["Max combo", "Combo máximo"], playAgain: ["Play again", "Otra partida"],
+  keyboard: ["Keyboard / mouse", "Teclado / ratón"], tiltActive: ["Tilt active", "Inclinación activa"], tiltDenied: ["Tilt permission denied", "Sin permiso de inclinación"],
+  newRecord: ["New record", "Nuevo récord"],
+  powers: {
+    frost: ["Ice", "Hielo"], missiles: ["Missiles", "Misiles"], vortex: ["Gravity", "Gravedad"], shield: ["Shield", "Protección"], spikes: ["Spikes", "Pinchos"], shock: ["Lightning", "Rayos"]
+  }
+};
+
+function copy(key) {
+  const value = webCopy[key];
+  return Array.isArray(value) ? value[webSpanish ? 1 : 0] : value;
+}
+
+function applyWebLocale() {
+  document.documentElement.lang = webSpanish ? "es" : "en";
+  document.querySelectorAll("[data-i18n]").forEach((node) => { node.textContent = copy(node.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-aria]").forEach((node) => { node.setAttribute("aria-label", copy(node.dataset.i18nAria)); });
+  ui.controlText.textContent = copy("keyboard");
+  pickupTypes.forEach((type) => { type.label = copyPower(type.id); });
+}
+
+function copyPower(id) {
+  const value = webCopy.powers[id];
+  return value ? value[webSpanish ? 1 : 0] : id;
+}
+
 const storageBest = "tilt-arena-best";
 const arena = { width: 0, height: 0, padding: 16 };
 const perf = {
@@ -41,6 +75,8 @@ const pickupTypes = [
   { id: "spikes", label: "Sierra", color: "#e8ecd1", cooldown: 10, icon: "assets/concept-c/power-spikes.svg", desc: "Cuchillas orbitando alrededor de la flecha." },
   { id: "shock", label: "Rayo", color: "#87b7c3", cooldown: 8.5, icon: "assets/concept-c/power-shock.svg", desc: "Cadena electrica entre muchos enemigos." }
 ];
+
+applyWebLocale();
 
 const assetSources = {
   player: "assets/concept-c/player-arrow.svg",
@@ -487,9 +523,9 @@ function endGame() {
   if (state.score > state.best) {
     state.best = state.score;
     localStorage.setItem(storageBest, String(state.best));
-    ui.finalTitle.textContent = "Nuevo record";
+    ui.finalTitle.textContent = copy("newRecord");
   } else {
-    ui.finalTitle.textContent = "Has caido";
+    ui.finalTitle.textContent = copy("fallen");
   }
   ui.finalScore.textContent = String(state.score);
   ui.finalCombo.textContent = `x${state.maxCombo}`;
@@ -850,7 +886,7 @@ function updateHud(force = false) {
     combo: `x${Math.max(1, Math.floor(state.combo))}`,
     time: formatTime(state.elapsed),
     best: String(state.best),
-    control: state.tilt.enabled ? "Inclinacion activa" : "Teclado / raton",
+    control: state.tilt.enabled ? copy("tiltActive") : copy("keyboard"),
     powers: state.activePowers
       .map((power) => `${power.id}:${Math.ceil(power.time * 10) / 10}`)
       .join("|")
@@ -903,11 +939,11 @@ async function enableTilt() {
     }
     state.tilt.enabled = true;
     state.tilt.calibrated = false;
-    ui.tiltButton.textContent = "Inclinacion activa";
+    ui.tiltButton.textContent = copy("tiltActive");
     vibrate(20);
   } catch {
     state.tilt.enabled = false;
-    ui.tiltButton.textContent = "Sin permiso de inclinacion";
+    ui.tiltButton.textContent = copy("tiltDenied");
   }
 }
 
