@@ -1,6 +1,8 @@
 # Tilt Arena support page draft
 
-Status: draft for future publication. Do not enter this URL in App Store Connect until the page is published and returns HTTPS 200.
+Status: published and verified on September 15, 2026.
+
+Public URL: https://krazel.github.io/tilt-arena/support/
 
 Tilt Arena is an iPhone game played in landscape. Calibrate the posture, tilt to guide the arrow, collect orbs and pause with the in-game button.
 

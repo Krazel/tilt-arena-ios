@@ -1,6 +1,8 @@
 # Tilt Arena privacy policy draft
 
-Status: draft for future publication. Do not enter this URL in App Store Connect until the page is published and returns HTTPS 200.
+Status: published and verified on September 15, 2026.
+
+Public URL: https://krazel.github.io/tilt-arena/privacy/
 
 Tilt Arena stores the selected control posture, calibration and personal high score locally on the device. The app does not require an account, does not run analytics or advertising SDKs, and does not send motion data or gameplay data to Krazel or another service. The app does not collect tracking data. Apple may process App Store distribution and TestFlight information under Apple's own policies.
 

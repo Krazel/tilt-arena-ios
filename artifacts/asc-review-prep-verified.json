@@ -1,0 +1,250 @@
+{
+  "app": {
+    "accessibilityUrl": null,
+    "name": "Tilt Arena",
+    "bundleId": "com.dmkr.tiltarena",
+    "sku": "krazel-tilt-arena-ios",
+    "primaryLocale": "en-US",
+    "isOrEverWasMadeForKids": false,
+    "subscriptionStatusUrl": null,
+    "subscriptionStatusUrlVersion": null,
+    "subscriptionStatusUrlForSandbox": null,
+    "subscriptionStatusUrlVersionForSandbox": null,
+    "contentRightsDeclaration": "DOES_NOT_USE_THIRD_PARTY_CONTENT",
+    "streamlinedPurchasingEnabled": true
+  },
+  "info": {
+    "appStoreState": "PREPARE_FOR_SUBMISSION",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "appStoreAgeRating": "NINE_PLUS",
+    "australiaAgeRating": null,
+    "brazilAgeRating": "TEN",
+    "brazilAgeRatingV2": "SELF_RATED_TEN",
+    "franceAgeRating": null,
+    "koreaAgeRating": "ALL"
+  },
+  "appInfoLocalizations": [
+    {
+      "locale": "es-ES",
+      "name": "Tilt Arena",
+      "subtitle": "Esquiva y encadena poderes",
+      "privacyPolicyUrl": "https://krazel.github.io/tilt-arena/privacy/",
+      "privacyChoicesUrl": null,
+      "privacyPolicyText": null
+    },
+    {
+      "locale": "en-US",
+      "name": "Tilt Arena",
+      "subtitle": "Dodge and chain powers",
+      "privacyPolicyUrl": "https://krazel.github.io/tilt-arena/privacy/",
+      "privacyChoicesUrl": null,
+      "privacyPolicyText": null
+    }
+  ],
+  "version": {
+    "platform": "IOS",
+    "versionString": "1.0",
+    "appStoreState": "PREPARE_FOR_SUBMISSION",
+    "appVersionState": "PREPARE_FOR_SUBMISSION",
+    "copyright": "© 2026 Krazel Games",
+    "reviewType": "APP_STORE",
+    "releaseType": "AFTER_APPROVAL",
+    "earliestReleaseDate": null,
+    "usesIdfa": null,
+    "downloadable": true,
+    "createdDate": "2026-09-06T08:37:02-07:00"
+  },
+  "versionLocalizations": [
+    {
+      "id": "8a155d5b-1864-4d8c-b026-53c7854ca0d0",
+      "locale": "es-ES",
+      "descriptionLength": 412,
+      "promotionalText": "Los enemigos no dejan de acercarse. Inclina, esquiva, recoge poderes y convierte cada oportunidad en un nuevo récord.",
+      "marketingUrl": null,
+      "supportUrl": "https://krazel.github.io/tilt-arena/support/"
+    },
+    {
+      "id": "76440ee6-cf7f-4159-80de-913be03f8f52",
+      "locale": "en-US",
+      "descriptionLength": 777,
+      "promotionalText": "Find the gap, collect a power and chain the next one. An arcade of dodging, combos and ten powers built for chasing your high score.",
+      "marketingUrl": null,
+      "supportUrl": "https://krazel.github.io/tilt-arena/support/"
+    }
+  ],
+  "build": {
+    "id": "88f7f95e-aeaa-40ab-bae8-456a4d829471",
+    "attrs": {
+      "version": "1",
+      "uploadedDate": "2026-09-12T12:03:54-07:00",
+      "expirationDate": "2026-12-11T11:03:54-08:00",
+      "expired": false,
+      "minOsVersion": "16.0",
+      "lsMinimumSystemVersion": null,
+      "computedMinMacOsVersion": "13.0",
+      "computedMinVisionOsVersion": "1.0",
+      "iconAssetToken": {
+        "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/22/c8/c8/22c8c8a7-4bc1-95df-d31a-4f126a5e0816/AppIcon60x60@2x.png/{w}x{h}bb.{f}",
+        "width": 120,
+        "height": 120
+      },
+      "processingState": "VALID",
+      "buildAudienceType": "APP_STORE_ELIGIBLE",
+      "usesNonExemptEncryption": false
+    }
+  },
+  "category": "GAMES",
+  "subcategory": "GAMES_ACTION",
+  "age": {
+    "advertising": false,
+    "alcoholTobaccoOrDrugUseOrReferences": "NONE",
+    "contests": "NONE",
+    "gambling": false,
+    "gamblingSimulated": "NONE",
+    "gunsOrOtherWeapons": "NONE",
+    "healthOrWellnessTopics": false,
+    "kidsAgeBand": null,
+    "lootBox": false,
+    "medicalOrTreatmentInformation": "NONE",
+    "messagingAndChat": false,
+    "parentalControls": false,
+    "profanityOrCrudeHumor": "NONE",
+    "ageAssurance": false,
+    "sexualContentGraphicAndNudity": "NONE",
+    "sexualContentOrNudity": "NONE",
+    "socialMedia": null,
+    "socialMediaAgeRestricted": null,
+    "horrorOrFearThemes": "NONE",
+    "matureOrSuggestiveThemes": "NONE",
+    "unrestrictedWebAccess": false,
+    "userGeneratedContent": false,
+    "violenceCartoonOrFantasy": "INFREQUENT_OR_MILD",
+    "violenceRealisticProlongedGraphicOrSadistic": "NONE",
+    "violenceRealistic": "NONE",
+    "ageRatingOverride": "NONE",
+    "ageRatingOverrideV2": "NONE",
+    "koreaAgeRatingOverride": "NONE",
+    "developerAgeRatingInfoUrl": null
+  },
+  "baseTerritory": {
+    "type": "territories",
+    "id": "ESP",
+    "attributes": {
+      "currency": "EUR"
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/territories/ESP"
+    }
+  },
+  "prices": [
+    {
+      "id": "eyJzIjoiNjgwOTE5MzE4NSIsInQiOiJFU1AiLCJwIjoiMTAwNDkiLCJzZCI6MC4wLCJlZCI6MC4wfQ",
+      "attributes": {
+        "manual": true,
+        "startDate": null,
+        "endDate": null
+      },
+      "territory": "ESP",
+      "point": "eyJzIjoiNjgwOTE5MzE4NSIsInQiOiJFU1AiLCJwIjoiMTAwNDkifQ",
+      "included": [
+        {
+          "type": "appPricePoints",
+          "id": "eyJzIjoiNjgwOTE5MzE4NSIsInQiOiJFU1AiLCJwIjoiMTAwNDkifQ",
+          "attributes": {
+            "customerPrice": "3.99",
+            "proceeds": "2.29"
+          }
+        },
+        {
+          "type": "territories",
+          "id": "ESP",
+          "attributes": {
+            "currency": "EUR"
+          }
+        }
+      ]
+    }
+  ],
+  "screenshots": {
+    "es-ES": [
+      {
+        "id": "fa3cb4a1-f3fd-437d-8046-debb0b7dca5b",
+        "type": "APP_IPHONE_67",
+        "shots": [
+          {
+            "id": "6ec64245-fee8-43c8-b3bf-182a1884fe2f",
+            "fileName": "gameplay-00-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          },
+          {
+            "id": "1396778e-7dd4-4e9f-94ce-123c0a18833c",
+            "fileName": "gameplay-01-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          },
+          {
+            "id": "08ff4ed8-81d5-4b8f-bb04-c91272c3538b",
+            "fileName": "gameplay-02-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          },
+          {
+            "id": "4a21756e-e32f-4d98-ba00-0d9dc1cf2a60",
+            "fileName": "gameplay-03-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          }
+        ]
+      }
+    ],
+    "en-US": [
+      {
+        "id": "f8b717f4-aa35-495a-a863-6ae04c3ef036",
+        "type": "APP_IPHONE_67",
+        "shots": [
+          {
+            "id": "de75d03a-005e-4b6d-ab03-600ab79624d8",
+            "fileName": "gameplay-00-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          },
+          {
+            "id": "2fe24c66-dc98-4d4e-838d-038a0a009af8",
+            "fileName": "gameplay-01-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          },
+          {
+            "id": "554d0011-b5a8-45ac-a7f9-b043490d0dd7",
+            "fileName": "gameplay-02-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          },
+          {
+            "id": "8c1ce528-f19c-4ecd-acae-0065be42ab74",
+            "fileName": "gameplay-03-1290.png",
+            "state": "COMPLETE",
+            "width": 1290,
+            "height": 2796,
+            "errors": []
+          }
+        ]
+      }
+    ]
+  }
+}
