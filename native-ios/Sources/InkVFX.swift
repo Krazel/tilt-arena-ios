@@ -15,7 +15,9 @@ final class InkVFX {
         let root = SKNode(); root.position = CGPoint(x: x, y: y)
         root.name = event.kind == "kill" ? "spark" : "weapon"; layer.addChild(root)
         root.run(.sequence([.wait(forDuration: 1.15), .removeFromParent()]))
-        let color = InkArt.color(for: event.power ?? event.kind)
+        let sourceColor = event.color?.replacingOccurrences(of: "#", with: "")
+        let power = event.power ?? ClassicArt.colors.first(where: { $0.value == sourceColor })?.key
+        let color = InkArt.color(for: power ?? event.kind)
         switch event.kind {
         case "blast", "death":
             root.addChild(InkExplosion(radius: CGFloat(event.radius ?? 95), color: event.kind == "death" ? InkArt.red : color, reduced: reduced))

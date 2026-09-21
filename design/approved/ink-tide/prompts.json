@@ -1,0 +1,19 @@
+{
+  "tool": "built-in ChatGPT Images",
+  "reference": "design/approved/ink-tide/reference.png",
+  "referenceRole": "approved style and composition reference",
+  "prompts": [
+    {
+      "asset": "native-ios/Resources/ink-tide-arena.png",
+      "prompt": "Precise background extraction edit for a production 2D landscape iPhone game. Use this approved Ink Tide image exactly as style and composition reference. Remove ALL gameplay objects: remove every red enemy, the white arrow, every teal power-up disc, and blue crescent attack including their shadows. Reconstruct the empty charcoal handmade paper and very subtle broad gray flowing dry-brush wind strokes behind them. Keep the narrow ivory torn-paper corner borders, black pine silhouettes, ochre reeds and lotus leaves at the outermost corners in the exact same flat ink comic style. Wide landscape 2.17:1 composition, high quality background texture. To maximize safe gameplay, keep all bright ivory and ochre decoration within the outer 5% of frame, the center 90% must be dark with very low contrast gray brush currents. No central spiral, no new objects, no HUD, no text. Flat matte print, not realistic, no lighting or vignette. This is the clean arena BACKGROUND ONLY."
+    },
+    {
+      "asset": "native-ios/Resources/ink-tide-sprites.png",
+      "prompt": "Production sprite atlas based precisely on the approved reference's flat comic ink/paper look. TRANSPARENT background with genuine alpha, no checkerboard drawn, no background paper. 4 columns x 2 rows, eight equal square cells, each isolated sprite centered in its own cell, fit within 70% of cell with transparent gutters. No text labels. Row1 left to right: (1) ivory folded paper arrow with small vermilion circle seal, points RIGHT, rough paper grain and dark fold line; (2) red ink-comma enemy, round vermilion head at center with expressive black drybrush tail extending LEFT, head faces RIGHT; (3) plain muted teal round matte painted seal disc with rough ivory rim, NO GLYPH at all, cream glyph will be rendered by game; (4) cobalt blue brush crescent attack, ivory painted inner streak, opens LEFT, bulges RIGHT, few blue flecks. Row2 left to right: (5) short dynamic flame stroke pointed RIGHT, ochre and burnt orange jagged tongues trailing LEFT, small cream hot streak; (6) black ink vortex spiral with three muted teal drybrush curling arms and small ochre rim, top-down, circular, no luminous purple; (7) white irregular opaque drybrush ink fleck/splatter, neutral white so game can tint it any color; (8) ochre/ivory two-bladed curved boomerang, flat cut-paper brush silhouette, hub centered. Each sprite fully separate, no overlapping cells, flat matte ink shapes, no glossy shading, no scene, no glow, no perspective. Preserve visual detail at small size. Exact regular equal 4x2 atlas, transparent outside all sprites."
+    },
+    {
+      "asset": "design/approved/ink-tide/app-icon-master.png",
+      "prompt": "Create the iOS game app icon for Tilt Arena, using exactly the approved flat Ink Tide comic ink-and-paper art style shown in this reference. Square 1024x1024 pixels, full bleed opaque charcoal handmade paper background, no transparency, no rounded corners or outer app frame. One large ivory folded-paper directional arrow with a vermilion circle seal, pointing diagonally upper-right, centered and instantly readable at tiny size. Around it one rough muted teal circular brushstroke; three small vermilion ink-comma enemies outside that brush ring, discreet ochre drybrush accents at two corners. Strong black ink outlines and subtle paper grain, carefully cut angular folds, matte screenprint, no photorealism, no glossy 3D shading, no text, no logos, no letters. Restrained iconic composition matching the reference exactly, generous dark breathing room."
+    }
+  ]
+}

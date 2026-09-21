@@ -1,0 +1,4 @@
+Ink Tide: a new ink-and-paper look for the arena, player, enemies, power seals, charge animations, explosions, ice, fire and menus.
+Use Visual style in the menu or pause screen to switch between Ink Tide and Original. Your selection is saved without resetting your run, best score or calibration.
+English is the default language; Spanish follows the device language.
+Please check enemy readability, arrow direction, overlapping powers and performance in longer runs. Gameplay rules, speeds, power probabilities and scoring are unchanged.

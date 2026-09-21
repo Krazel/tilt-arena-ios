@@ -110,9 +110,9 @@ struct GameView: View {
                             }.padding(22)
                         }
                         .frame(maxWidth: 780, maxHeight: min(360, geometry.size.height - 12))
-                        .background(panel.opacity(0.97))
+                        .background(panel.opacity(ink ? 0.97 : 0.96))
                         .clipShape(RoundedRectangle(cornerRadius: ink ? 6 : 24))
-                        .overlay(RoundedRectangle(cornerRadius: ink ? 6 : 24).stroke(accent.opacity(0.45), lineWidth: 1))
+                        .overlay(RoundedRectangle(cornerRadius: ink ? 6 : 24).stroke(accent.opacity(ink ? 0.45 : 0.3), lineWidth: 1))
                         .padding(.horizontal, 12)
                     }.frame(width: geometry.size.width, height: geometry.size.height)
                 }
@@ -148,7 +148,7 @@ struct GameView: View {
                 ProgressView().tint(accent)
                 secondary(GameText.cancel) { game.scene.cancelCalibration() }
             case .paused:
-                Text(GameText.pause).font(.system(size: 38, weight: .black, design: .rounded))
+                Text(GameText.pause).font(.system(size: 38, weight: .black, design: ink ? .serif : .rounded))
                 Text(game.message.isEmpty ? GameText.arenaWaits : game.message)
                     .font(.subheadline).multilineTextAlignment(.center).foregroundColor(.white.opacity(0.7))
                 primary(GameText.resume, id: "resume") { game.scene.play(restart: false) }
@@ -156,7 +156,7 @@ struct GameView: View {
                 Button(GameText.finishRun) { game.scene.finishPausedRun() }.font(.footnote).foregroundColor(.white.opacity(0.65))
             case .gameOver:
                 Text(GameText.resultTitle).font(.title.bold())
-                Text(game.resultScore.formatted()).font(.system(size: 38, weight: .black, design: .rounded)).foregroundColor(accent)
+                Text(game.resultScore.formatted()).font(.system(size: 38, weight: .black, design: ink ? .serif : .rounded)).foregroundColor(accent)
                 Text("COMBO ×\(game.resultCombo)   ·   \(game.resultTime) s").font(.system(.callout, design: .monospaced))
                 primary(GameText.replay, id: "replay") { game.scene.play(restart: true) }
                 secondary(GameText.menu) { game.scene.menu() }

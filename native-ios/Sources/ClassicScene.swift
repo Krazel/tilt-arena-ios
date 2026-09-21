@@ -350,6 +350,18 @@ final class ClassicScene: SKScene {
         layoutHUD()
     }
     private func layoutHUD() {
+        hud.children.filter { $0.name == "ink-hud-backing" }.forEach { $0.removeFromParent() }
+        if theme == .inkTide {
+            // Paper borders must never reduce the contrast of score or combo text.
+            for rect in [CGRect(x: arenaBounds.minX, y: 600, width: 200, height: 30),
+                         CGRect(x: arenaBounds.maxX - 292, y: 600, width: 228, height: 30),
+                         CGRect(x: arenaBounds.minX, y: arenaBounds.minY - 45, width: 270, height: 37)] {
+                let backing = SKShapeNode(rect: rect, cornerRadius: 3)
+                backing.name = "ink-hud-backing"; backing.zPosition = -1
+                backing.fillColor = UIColor(hex: "181817").withAlphaComponent(0.86)
+                backing.strokeColor = .clear; hud.addChild(backing)
+            }
+        }
         scoreLabel.position = CGPoint(x: arenaBounds.minX + 6, y: 615)
         bestLabel.position = CGPoint(x: arenaBounds.maxX - 72, y: 615)
         comboLabel.position = CGPoint(x: arenaBounds.minX + 6, y: arenaBounds.minY - 23)
