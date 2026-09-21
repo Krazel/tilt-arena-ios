@@ -3,6 +3,18 @@
 Actualizado 2026-09-15. Krazel Games. Registro PR-031.
 Responsable: tarea de producto 01a071f1-2875-7bc1-a4bd-9d9e38c35718.
 
+## Propuestas visuales — 2026-09-21
+
+Se prepararon cuatro direcciones conceptuales independientes del aspecto actual:
+Prism Circuit, Ink Tide, Solar Forge y Abyss Bloom. Cada una conserva la lectura
+de movimiento, esquiva, enemigos, orbes y un VFX activo, pero cambia materiales,
+arena, protagonista, enemigos y lenguaje de efectos. Son imágenes generadas para
+selección, no sustituyen todavía el arte aprobado ni una build.
+La galería y los archivos recuperables están en
+`design/visual-proposals/2026-09-21/PROPOSALS.md` y sus cuatro PNG.
+Recomendación inicial: Prism Circuit por legibilidad móvil, rendimiento y una
+transición limpia desde el renderer actual. Pendiente de elección del usuario.
+
 ## Entrega actual: 0.3.9 (1)
 
 Frenado anterior recuperado (22), velocidad máxima 600 conservada. Bumerán a 640
