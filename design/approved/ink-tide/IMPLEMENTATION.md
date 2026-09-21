@@ -4,7 +4,7 @@ El 2026-09-21 el usuario selecciona «01 Pinos y viento» y encarga trasladarla 
 todo el juego, conservando el aspecto anterior para cambiar fácilmente.
 Referencia: reference.png, imagen completa horizontal. Mismos controles y reglas.
 
-Implementación: candidata iOS 0.4 (1), SpriteKit/SwiftUI. Tema predeterminado
+Implementación: entrega iOS 0.4 (1), SpriteKit/SwiftUI. Tema predeterminado
 Ink Tide; selector «Estilo visual / Visual style» en menú y pausa. Original
 conserva renderer, assets y efectos previos. La preferencia usa classic.visualTheme,
 independiente de récords y calibración. El cambio reconstruye solo los nodos
@@ -26,5 +26,9 @@ Icono generado con el mismo estilo, normalizado a RGB 1024×1024 para el catálo
 iOS; máster guardado. Icono anterior en design/archive/original/AppIcon.png.
 Cambiar el tema afecta al juego, no al icono de inicio de iOS.
 
-Validación pendiente de compilación y capturas nativas. Las imágenes conceptuales
-no son capturas del binario. Motor classic-core.js intacto, 60 pruebas Node pasan.
+Validación nativa aprobada: 60 Node, 21 XCTest y 10 XCUITest, cero fallos.
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/35661012134 .
+23 capturas nativas revisadas y archivadas en el repositorio canónico.
+Motor classic-core.js intacto. Ensayo físico pendiente.
+0.4 (1) VALID e IN_BETA_TESTING, solo grupo interno del titular; API verificada.
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/35662907660 .

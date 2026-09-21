@@ -3,7 +3,10 @@
 Juego iOS inspirado en la sensación de Tilt to Live Classic, con código, arte y
 sonido propios. Nombre provisional; biblioteca PR-031.
 
-- Entrega actual: 0.3.9 (1), activa en TestFlight interno.
+- Entrega actual: 0.4 (1), VALID y activa en TestFlight interno solo para el titular.
+- Ink Tide predeterminado: arena de tinta y papel, sprites, icono, interfaz y VFX.
+  Estilo anterior íntegro en «Estilo visual → Original» desde menú o pausa.
+  Selección persistente; conserva partida, récord, calibración y reglas.
 - Puntuación: 10 por recogida, 10 por baja y bonus de combo 6 × bajas².
   Nuevo récord de estas reglas; el récord anterior se conserva aparte.
 - Velocidad máxima normal 600 (+28 %), frenado anterior recuperado; impulso de fuego 1050.
@@ -16,10 +19,10 @@ sonido propios. Nombre provisional; biblioteca PR-031.
 - Explosión con núcleo blanco, expansión, doble onda y fragmentos.
 - Enemigos sobre orbes; vórtice pequeño con atracción al protagonista desde radio 300.
 - Electricidad con primer salto de radio 220 y cadenas de 90.
-- Onda lila y fuego con carga de 0,5 s; fuego con dirección libre a plena velocidad.
+- Onda y fuego con carga de 0,5 s; fuego con dirección libre a plena velocidad.
 - Última magia repuesta inmediatamente. Calibrar inicial, Normal e Inclinado plano.
 - Curva difícil por tiempo conservada; sensación pendiente de partidas físicas.
-- 60 Node, 16 XCTest y 9 XCUITest aprobados; capturas nativas e IPA verificadas.
+- 60 Node, 21 XCTest y 10 XCUITest aprobados; 23 capturas nativas e IPA verificadas.
 - Ensayo físico pendiente. Sin publicación en App Store.
 
 native-ios/: SwiftUI, SpriteKit, CoreMotion y motor JavaScriptCore único.
@@ -28,7 +31,7 @@ bash scripts/verify-ios.sh compila y prueba en Mac. qa/ es un laboratorio de reg
 no una validación de iPhone. Web y assets anteriores preservados como historial.
 
 Repositorio: https://github.com/Krazel/tilt-arena-ios .
-QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/34711942552
-Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/34712768490
-Fuente compilada: c733e9ed4c05070cb19ac28fce6d3b5f8775e9f6.
+QA: https://github.com/Krazel/tilt-arena-ios/actions/runs/35661012134
+Subida: https://github.com/Krazel/tilt-arena-ios/actions/runs/35662907660
+Fuente compilada: 1f6cfb44679b465b36bd86f5649b1efb34aef0aa.
 No contiene claves ni historial privado de Studio. Ruta local sin traslado.
