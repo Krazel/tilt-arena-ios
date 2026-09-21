@@ -28,6 +28,7 @@ final class GameSession: ObservableObject {
     @Published var resultTime = 0
     @Published var best = ClassicScoreRecord.read()
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
+    @Published var theme = VisualTheme.read()
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
     @Published var hasCustom = UserDefaults.standard.object(forKey: "classic.neutralY") != nil
     private var custom = TiltProfile(screenX: UserDefaults.standard.double(forKey: "classic.neutralX"),
@@ -36,6 +37,8 @@ final class GameSession: ObservableObject {
     let scene = ClassicScene()
     init() {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--theme-classic-qa") { theme = .classic }
+        if ProcessInfo.processInfo.arguments.contains("--theme-ink-qa") { theme = .inkTide }
         if ProcessInfo.processInfo.arguments.contains("--fresh-controls-qa") {
             for key in ["classic.posture", "classic.postureRevision", "classic.neutralX", "classic.neutralY"] {
                 UserDefaults.standard.removeObject(forKey: key)
@@ -44,6 +47,7 @@ final class GameSession: ObservableObject {
         }
         #endif
         scene.session = self
+        scene.setTheme(theme)
         UserDefaults.standard.set(posture.rawValue, forKey: "classic.posture")
         UserDefaults.standard.set(2, forKey: "classic.postureRevision")
     }
@@ -72,7 +76,10 @@ struct GameView: View {
     @StateObject private var game = GameSession()
     @Environment(\.scenePhase) private var appPhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    private let accent = Color(red: 0.82, green: 0.96, blue: 0.38)
+    private var ink: Bool { game.theme == .inkTide }
+    private var accent: Color { ink ? Color(InkArt.gold) : Color(red: 0.82, green: 0.96, blue: 0.38) }
+    private var paper: Color { ink ? Color(InkArt.paper) : .white }
+    private var panel: Color { ink ? Color(UIColor(hex: "201f1c")) : Color(red: 0.075, green: 0.12, blue: 0.055) }
     private var showSettings: Bool { game.phase == .menu || game.phase == .paused || game.phase == .gameOver }
     var body: some View {
         ZStack {
@@ -103,20 +110,21 @@ struct GameView: View {
                             }.padding(22)
                         }
                         .frame(maxWidth: 780, maxHeight: min(360, geometry.size.height - 12))
-                        .background(Color(red: 0.075, green: 0.12, blue: 0.055).opacity(0.96))
-                        .clipShape(RoundedRectangle(cornerRadius: 24))
-                        .overlay(RoundedRectangle(cornerRadius: 24).stroke(accent.opacity(0.3), lineWidth: 1))
+                        .background(panel.opacity(0.97))
+                        .clipShape(RoundedRectangle(cornerRadius: ink ? 6 : 24))
+                        .overlay(RoundedRectangle(cornerRadius: ink ? 6 : 24).stroke(accent.opacity(0.45), lineWidth: 1))
                         .padding(.horizontal, 12)
                     }.frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
-        }.tint(accent)
+        }.tint(accent).foregroundColor(paper)
         .onAppear { game.scene.reduceEffects = reduceMotion; game.scene.sound.setMuted(game.muted) }
         .onChange(of: appPhase) { phase in
             if phase != .active { game.scene.suspend() } else { game.scene.startMotion() }
         }
         .onChange(of: reduceMotion) { game.scene.reduceEffects = $0 }
         .onChange(of: game.posture) { UserDefaults.standard.set($0.rawValue, forKey: "classic.posture") }
+        .onChange(of: game.theme) { theme in theme.save(); game.scene.setTheme(theme) }
         .onChange(of: game.muted) {
             UserDefaults.standard.set($0, forKey: "classic.muted"); game.scene.sound.setMuted($0)
         }
@@ -126,7 +134,7 @@ struct GameView: View {
             Text("KRAZEL GAMES").font(.system(size: 10, weight: .bold, design: .rounded)).tracking(4).foregroundColor(accent)
             switch game.phase {
             case .menu:
-                Text(GameText.menuTitle).font(.system(size: 38, weight: .black, design: .rounded))
+                Text(ink ? "TILT ARENA" : GameText.menuTitle).font(.system(size: 38, weight: .black, design: ink ? .serif : .rounded))
                 Text(GameText.tagline).font(.subheadline).foregroundColor(.white.opacity(0.7))
                 Text("\(GameText.best)  \(game.best.formatted())").font(.system(.callout, design: .monospaced))
                 primary(game.posture == .custom && !game.hasCustom ? GameText.calibrateAndPlay : GameText.play, id: "play") { game.scene.play(restart: true) }
@@ -162,6 +170,19 @@ struct GameView: View {
     }
     private var settings: some View {
         VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Text(GameText.visualStyle).font(.system(size: 9, weight: .bold)).tracking(1).foregroundColor(accent)
+                Spacer(minLength: 0)
+                ForEach(VisualTheme.allCases) { theme in
+                    Button { game.theme = theme } label: {
+                        Text(theme.title).font(.system(size: 11, weight: .semibold))
+                            .padding(.horizontal, 9).frame(minHeight: 34)
+                            .foregroundColor(game.theme == theme ? .black : paper)
+                            .background(game.theme == theme ? accent : paper.opacity(0.06), in: RoundedRectangle(cornerRadius: ink ? 3 : 9))
+                    }.buttonStyle(.plain).accessibilityIdentifier("theme-\(theme.rawValue)")
+                    .accessibilityAddTraits(game.theme == theme ? .isSelected : [])
+                }
+            }.padding(.bottom, 4)
             Text(GameText.controlPosture).font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
             HStack(spacing: 7) {
                 ForEach(TiltPosture.allCases) { posture in
@@ -172,7 +193,7 @@ struct GameView: View {
                             Text(posture.title).font(.system(size: 10, weight: .semibold)).minimumScaleFactor(0.8).lineLimit(1)
                         }.frame(maxWidth: .infinity, minHeight: 67)
                         .foregroundColor(game.posture == posture ? .black : .white.opacity(0.75))
-                        .background(game.posture == posture ? accent : .white.opacity(0.07), in: RoundedRectangle(cornerRadius: 12))
+                        .background(game.posture == posture ? accent : paper.opacity(0.07), in: RoundedRectangle(cornerRadius: ink ? 4 : 12))
                     }.buttonStyle(.plain).accessibilityIdentifier("posture-\(posture.rawValue)")
                     .accessibilityAddTraits(game.posture == posture ? .isSelected : [])
                 }
@@ -195,13 +216,13 @@ struct GameView: View {
     private func primary(_ title: String, id: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title).font(.headline).foregroundColor(.black)
-                .frame(maxWidth: .infinity, minHeight: 44).background(accent, in: RoundedRectangle(cornerRadius: 12))
+                .frame(maxWidth: .infinity, minHeight: 44).background(accent, in: RoundedRectangle(cornerRadius: ink ? 4 : 12))
         }.accessibilityIdentifier(id)
     }
     private func secondary(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title).font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 38)
-                .background(.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 10))
+                .background(paper.opacity(0.06), in: RoundedRectangle(cornerRadius: ink ? 4 : 10))
         }
     }
 }

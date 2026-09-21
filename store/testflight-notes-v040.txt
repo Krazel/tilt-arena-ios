@@ -1,0 +1,4 @@
+Ink Tide: nuevo aspecto de tinta y papel para escenario, flecha, enemigos, orbes, poderes, cargas, explosiones, hielo, fuego y menús.
+En el menú o la pausa, Estilo visual permite alternar Ink Tide y Original. La elección queda guardada y no reinicia la partida ni borra récords o calibración.
+Inglés por defecto y castellano según el idioma del dispositivo.
+Comprobar especialmente la claridad de los enemigos, la dirección de la flecha, los poderes superpuestos y la fluidez en partidas largas. Reglas, velocidades, probabilidades y puntuación conservadas.

@@ -1,6 +1,29 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testInkAndOriginalCanSwitchDuringPauseAndPersist() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--visual-qa"]
+        app.launch()
+        XCTAssertTrue(app.buttons["theme-inkTide"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["theme-inkTide"].isSelected)
+        capture("20-ink-menu", app: app)
+        app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+        capture("21-ink-arena", app: app)
+        app.buttons["pause"].tap(); app.buttons["theme-classic"].tap()
+        XCTAssertTrue(app.buttons["theme-classic"].isSelected)
+        app.buttons["resume"].tap()
+        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+        capture("22-original-preserved", app: app)
+        app.terminate(); app.launchArguments = ["--ui-testing"]; app.launch()
+        XCTAssertTrue(app.buttons["theme-classic"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["theme-classic"].isSelected)
+        app.buttons["theme-inkTide"].tap()
+        app.terminate(); app.launch()
+        XCTAssertTrue(app.buttons["theme-inkTide"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["theme-inkTide"].isSelected)
+    }
     func testExplosionHotCoreAndDissipation() {
         let app = XCUIApplication()
         for tail in [false, true] {

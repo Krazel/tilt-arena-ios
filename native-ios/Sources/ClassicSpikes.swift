@@ -4,7 +4,9 @@ import SpriteKit
 final class ClassicSpikes: SKNode {
     private var teeth: [SKShapeNode] = []
     private let countdown = SKShapeNode()
-    override init() {
+    private let theme: VisualTheme
+    init(theme: VisualTheme = .classic) {
+        self.theme = theme
         super.init()
         zPosition = 0.3
         for index in 0..<12 {
@@ -15,8 +17,8 @@ final class ClassicSpikes: SKNode {
             path.addLine(to: CGPoint(x: 32, y: 6))
             path.closeSubpath()
             tooth.path = path
-            tooth.fillColor = UIColor(hex: "ceeaff")
-            tooth.strokeColor = UIColor(hex: "223968")
+            tooth.fillColor = theme == .inkTide ? InkArt.paper : UIColor(hex: "ceeaff")
+            tooth.strokeColor = theme == .inkTide ? InkArt.gold : UIColor(hex: "223968")
             tooth.lineWidth = 2
             tooth.zRotation = CGFloat(index) * .pi / 6
             addChild(tooth); teeth.append(tooth)
@@ -39,16 +41,17 @@ final class ClassicSpikes: SKNode {
         // fixed-world countdown arc warn even with Reduce Motion enabled.
         alpha = 1; countdown.isHidden = !warning
         for tooth in teeth {
-            tooth.fillColor = UIColor(hex: warning ? "ffbf55" : "ceeaff")
-            tooth.strokeColor = UIColor(hex: warning ? "fff4cd" : "223968")
+            tooth.fillColor = theme == .inkTide ? (warning ? InkArt.gold : InkArt.paper) : UIColor(hex: warning ? "ffbf55" : "ceeaff")
+            tooth.strokeColor = theme == .inkTide ? (warning ? InkArt.paper : InkArt.gold) : UIColor(hex: warning ? "fff4cd" : "223968")
             tooth.alpha = warning && !reduced ? CGFloat(0.7 + 0.3 * cos(remaining * .pi * 4)) : 1
         }
         if warning {
             let path = CGMutablePath()
             path.addArc(center: .zero, radius: 54, startAngle: .pi / 2,
                         endAngle: .pi / 2 + CGFloat(remaining / 1.5) * .pi * 2, clockwise: false)
-            countdown.path = path; countdown.zRotation = CGFloat(-spin)
-            countdown.glowWidth = reduced ? 0 : 1
+            countdown.path = theme == .inkTide ? InkArt.ringPath(radius: 54, fraction: CGFloat(remaining / 1.5), phase: .pi / 2) : path
+            countdown.zRotation = CGFloat(-spin)
+            countdown.glowWidth = reduced || theme == .inkTide ? 0 : 1
         }
     }
 }

@@ -3,6 +3,8 @@ import SpriteKit
 /// Each transient owns one bounded root; important weapon effects displace old sparks.
 final class ClassicVFX {
     let layer: SKNode
+    var theme: VisualTheme = .classic
+    private lazy var ink = InkVFX(layer: layer)
     init(layer: SKNode) { self.layer = layer }
     private static let glow: SKTexture = {
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: 128, height: 128))
@@ -15,6 +17,7 @@ final class ClassicVFX {
         })
     }()
     func show(_ event: ClassicFrame.Event, reduced: Bool) {
+        if theme == .inkTide { ink.show(event, reduced: reduced); return }
         guard let x = event.x, let y = event.y else { return }
         let important = ["blast", "freeze", "death", "wave", "pickup", "burnLaunch", "electricPulse", "boomerangLaunch", "boomerangBounce", "boomerangCatch"].contains(event.kind)
         guard important || ["kill", "spawnPickup", "lightning", "combo"].contains(event.kind) else { return }
@@ -149,6 +152,7 @@ final class ClassicVFX {
         emitter.particleAlphaSpeed = -1 / duration; root.addChild(emitter)
     }
     func attachMissileTrail(to node: SKNode, reduced: Bool) {
+        if theme == .inkTide { ink.attachTrail(to: node, reduced: reduced, boomerang: false); return }
         guard !reduced else { return }
         let emitter = SKEmitterNode(); emitter.particleTexture = Self.glow
         emitter.particleColor = UIColor(hex: "ffd15a"); emitter.particleColorBlendFactor = 1; emitter.particleBlendMode = .add
@@ -157,6 +161,7 @@ final class ClassicVFX {
         emitter.position = CGPoint(x: -8, y: 0); emitter.targetNode = layer; node.addChild(emitter)
     }
     func attachBoomerangTrail(to node: SKNode, reduced: Bool) {
+        if theme == .inkTide { ink.attachTrail(to: node, reduced: reduced, boomerang: true); return }
         guard !reduced else { return }
         let emitter = SKEmitterNode(); emitter.particleTexture = Self.glow
         emitter.particleColor = UIColor(hex: "ffc06a"); emitter.particleColorBlendFactor = 1

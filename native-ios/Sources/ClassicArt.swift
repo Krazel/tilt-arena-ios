@@ -45,7 +45,8 @@ enum ClassicArt {
     private static func circle(_ radius: CGFloat, fill: UIColor, stroke: UIColor, width: CGFloat = 2) -> SKShapeNode {
         let n=SKShapeNode(circleOfRadius:radius);n.fillColor=fill;n.strokeColor=stroke;n.lineWidth=width;return n
     }
-    static func node(style: String) -> SKNode {
+    static func node(style: String, theme: VisualTheme = .classic) -> SKNode {
+        if theme == .inkTide { return InkArt.node(style: style) }
         if style == "boomerangShot" {
             let root = SKNode()
             // Two swept blades around a luminous hub: readable in every rotation.

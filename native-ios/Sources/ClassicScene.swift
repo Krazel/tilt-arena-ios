@@ -6,6 +6,7 @@ final class ClassicScene: SKScene {
     weak var session: GameSession?
     let sound = ClassicSound()
     var reduceEffects = false
+    private(set) var theme = VisualTheme.read()
     private let motion = CMMotionManager()
     private var bridge: ClassicBridge?
     private let world = SKNode(), effects = SKNode(), hud = SKNode()
@@ -14,12 +15,12 @@ final class ClassicScene: SKScene {
     private(set) var arenaBounds = CGRect(x: 24, y: 52, width: 912, height: 540)
     private var objects: [String: SKNode] = [:], textures: [String: SKTexture] = [:]
     private var textureAnchors: [String: CGPoint] = [:]
-    private let fireCharge = ClassicFireCharge()
-    private let waveCharge = ClassicWaveCharge()
-    private let boomerangCharge = ClassicBoomerangCharge()
+    private var fireCharge = ThemedCharge(.fire, theme: VisualTheme.read())
+    private var waveCharge = ThemedCharge(.wave, theme: VisualTheme.read())
+    private var boomerangCharge = ThemedCharge(.boomerang, theme: VisualTheme.read())
     private let arrow = SKNode()
     private var bubble = SKShapeNode()
-    private let spikes = ClassicSpikes()
+    private var spikes = ClassicSpikes(theme: VisualTheme.read())
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     private let bestLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
@@ -35,6 +36,7 @@ final class ClassicScene: SKScene {
     private var sensorGraceUntil = 0.0
     private var trailTime = 0.0
     #if DEBUG
+    var frameForVerification: ClassicFrame? { gameFrame }
     private let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
     private let visualPreview = ProcessInfo.processInfo.arguments.contains("--visual-qa")
     private let freezeVFXPreview = ProcessInfo.processInfo.arguments.contains("--freeze-vfx-qa")
@@ -65,6 +67,7 @@ final class ClassicScene: SKScene {
         addChild(world); addChild(hud); addChild(effects)
         world.zPosition = 0; effects.zPosition = 5; hud.zPosition = 10
         world.addChild(arenaDecoration)
+        vfx.theme = theme
         drawArena(); drawPlayer(); drawHUD(); startMotion()
         configureViewport(viewSize: view.bounds.size, insets: view.window?.safeAreaInsets ?? .zero)
     }
@@ -186,8 +189,14 @@ final class ClassicScene: SKScene {
             if let frame = gameFrame { render(frame) }; sound.playMusic()
             #if DEBUG
             if explosionPreview {
-                let blast = ClassicExplosion(radius: 155, color: UIColor(hex: "ffb52a"), reduced: reduceEffects)
-                blast.removeAllActions(); blast.update(elapsed: explosionTailPreview ? 0.4 : 0.16)
+                let blast: SKNode
+                if theme == .inkTide {
+                    let ink = InkExplosion(radius: 155, color: InkArt.gold, reduced: reduceEffects)
+                    ink.removeAllActions(); ink.update(elapsed: explosionTailPreview ? 0.4 : 0.16); blast = ink
+                } else {
+                    let original = ClassicExplosion(radius: 155, color: UIColor(hex: "ffb52a"), reduced: reduceEffects)
+                    original.removeAllActions(); original.update(elapsed: explosionTailPreview ? 0.4 : 0.16); blast = original
+                }
                 blast.position = CGPoint(x: arenaBounds.minX + 280, y: 290); effects.addChild(blast)
             }
             #endif
@@ -284,29 +293,51 @@ final class ClassicScene: SKScene {
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) { touchVector=(0,0);touchOrigin=nil }
     #endif
 
+    /// Rebuild presentation while retaining the exact paused simulation frame.
+    func setTheme(_ next: VisualTheme) {
+        guard next != theme else { return }
+        theme = next; vfx.theme = next
+        fireCharge = ThemedCharge(.fire, theme: next)
+        waveCharge = ThemedCharge(.wave, theme: next)
+        boomerangCharge = ThemedCharge(.boomerang, theme: next)
+        spikes = ClassicSpikes(theme: next)
+        guard world.parent != nil else { return }
+        for node in objects.values { node.removeFromParent() }
+        objects.removeAll(); textures.removeAll(); textureAnchors.removeAll()
+        effects.removeAllChildren(); arrow.removeAllChildren(); arrow.removeFromParent()
+        hud.removeAllChildren(); drawArena(); drawPlayer(); drawHUD()
+        if let frame = gameFrame { render(frame, replayEvents: false) }
+    }
     private func drawArena() {
         arenaDecoration.removeAllChildren()
-        let background = SKSpriteNode(texture: ClassicArt.background(size: size))
+        let background = SKSpriteNode(texture: theme == .inkTide ? InkArt.arena : ClassicArt.background(size: size))
+        background.size = size
         background.position = CGPoint(x:size.width/2,y:size.height/2);background.zPosition = -10;arenaDecoration.addChild(background)
         let border = SKShapeNode(rect: arenaBounds,cornerRadius:16)
-        border.strokeColor = UIColor(hex:"e3efc9").withAlphaComponent(0.65);border.lineWidth=2
+        border.strokeColor = theme == .inkTide ? InkArt.gold.withAlphaComponent(0.22) : UIColor(hex:"e3efc9").withAlphaComponent(0.65);border.lineWidth=theme == .inkTide ? 1 : 2
         border.fillColor = .clear;arenaDecoration.addChild(border)
     }
     private func drawPlayer() {
         fireCharge.zPosition = -0.1; arrow.addChild(fireCharge)
         waveCharge.zPosition = 0.1; arrow.addChild(waveCharge)
         boomerangCharge.zPosition = 0.2; arrow.addChild(boomerangCharge)
-        arrow.addChild(ClassicArt.node(style:"arrow"));arrow.zPosition=4
+        arrow.addChild(ClassicArt.node(style:"arrow", theme: theme));arrow.zPosition=4
         arrow.position=CGPoint(x:480,y:320);world.addChild(arrow)
         bubble = SKShapeNode(circleOfRadius:32);bubble.strokeColor=UIColor(hex:"7bde83")
         bubble.lineWidth=3;bubble.fillColor=UIColor(hex:"7bde83").withAlphaComponent(0.12);arrow.addChild(bubble)
         bubble.glowWidth = 2
+        if theme == .inkTide {
+            bubble.path = InkArt.ringPath(radius: 32)
+            bubble.strokeColor = InkArt.teal; bubble.fillColor = InkArt.teal.withAlphaComponent(0.08)
+            bubble.lineWidth = 4; bubble.glowWidth = 0
+        }
         arrow.addChild(spikes)
         bubble.isHidden=true;spikes.isHidden=true
     }
     private func drawHUD() {
         for label in [scoreLabel,comboLabel,bestLabel] {
-            label.fontColor=UIColor(hex:"f0f5d9");label.fontSize=22
+            label.fontColor=theme == .inkTide ? InkArt.paper : UIColor(hex:"f0f5d9");label.fontSize=22
+            label.fontName = theme == .inkTide ? "AvenirNextCondensed-Heavy" : (label === scoreLabel ? "AvenirNext-Heavy" : (label === bestLabel ? "AvenirNext-DemiBold" : "AvenirNext-Bold"))
             label.verticalAlignmentMode = .center;hud.addChild(label)
         }
         scoreLabel.position=CGPoint(x:30,y:615);scoreLabel.horizontalAlignmentMode = .left;scoreLabel.text="0"
@@ -315,6 +346,7 @@ final class ClassicScene: SKScene {
         comboLabel.position=CGPoint(x:30,y:28);comboLabel.horizontalAlignmentMode = .left;comboLabel.fontSize=18
         comboLabel.text=GameText.chainPowers
         comboBar.anchorPoint=CGPoint(x:0,y:0.5);comboBar.position=CGPoint(x:30,y:12);hud.addChild(comboBar)
+        comboBar.color = theme == .inkTide ? InkArt.gold : UIColor(hex: "d5f56b")
         layoutHUD()
     }
     private func layoutHUD() {
@@ -326,10 +358,10 @@ final class ClassicScene: SKScene {
     private func sprite(key: String, style: String) -> SKNode {
         if let node = objects[key] { return node }
         let node: SKNode
-        if style == "dot" { node = ClassicArt.node(style: style) }
+        if style == "dot" { node = ClassicArt.node(style: style, theme: theme) }
         else if let cached = textures[style] { node=SKSpriteNode(texture:cached) }
         else {
-            let shape=ClassicArt.node(style:style)
+            let shape=ClassicArt.node(style:style, theme: theme)
             let bounds = shape.calculateAccumulatedFrame()
             if let rendered=view?.texture(from:shape) {
                 textures[style]=rendered;node=SKSpriteNode(texture:rendered)
@@ -344,12 +376,20 @@ final class ClassicScene: SKScene {
         if style == "boomerangShot" { vfx.attachBoomerangTrail(to: node, reduced: reduceEffects) }
         return node
     }
-    private func render(_ frame: ClassicFrame) {
+    private func render(_ frame: ClassicFrame, replayEvents: Bool = true) {
         var alive=Set<String>()
         for dot in frame.enemies {
             let key="d\(dot.id)";alive.insert(key)
-            let node=sprite(key:key,style:"dot");node.position=CGPoint(x:dot.x,y:dot.y)
+            let node=sprite(key:key,style:"dot"), previous = objects[key]?.position ?? .zero
             (node as? SKShapeNode)?.fillColor = UIColor(hex: dot.frozen ? "70dce9" : "ff5658")
+            if theme == .inkTide, let ink = node as? SKSpriteNode {
+                ink.color = InkArt.blue; ink.colorBlendFactor = dot.frozen ? 1 : 0
+                let dx = dot.x - Double(previous.x), dy = dot.y - Double(previous.y)
+                if ink.userData == nil { ink.zRotation = atan2(frame.player.y - dot.y, frame.player.x - dot.x) }
+                else if !dot.frozen && hypot(dx, dy) > 0.05 { ink.zRotation = atan2(dy, dx) }
+                if ink.userData == nil { ink.userData = NSMutableDictionary() }
+            }
+            node.position=CGPoint(x:dot.x,y:dot.y)
             node.alpha=dot.telegraph ? 0.22+0.12*sin(frame.time*18) : (dot.thawing ? 0.65+0.35*sin(frame.time*22) : 1)
             node.setScale(dot.telegraph ? 1.45 : 1);node.zPosition=3.5
         }
@@ -381,13 +421,14 @@ final class ClassicScene: SKScene {
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
         bubble.isHidden = !frame.player.bubble
         spikes.update(time: frame.time, until: frame.player.spikesUntil, heading: frame.player.angle, reduced: reduceEffects)
-        bubble.glowWidth = reduceEffects ? 0 : 2
+        bubble.glowWidth = reduceEffects || theme == .inkTide ? 0 : 2
         fireCharge.update(progress: frame.player.fireChargeProgress, active: frame.player.fireChargeUntil > frame.time, reduced: reduceEffects)
         waveCharge.update(progress: frame.player.waveChargeProgress, active: frame.player.waveCharging, reduced: reduceEffects)
         boomerangCharge.update(progress: frame.player.boomerangChargeProgress, active: frame.player.boomerangCharging, reduced: reduceEffects)
         scoreLabel.text="\(frame.score.formatted())"
         comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : GameText.chainPowers
         comboBar.xScale=frame.comboRemaining;bestLabel.text="\(GameText.best)  \(max(session?.best ?? 0,frame.score).formatted())"
+        guard replayEvents else { return }
         var particles=0
         for event in frame.events {
             if event.kind == "kill" { if particles<12 { showEffect(event);particles+=1 } }

@@ -37,6 +37,8 @@ enum GameText {
     static var menu: String { text("Menu", "Menú") }
     static var moment: String { text("One moment…", "Un momento…") }
     static var controlPosture: String { text("CONTROL POSTURE", "POSTURA DE CONTROL") }
+    static var visualStyle: String { text("VISUAL STYLE", "ESTILO VISUAL") }
+    static var originalStyle: String { text("Original", "Original") }
     static var savedPosture: String { text("Posture saved · ready to play", "Postura guardada · lista para jugar") }
     static var customHint: String { text("Tap Calibrate to save your posture", "Pulsa Calibrar para guardar tu postura") }
     static var sound: String { text("Sound", "Sonido") }
