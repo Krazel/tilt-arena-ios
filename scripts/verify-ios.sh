@@ -13,10 +13,16 @@ version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_p
 build=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_plist")
 tar -czf "../artifacts/ios-verification/TiltArena-${version}-build${build}-simulator.tar.gz" -C DerivedData/Build/Products/Debug-iphonesimulator TiltArena.app
 device_id=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; d=json.load(sys.stdin); print(next(x["udid"] for group in d["devices"].values() for x in group if x["name"].startswith("iPhone")))')
+test_selection=()
+if [ "${QA_VISUAL_ONLY:-false}" = "true" ]; then
+  test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist)
+fi
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \
   -derivedDataPath DerivedData -resultBundlePath ../artifacts/ios-verification/TiltArena-tests.xcresult \
-  -parallel-testing-enabled NO CODE_SIGNING_ALLOWED=NO test
+  -parallel-testing-enabled NO "${test_selection[@]}" CODE_SIGNING_ALLOWED=NO test
 xcrun xcresulttool export attachments --path ../artifacts/ios-verification/TiltArena-tests.xcresult --output-path ../artifacts/ios-verification/screenshots
 xcrun simctl bootstatus "$device_id" -b
 xcrun simctl install "$device_id" DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app

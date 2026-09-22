@@ -30,6 +30,21 @@ enum InkArt {
     }
     static let orbColors = ["nuke":"d5a135", "wave":"9d70c6", "missiles":"d6cc61", "frost":"64bdcf",
         "bubble":"6aa06a", "spikes":"618acb", "vortex":"c568a4", "lightning":"c6d3cf", "burn":"d76b3c", "boomerang":"b78b68"]
+    private static let coloredOrbs: [String: SKTexture] = {
+        guard let source = UIImage(named: "ink-tide-sprites") else { return [:] }
+        let format = UIGraphicsImageRendererFormat(); format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 192, height: 192), format: format)
+        return orbColors.mapValues { hex in
+            SKTexture(image: renderer.image { context in
+                // Cell 2 of the 4×2 atlas. Source-atop preserves alpha and paper
+                // texture; SpriteKit's multiplicative tint made the colors muddy.
+                source.draw(in: CGRect(x: -384, y: 0, width: 768, height: 384))
+                context.cgContext.setBlendMode(.sourceAtop)
+                context.cgContext.setFillColor(UIColor(hex: hex).withAlphaComponent(0.82).cgColor)
+                context.cgContext.fill(CGRect(x: 0, y: 0, width: 192, height: 192))
+            })
+        }
+    }()
     static func node(style: String) -> SKNode {
         switch style {
         case "arrow", "missileShot":
@@ -45,8 +60,8 @@ enum InkArt {
         case "vortexField": return sprite(5, size: 450)
         case "boomerangShot": return sprite(7, size: 78)
         default:
-            let root = SKNode(), orb = sprite(2, size: 60)
-            orb.color = UIColor(hex: orbColors[style] ?? "55969a"); orb.colorBlendFactor = 0.82
+            let root = SKNode(), orb = SKSpriteNode(texture: coloredOrbs[style] ?? cells[2])
+            orb.size = CGSize(width: 60, height: 60)
             root.addChild(orb)
             // Keep the learned power symbols, with paper ink instead of glass.
             let original = ClassicArt.node(style: style)
