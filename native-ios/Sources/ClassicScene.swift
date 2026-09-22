@@ -158,6 +158,7 @@ final class ClassicScene: SKScene {
         do {
             if bridge == nil { bridge = try ClassicBridge() }
             if restart {
+                sound.startRun()
                 for node in objects.values { node.removeFromParent() }; objects.removeAll()
                 effects.removeAllChildren()
                 #if DEBUG
@@ -268,7 +269,7 @@ final class ClassicScene: SKScene {
             #endif
             if let next = try bridge?.tick(dt: dt, x: input.0, y: input.1) {
                 gameFrame = next; render(next)
-                if next.state == "gameOver" { halt(); effects.isPaused = false; session.finish(next); sound.play("death") }
+                if next.state == "gameOver" { halt(); effects.isPaused = false; session.finish(next) }
             }
         } catch { session.fail(error) }
     }
@@ -450,8 +451,7 @@ final class ClassicScene: SKScene {
             if event.kind == "kill" { if particles<12 { showEffect(event);particles+=1 } }
             else { showEffect(event) }
         }
-        if frame.events.contains(where:{$0.kind=="pickup"}) { sound.play("pickup") }
-        else if frame.events.contains(where:{$0.kind=="kill"}) { sound.play("hit") }
+        sound.consume(frame)
     }
     private func showEffect(_ event: ClassicFrame.Event) {
         // These powers are drawn from their live fields, so visuals cannot outlive damage.

@@ -1,6 +1,21 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testApprovedAudioCreditsAreAccessibleInBothLanguages() {
+        let app = XCUIApplication()
+        for language in ["en", "es"] {
+            app.launchArguments = ["--ui-testing", "--theme-ink-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
+            app.launch()
+            XCTAssertTrue(app.buttons["audio-credits"].waitForExistence(timeout: 10))
+            app.buttons["audio-credits"].tap()
+            let close = app.buttons[language == "es" ? "Cerrar" : "Close"]
+            XCTAssertTrue(close.waitForExistence(timeout: 3))
+            XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "PeriTune")).firstMatch.exists)
+            capture("34-audio-credits-\(language)", app: app)
+            close.tap(); XCTAssertTrue(app.buttons["play"].exists)
+            app.terminate()
+        }
+    }
     func testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes() {
         let app = XCUIApplication()
         for (language, theme) in [("en", "ink"), ("es", "ink"), ("en", "classic")] {

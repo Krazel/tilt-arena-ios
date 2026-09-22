@@ -93,6 +93,7 @@ struct InkMenuView: View {
 
     private var primary: some View {
         Button {
+            game.uiClick()
             if paused { game.scene.play(restart: false) }
             else if ended { requestAction(.restart) }
             else { game.scene.play(restart: true) }
@@ -130,7 +131,7 @@ struct InkMenuView: View {
             HStack {
                 Text(GameText.sound).foregroundColor(muted)
                 Spacer()
-                Button { game.muted.toggle() } label: {
+                Button { game.toggleSound() } label: {
                     Label(game.muted ? GameText.disabled : GameText.enabled, systemImage: game.muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                 }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
             }.font(.system(size: 11.5)).frame(height: 27)
@@ -146,7 +147,7 @@ struct InkMenuView: View {
             label(GameText.controlPosture)
             HStack(spacing: 7) {
                 ForEach(TiltPosture.allCases) { posture in
-                    Button { game.posture = posture } label: {
+                    Button { game.uiClick(); game.posture = posture } label: {
                         ZStack {
                             InkMenuArt.image(game.posture == posture ? .gold : .charcoal).resizable()
                             VStack(spacing: 8) {
@@ -172,7 +173,7 @@ struct InkMenuView: View {
             if game.phase == .menu {
                 HStack(spacing: 7) {
                     ForEach(GameMode.allCases) { mode in
-                        Button { game.selectMode(mode) } label: {
+                        Button { game.uiClick(); game.selectMode(mode) } label: {
                             ZStack {
                                 InkMenuArt.image(game.mode == mode ? .gold : .charcoal).resizable()
                                 Text(mode.title).font(.system(size: 12, weight: .semibold))
@@ -191,7 +192,7 @@ struct InkMenuView: View {
         Text(value).font(.system(size: 11, design: .monospaced)).tracking(2).frame(height: 15)
     }
     private func paintedButton(_ title: String, id: String, size: CGFloat = 16, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button { game.uiClick(); action() } label: {
             ZStack {
                 InkMenuArt.image(.charcoal).resizable()
                 Text(title).font(.system(size: size, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.8)

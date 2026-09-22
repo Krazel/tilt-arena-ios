@@ -1,0 +1,33 @@
+TILT ARENA — AUDIO CREDITS
+
+Music by PeriTune / Sei Mutsuki
+Ametsuchi, Kengeki, Conjurer (instrumental), Oboro2.
+Licensed under CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
+Pre-March 2026 works retain CC BY 4.0: https://peritune.com/about/
+Changes: volume normalization and MP3 encoding.
+
+https://peritune.com/blog/2018/10/01/ametsuchi/
+https://peritune.com/blog/2021/08/17/kengeki/
+https://peritune.com/blog/2022/12/23/conjurer/
+https://peritune.com/blog/2019/04/10/oboro2/
+
+Torch Fire Spell / Waving Torch by spookymodem
+https://opengameart.org/content/torch-fire-spell
+CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
+Changes: trimmed, leveled, faded; derived 0.5-second reversed charge; split charge and release.
+
+Other sound effects (CC0):
+Kenney — Interface Sounds, Impact Sounds, RPG Audio
+https://kenney.nl/assets/interface-sounds
+https://kenney.nl/assets/impact-sounds
+https://kenney.nl/assets/rpg-audio
+rubberduck — 50 CC0 Sci-Fi SFX
+https://opengameart.org/content/50-cc0-sci-fi-sfx
+IgnasD — Ice breaking/shattering
+https://opengameart.org/content/ice-breakingshattering
+Augmentality (Brandon Morris), submitted by HaelDB — Spell sounds
+https://opengameart.org/content/spell-sounds
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Changes: trimming, volume adjustment and short fades; derived boomerang charge.
+
+No endorsement by the original authors is implied.

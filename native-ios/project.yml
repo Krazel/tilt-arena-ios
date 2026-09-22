@@ -18,11 +18,15 @@ targets:
         excludes:
           - Info.plist
           - enemy-dot-v03.png
+          - classic-loop.wav
+          - pickup.wav
+          - hit.wav
+          - death.wav
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.dmkr.tiltarena
         PRODUCT_NAME: TiltArena
-        MARKETING_VERSION: "0.4.7"
+        MARKETING_VERSION: "0.5"
         CURRENT_PROJECT_VERSION: "1"
         INFOPLIST_FILE: Resources/Info.plist
         CODE_SIGN_STYLE: Automatic

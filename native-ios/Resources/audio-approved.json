@@ -1,0 +1,182 @@
+{
+  "version": 1,
+  "menu": "music-menu",
+  "playlist": [
+    "music-a",
+    "music-b",
+    "music-c"
+  ],
+  "assets": {
+    "ui": {
+      "file": "audio-ui.wav",
+      "volume": 0.7,
+      "proposal": "click-A",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
+      "sha256": "695aa42e887d135ed9a88ea09c850eba67609f5e9db5711b2ed385bac567136a"
+    },
+    "pickup": {
+      "file": "audio-pickup.wav",
+      "volume": 0.65,
+      "proposal": "pickup-A",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/interface-sounds",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
+      "sha256": "fb3d331dbb50070c58c36412b8df19565ba4c142b3f5ff80dd8b0d8ca5c01e46"
+    },
+    "hit": {
+      "file": "audio-hit.wav",
+      "volume": 0.4,
+      "proposal": "kill-A",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
+      "sha256": "b25e5a8833da4690b217168cb32f0b481916ad6e71714c8016e2c58358e28f0e"
+    },
+    "vortex": {
+      "file": "audio-vortex.wav",
+      "volume": 0.2,
+      "proposal": "vortex-A",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/50-cc0-sci-fi-sfx",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Fragmento inicial de hasta 4 s.",
+      "sha256": "8949fc0863b6cbec8d0c81f34c72453a5cdde02bfd2fef00f51eab1ab92df7d0"
+    },
+    "lightning": {
+      "file": "audio-lightning.wav",
+      "volume": 0.55,
+      "proposal": "lightning-A",
+      "author": "Augmentality (Brandon Morris)",
+      "source": "https://opengameart.org/content/spell-sounds",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Fragmento inicial de hasta 1.6 s.",
+      "sha256": "2398abb1a1937d5d924252ac45d3b651876aaffd3671d569b8aec6fa7800e171"
+    },
+    "shatter-a": {
+      "file": "audio-shatter-a.wav",
+      "volume": 0.5,
+      "proposal": "shatter-A",
+      "author": "IgnasD",
+      "source": "https://opengameart.org/content/ice-breakingshattering",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
+      "sha256": "5faa9f0a64cf96517e774fb013e68b7f54ac1fd54b2ae5541a93605f42cf0608"
+    },
+    "shatter-b": {
+      "file": "audio-shatter-b.wav",
+      "volume": 0.5,
+      "proposal": "shatter-B",
+      "author": "IgnasD",
+      "source": "https://opengameart.org/content/ice-breakingshattering",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
+      "sha256": "5fead2fc20e85e1ebb487f5a2a07ff8bcef2c2bdaf51735c5451d5530a6a4801"
+    },
+    "bounce": {
+      "file": "audio-bounce.wav",
+      "volume": 0.45,
+      "proposal": "bounce-B",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/impact-sounds",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
+      "sha256": "cb57d0ff41c037b816cd9e80f5d0054f98eb622f1559b53c14ea1e76a4deac55"
+    },
+    "burn-charge": {
+      "file": "audio-burn-charge.wav",
+      "volume": 0.6,
+      "proposal": "burn-A",
+      "author": "spookymodem",
+      "source": "https://opengameart.org/content/torch-fire-spell",
+      "license": "CC-BY 3.0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Fragmento inicial de hasta 1.5 s. Montaje: carga invertida de 0,5 s y lanzamiento. Split at 0.5 s to synchronize with simulation charge/release events.",
+      "sha256": "c0921f79f45ff5d90eeb2620ba546d8a23334436a0cdd1289feb2f8bd33038e3"
+    },
+    "burn-launch": {
+      "file": "audio-burn-launch.wav",
+      "volume": 0.6,
+      "proposal": "burn-A",
+      "author": "spookymodem",
+      "source": "https://opengameart.org/content/torch-fire-spell",
+      "license": "CC-BY 3.0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Fragmento inicial de hasta 1.5 s. Montaje: carga invertida de 0,5 s y lanzamiento. Split at 0.5 s to synchronize with simulation charge/release events.",
+      "sha256": "88d5facd7379d676e0c419f7c9344cfe00edfe610273166a4366a95261a7bf01"
+    },
+    "boomerang-charge": {
+      "file": "audio-boomerang-charge.wav",
+      "volume": 0.6,
+      "proposal": "boomerang-A",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Montaje: carga invertida de 0,5 s y lanzamiento. Split at 0.5 s to synchronize with simulation charge/release events.",
+      "sha256": "afa7d462384a25b5b38cce00ab6da050033f9bfea8506572e622b7c2e506e759"
+    },
+    "boomerang-launch": {
+      "file": "audio-boomerang-launch.wav",
+      "volume": 0.6,
+      "proposal": "boomerang-A",
+      "author": "Kenney",
+      "source": "https://kenney.nl/assets/rpg-audio",
+      "license": "CC0",
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Montaje: carga invertida de 0,5 s y lanzamiento. Split at 0.5 s to synchronize with simulation charge/release events.",
+      "sha256": "a499db5505d4aae76dd801854fefc03d9ff78a432e4a8de0435039ad6f9d6e1d"
+    },
+    "music-menu": {
+      "file": "audio-music-menu.mp3",
+      "volume": 0.3,
+      "proposal": "music-menu-A",
+      "author": "PeriTune / Sei Mutsuki",
+      "source": "https://peritune.com/blog/2019/04/10/oboro2/",
+      "license": "CC-BY 4.0",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
+      "sha256": "b92cb895f599b6e7c6b3c54a808844361a7607061d47259bae32c622c9957616"
+    },
+    "music-a": {
+      "file": "audio-music-a.mp3",
+      "volume": 0.3,
+      "proposal": "music-play-A",
+      "author": "PeriTune / Sei Mutsuki",
+      "source": "https://peritune.com/blog/2018/10/01/ametsuchi/",
+      "license": "CC-BY 4.0",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
+      "sha256": "039daae20ad585dc866e93a2d78e7669686701972c874d693cb190daa622becd"
+    },
+    "music-b": {
+      "file": "audio-music-b.mp3",
+      "volume": 0.3,
+      "proposal": "music-play-B",
+      "author": "PeriTune / Sei Mutsuki",
+      "source": "https://peritune.com/blog/2021/08/17/kengeki/",
+      "license": "CC-BY 4.0",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
+      "sha256": "eb527e48f92c25935ea58c60ad705b14211322c1078411fbea84fab1f12c32b7"
+    },
+    "music-c": {
+      "file": "audio-music-c.mp3",
+      "volume": 0.3,
+      "proposal": "music-play-C",
+      "author": "PeriTune / Sei Mutsuki",
+      "source": "https://peritune.com/blog/2022/12/23/conjurer/",
+      "license": "CC-BY 4.0",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
+      "sha256": "f8db8260cc58c10eb531c6ecc359f2fdca84d5b8ca27f8abcb2adefe2698b958"
+    }
+  },
+  "silent": [
+    "death",
+    "warning",
+    "combo",
+    "nuke",
+    "wave",
+    "missiles",
+    "frost",
+    "bubble",
+    "spikes"
+  ]
+}

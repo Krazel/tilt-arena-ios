@@ -16,6 +16,7 @@ device_id=$(xcrun simctl list devices available -j | python3 -c 'import sys,json
 test_selection=(-only-testing:TiltArenaTests -only-testing:TiltArenaUITests)
 if [ "${QA_VISUAL_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testApprovedAudioCreditsAreAccessibleInBothLanguages
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
     -only-testing:TiltArenaUITests/ClassicFlowTests/testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes
     -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes

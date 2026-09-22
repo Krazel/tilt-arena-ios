@@ -225,7 +225,7 @@
       e.dead=true;this.kills++;this.score+=SCORING.kill;this.combo++;
       this.bestCombo=Math.max(this.bestCombo,this.combo);
       this.comboUntil=this.time+TUNING.comboWindow;
-      this.event('kill',{x:e.x,y:e.y,color:style==='ice'?COLORS.frost:'#ff5658'});
+      this.event('kill',{x:e.x,y:e.y,color:style==='ice'?COLORS.frost:'#ff5658',frozen:this.time<e.frozenUntil});
     }
     die() {
       if(this.state!=='running')return;

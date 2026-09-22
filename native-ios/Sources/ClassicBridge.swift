@@ -36,6 +36,7 @@ struct ClassicFrame: Decodable {
         let remaining, angle, radius, duration: Double
     }
     struct Event: Decodable {
+        var frozen: Bool? = nil
         let kind: String
         let x, y, radius, angle, toX, toY: Double?
         let color, power: String?

@@ -67,6 +67,19 @@ final class GameSession: ObservableObject {
         UserDefaults.standard.set(posture.rawValue, forKey: "classic.posture")
         UserDefaults.standard.set(2, forKey: "classic.postureRevision")
     }
+    func uiClick() { scene.sound.uiClick() }
+    func toggleSound() {
+        muted.toggle(); scene.sound.setMuted(muted)
+        if !muted { uiClick() }
+    }
+    func updateAudioPhase() {
+        switch phase {
+        case .running: scene.sound.setMode(.game)
+        case .paused: scene.sound.setMode(.paused)
+        case .menu, .gameOver, .calibrating: scene.sound.setMode(.menu)
+        case .failed: scene.sound.setMode(.off)
+        }
+    }
     func selectMode(_ value: GameMode) {
         guard phase == .menu else { return }
         mode = value; best = ClassicScoreRecord.read(mode: value)
@@ -102,6 +115,7 @@ final class GameSession: ObservableObject {
 struct GameView: View {
     @StateObject private var game = GameSession()
     @State private var pendingAction: RunAction?
+    @State private var showCredits = false
     @Environment(\.scenePhase) private var appPhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var ink: Bool { game.theme == .inkTide }
@@ -139,14 +153,28 @@ struct GameView: View {
             if showSettings {
                 temporaryThemeControl.padding(.trailing, 8).padding(.bottom, 2)
             }
+        }.overlay(alignment: .bottomLeading) {
+            if showSettings {
+                Button(GameLanguage.current == .spanish ? "Créditos" : "Credits") { game.uiClick(); showCredits = true }
+                    .font(.system(size: 10)).padding(8).accessibilityIdentifier("audio-credits")
+            }
+        }.sheet(isPresented: $showCredits) {
+            NavigationStack {
+                ScrollView {
+                    Text((try? String(contentsOf: Bundle.main.url(forResource: "Audio-Credits", withExtension: "txt")!, encoding: .utf8)) ?? "")
+                        .font(.footnote).textSelection(.enabled).padding()
+                }.navigationTitle(GameLanguage.current == .spanish ? "Créditos" : "Credits")
+                    .toolbar { Button(GameLanguage.current == .spanish ? "Cerrar" : "Close") { game.uiClick(); showCredits = false } }
+            }
         }.tint(accent).foregroundColor(paper)
         .alert(pendingAction?.question ?? "", isPresented: Binding(get: { pendingAction != nil }, set: { if !$0 { pendingAction = nil } }), presenting: pendingAction) { action in
-            Button(GameText.cancel, role: .cancel) { pendingAction = nil }
-            Button(action.title, role: .destructive) { game.performConfirmed(action); pendingAction = nil }
+            Button(GameText.cancel, role: .cancel) { game.uiClick(); pendingAction = nil }
+            Button(action.title, role: .destructive) { game.uiClick(); game.performConfirmed(action); pendingAction = nil }
         } message: { _ in Text(GameText.leaveRunMessage) }
-        .onAppear { game.scene.reduceEffects = reduceMotion; game.scene.sound.setMuted(game.muted) }
+        .onAppear { game.scene.reduceEffects = reduceMotion; game.scene.sound.setMuted(game.muted); game.updateAudioPhase() }
+        .onChange(of: game.phase) { _ in game.updateAudioPhase() }
         .onChange(of: appPhase) { phase in
-            if phase != .active { game.scene.suspend() } else { game.scene.startMotion() }
+            if phase != .active { game.scene.suspend(); game.scene.sound.setSuspended(true) } else { game.scene.sound.setSuspended(false); game.scene.startMotion(); game.updateAudioPhase() }
         }
         .onChange(of: reduceMotion) { game.scene.reduceEffects = $0 }
         .onChange(of: game.posture) { UserDefaults.standard.set($0.rawValue, forKey: "classic.posture") }
@@ -180,8 +208,8 @@ struct GameView: View {
                 primary(GameText.resume, id: "resume") { game.scene.play(restart: false) }
                 secondary(GameText.recalibrate) { game.scene.calibrate(restart: false) }
                 HStack {
-                    Button(GameText.restartRun) { pendingAction = .restart }.accessibilityIdentifier("restart")
-                    Button(GameText.mainMenu) { pendingAction = .mainMenu }.accessibilityIdentifier("main-menu")
+                    Button(GameText.restartRun) { game.uiClick(); pendingAction = .restart }.accessibilityIdentifier("restart")
+                    Button(GameText.mainMenu) { game.uiClick(); pendingAction = .mainMenu }.accessibilityIdentifier("main-menu")
                 }.font(.footnote)
             case .gameOver:
                 Text(GameText.resultTitle).font(.title.bold())
@@ -202,7 +230,7 @@ struct GameView: View {
     private var temporaryThemeControl: some View {
         HStack(spacing: 2) {
             ForEach(VisualTheme.allCases) { theme in
-                Button { game.theme = theme } label: {
+                Button { game.uiClick(); game.theme = theme } label: {
                     Text(theme.title).font(.system(size: 9, weight: .medium))
                         .foregroundColor(game.theme == theme ? paper : paper.opacity(0.5))
                         .padding(.horizontal, 6).frame(height: 24)
@@ -218,7 +246,7 @@ struct GameView: View {
             Text(GameText.controlPosture).font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
             HStack(spacing: 7) {
                 ForEach(TiltPosture.allCases) { posture in
-                    Button { game.posture = posture } label: {
+                    Button { game.uiClick(); game.posture = posture } label: {
                         VStack(spacing: 6) {
                             Image(systemName: posture.symbol).font(.system(size: 23))
                                 .rotation3DEffect(.degrees(posture == .inclined ? 65 : 0), axis: (x: 1, y: 0, z: 0))
@@ -238,7 +266,7 @@ struct GameView: View {
             HStack {
                 Text(GameText.sound).font(.system(size: 12)).foregroundColor(.white.opacity(0.65))
                 Spacer()
-                Button { game.muted.toggle() } label: {
+                Button { game.toggleSound() } label: {
                     Label(game.muted ? GameText.disabled : GameText.enabled, systemImage: game.muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                         .font(.system(size: 12)).frame(minHeight: 36)
                 }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
@@ -248,7 +276,7 @@ struct GameView: View {
                 if game.phase == .menu {
                     HStack(spacing: 7) {
                         ForEach(GameMode.allCases) { mode in
-                            Button { game.selectMode(mode) } label: {
+                            Button { game.uiClick(); game.selectMode(mode) } label: {
                                 Text(mode.title).font(.system(size: 12, weight: .semibold))
                                     .frame(maxWidth: .infinity, minHeight: 32)
                                     .foregroundColor(game.mode == mode ? .black : paper)
@@ -263,13 +291,13 @@ struct GameView: View {
         }
     }
     private func primary(_ title: String, id: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button { game.uiClick(); action() } label: {
             Text(title).font(.headline).foregroundColor(.black)
                 .frame(maxWidth: .infinity, minHeight: 44).background(accent, in: RoundedRectangle(cornerRadius: ink ? 4 : 12))
         }.accessibilityIdentifier(id)
     }
     private func secondary(_ title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
+        Button { game.uiClick(); action() } label: {
             Text(title).font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 38)
                 .background(paper.opacity(0.06), in: RoundedRectangle(cornerRadius: ink ? 4 : 10))
         }
