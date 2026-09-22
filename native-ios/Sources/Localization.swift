@@ -37,6 +37,11 @@ enum GameText {
     static var resume: String { text("Resume", "Reanudar") }
     static var recalibrate: String { text("Recalibrate", "Recalibrar") }
     static var finishRun: String { text("End run", "Terminar partida") }
+    static var restartRun: String { text("Restart run", "Reiniciar partida") }
+    static var mainMenu: String { text("Main menu", "Menú principal") }
+    static var restartQuestion: String { text("Restart this run?", "¿Reiniciar la partida?") }
+    static var menuQuestion: String { text("Return to the main menu?", "¿Volver al menú principal?") }
+    static var leaveRunMessage: String { text("This run will end. Your best score will be saved.", "La partida actual terminará. Tu récord se guardará.") }
     static var resultTitle: String { text("By one point…", "Por un punto…") }
     static var replay: String { text("Play again", "Otra partida") }
     static var menu: String { text("Menu", "Menú") }

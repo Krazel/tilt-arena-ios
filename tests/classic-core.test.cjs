@@ -376,3 +376,21 @@ test('bundle global bridge loads without Node APIs and returns JSON for native d
   assert.equal(POWERS.includes('decoy'),false);
   assert.throws(()=>new ClassicGame(1,{powers:['decoy']}),/Invalid arsenal/);
 });
+
+test('small enemy hitbox permits close grazing but still catches contact and fast crossings',()=>{
+ for(const mode of ['classic','hard'])for(const distance of [12.9,13.1,15,17.9]){
+  const g=new ClassicGame(42,{spawning:false,mode});g.enemies=[];
+  dot(g,g.player.x+distance,g.player.y);g.advance(1/120,{x:0,y:0});
+  assert.equal(g.state,distance<13?'gameOver':'running',mode+' distance '+distance);
+ }
+ for(const offset of [12.9,13.1]){
+  const g=fresh(),x=g.player.x;g.player.vx=600;dot(g,x+2.5,g.player.y+offset);
+  g.advance(1/120,{x:1,y:0});assert.equal(g.state,offset<13?'gameOver':'running');
+ }
+});
+test('orb pickup radius stays at 33 independently of the smaller enemy hitbox',()=>{
+ for(const distance of [32.9,33.1]){
+  const g=fresh();g.pickups=[];const orb=g.addPickup('frost',g.player.x+distance,g.player.y);orb.vx=0;orb.vy=0;
+  g.advance(1/120,{x:0,y:0});assert.equal(g.pickups.some(p=>p.id===orb.id),distance>33);
+ }
+});

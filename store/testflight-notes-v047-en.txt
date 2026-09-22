@@ -1,0 +1,1 @@
+The illustrated Ink Tide menu is now on iPhone using the approved artwork. Restart run and Main menu are separate actions, both with confirmation; cancel keeps the run paused. The player has a much smaller enemy hitbox for close grazing, with orb collection and movement speed unchanged. Please check the menu, confirmations and close calls in both modes.

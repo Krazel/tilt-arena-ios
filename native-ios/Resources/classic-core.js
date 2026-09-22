@@ -10,7 +10,7 @@
   const distance = (a, b) => length(a.x - b.x, a.y - b.y);
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
   const TUNING = Object.freeze({step: 1 / 120, speed: 600, response: 22, braking: 22,
-    playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
+    playerRadius: 3, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 300, vortexRadius: 140, vortexPlayerRadius: 300,
     lightningStartRadius: 220, lightningChainRadius: 90,
     blastDuration: 1.2, frostDuration: 2, frozenDuration: 4, pickupSpeed: 18, pickupSpin: 0.6,
@@ -195,7 +195,9 @@
         // Relative swept collision includes the dot's movement as well as the arrow's.
         const relativeEnd={x:p.x-(e.x-old.x),y:p.y-(e.y-old.y)};
         const armored = p.spikesUntil>this.time || p.fireChargeUntil>0 || p.burnUntil>this.time-dt+1e-9;
-        if(swept(before,relativeEnd,old,armored?35:TUNING.playerRadius+TUNING.dotRadius)) {
+        // Keep ice shattering and offensive armor reach; only hostile contact gets the smaller hurtbox.
+        const contactReach=armored?35:frozen?18:TUNING.playerRadius+TUNING.dotRadius;
+        if(swept(before,relativeEnd,old,contactReach)) {
           if(frozen || armored) this.kill(e, frozen?'ice':'dot');
           else if(p.bubble) {
             p.bubble=false;

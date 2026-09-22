@@ -22,6 +22,8 @@
   <false/>
   <key>UILaunchScreen</key>
   <dict/>
+  <key>UIAppFonts</key>
+  <array><string>Knewave-Regular.ttf</string></array>
   <key>NSMotionUsageDescription</key>
   <string>Tilt the iPhone to move the arrow. Your custom posture stays on this device; motion data is never sent.</string>
   <key>UIRequiresFullScreen</key>

@@ -29,6 +29,11 @@ enum ClassicScoreRecord {
     }
 }
 
+enum RunAction: Equatable { case restart, mainMenu
+    var title: String { self == .restart ? GameText.restartRun : GameText.mainMenu }
+    var question: String { self == .restart ? GameText.restartQuestion : GameText.menuQuestion }
+}
+
 final class GameSession: ObservableObject {
     enum Phase { case menu, calibrating, running, paused, gameOver, failed }
     @Published var phase: Phase = .menu
@@ -67,6 +72,12 @@ final class GameSession: ObservableObject {
         mode = value; best = ClassicScoreRecord.read(mode: value)
         UserDefaults.standard.set(value.rawValue, forKey: "classic.mode")
     }
+    func performConfirmed(_ action: RunAction) {
+        guard phase == .paused || phase == .gameOver else { return }
+        if phase == .paused { scene.finishPausedRun() }
+        guard phase != .failed else { return }
+        if action == .restart { scene.play(restart: true) } else { scene.menu() }
+    }
     func saveCustom(_ profile: TiltProfile) {
         custom = profile; hasCustom = true; posture = .custom
         UserDefaults.standard.set(profile.screenX, forKey: "classic.neutralX")
@@ -90,6 +101,7 @@ final class GameSession: ObservableObject {
 
 struct GameView: View {
     @StateObject private var game = GameSession()
+    @State private var pendingAction: RunAction?
     @Environment(\.scenePhase) private var appPhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var ink: Bool { game.theme == .inkTide }
@@ -100,7 +112,9 @@ struct GameView: View {
     var body: some View {
         ZStack {
             ArenaView(scene: game.scene, isRunning: game.phase == .running).ignoresSafeArea()
-            if game.phase != .running {
+            if ink && showSettings {
+                InkMenuView(game: game) { pendingAction = $0 }.ignoresSafeArea()
+            } else if game.phase != .running {
                 GeometryReader { geometry in
                     ZStack {
                         Color.black.opacity(0.26).ignoresSafeArea()
@@ -126,6 +140,10 @@ struct GameView: View {
                 temporaryThemeControl.padding(.trailing, 8).padding(.bottom, 2)
             }
         }.tint(accent).foregroundColor(paper)
+        .alert(pendingAction?.question ?? "", isPresented: Binding(get: { pendingAction != nil }, set: { if !$0 { pendingAction = nil } }), presenting: pendingAction) { action in
+            Button(GameText.cancel, role: .cancel) { pendingAction = nil }
+            Button(action.title, role: .destructive) { game.performConfirmed(action); pendingAction = nil }
+        } message: { _ in Text(GameText.leaveRunMessage) }
         .onAppear { game.scene.reduceEffects = reduceMotion; game.scene.sound.setMuted(game.muted) }
         .onChange(of: appPhase) { phase in
             if phase != .active { game.scene.suspend() } else { game.scene.startMotion() }
@@ -161,13 +179,16 @@ struct GameView: View {
                     .font(.subheadline).multilineTextAlignment(.center).foregroundColor(.white.opacity(0.7))
                 primary(GameText.resume, id: "resume") { game.scene.play(restart: false) }
                 secondary(GameText.recalibrate) { game.scene.calibrate(restart: false) }
-                Button(GameText.finishRun) { game.scene.finishPausedRun() }.font(.footnote).foregroundColor(.white.opacity(0.65))
+                HStack {
+                    Button(GameText.restartRun) { pendingAction = .restart }.accessibilityIdentifier("restart")
+                    Button(GameText.mainMenu) { pendingAction = .mainMenu }.accessibilityIdentifier("main-menu")
+                }.font(.footnote)
             case .gameOver:
                 Text(GameText.resultTitle).font(.title.bold())
                 Text(game.resultScore.formatted()).font(.system(size: 38, weight: .black, design: ink ? .serif : .rounded)).foregroundColor(accent)
                 Text("COMBO ×\(game.resultCombo)   ·   \(game.resultTime) s").font(.system(.callout, design: .monospaced))
-                primary(GameText.replay, id: "replay") { game.scene.play(restart: true) }
-                secondary(GameText.menu) { game.scene.menu() }
+                primary(GameText.restartRun, id: "replay") { pendingAction = .restart }
+                secondary(GameText.mainMenu) { pendingAction = .mainMenu }.accessibilityIdentifier("main-menu")
             case .failed:
                 Text(GameText.moment).font(.title2.bold())
                 Text(game.message).multilineTextAlignment(.center)

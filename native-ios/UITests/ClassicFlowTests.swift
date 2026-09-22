@@ -1,6 +1,34 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes() {
+        let app = XCUIApplication()
+        for (language, theme) in [("en", "ink"), ("es", "ink"), ("en", "classic")] {
+            app.launchArguments = ["--ui-testing", "--theme-\(theme)-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["mode-classic"].tap(); app.buttons["posture-normal"].tap()
+            capture("31-\(theme)-\(language)-main", app: app)
+            app.buttons["play"].tap(); XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            pauseByTouch(app); capture("32-\(theme)-\(language)-pause", app: app)
+            for id in ["restart", "main-menu"] {
+                app.buttons[id].tap(); XCTAssertTrue(app.alerts.firstMatch.waitForExistence(timeout: 3))
+                capture("33-\(theme)-\(language)-\(id)-confirm", app: app)
+                app.alerts.buttons[language == "es" ? "Cancelar" : "Cancel"].tap()
+                XCTAssertTrue(app.buttons["resume"].exists); XCTAssertFalse(app.otherElements["arena-running"].exists)
+            }
+            app.buttons["restart"].tap()
+            app.alerts.buttons[language == "es" ? "Reiniciar partida" : "Restart run"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            pauseByTouch(app); XCTAssertTrue(app.buttons["posture-normal"].isSelected)
+            app.buttons["main-menu"].tap()
+            app.alerts.buttons[language == "es" ? "Menú principal" : "Main menu"].tap()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.buttons["mode-classic"].exists)
+            app.terminate()
+        }
+    }
+
     func testHardModeSelectionPersistsAndOpeningIsCrowded() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--hard-opening-qa"]
@@ -112,7 +140,7 @@ final class ClassicFlowTests: XCTestCase {
     }
     func testDefaultCalibrationAndSavedResume() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--fresh-controls-qa"]; app.launch()
+        app.launchArguments = ["--ui-testing", "--fresh-controls-qa", "--theme-classic-qa"]; app.launch()
         XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["posture-custom"].isSelected)
         XCTAssert(["Calibrate & play", "Calibrar y jugar"].contains(app.buttons["play"].label))

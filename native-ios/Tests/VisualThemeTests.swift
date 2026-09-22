@@ -3,6 +3,30 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    func testApprovedMenuArtworkAndBrushFontAreBundled() throws {
+        XCTAssertEqual(try XCTUnwrap(UIImage(named: "ink-menu-panel")?.cgImage).width, 1848)
+        XCTAssertEqual(InkMenuArt.pieces.count, 6)
+        for piece in InkMenuArt.Piece.allCases {
+            let image = try XCTUnwrap(InkMenuArt.pieces[piece]?.cgImage)
+            XCTAssertEqual(image.width, Int(piece.rect.width))
+            XCTAssertEqual(image.height, Int(piece.rect.height))
+        }
+        XCTAssertNotNil(UIFont(name: "Knewave-Regular", size: 23))
+    }
+    @MainActor func testConfirmedRestartAndMenuRetainModeAndPosture() throws {
+        let session = GameSession(), view = SKView(frame: CGRect(x: 0, y: 0, width: 874, height: 402))
+        session.selectMode(.hard); session.saveCustom(TiltProfile(screenX: 0.12, screenY: -0.41))
+        view.presentScene(session.scene); session.scene.play(restart: true); session.scene.pauseRun()
+        let profile = session.activeProfile
+        session.performConfirmed(.restart)
+        XCTAssertEqual(session.phase, .running); XCTAssertEqual(session.mode, .hard)
+        XCTAssertEqual(session.activeProfile.screenX, profile.screenX); XCTAssertEqual(session.activeProfile.screenY, profile.screenY)
+        XCTAssertEqual(try XCTUnwrap(session.scene.frameForVerification).score, 0)
+        session.scene.pauseRun(); session.performConfirmed(.mainMenu)
+        XCTAssertEqual(session.phase, .menu); XCTAssertEqual(session.mode, .hard); XCTAssertTrue(session.hasCustom)
+        session.scene.halt(); view.presentScene(nil)
+    }
+
     func testApprovedDrawingsLoadAsCompleteMaskedImagesWithoutReplacementGlyphs() throws {
         XCTAssertEqual(Set(ApprovedOrbArt.regions.keys), Set(["nuke", "wave", "frost", "bubble", "lightning"]))
         for power in ApprovedOrbArt.regions.keys {
