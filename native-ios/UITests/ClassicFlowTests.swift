@@ -1,6 +1,23 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testHardModeSelectionPersistsAndOpeningIsCrowded() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--hard-opening-qa"]
+        app.launch()
+        XCTAssertTrue(app.buttons["mode-hard"].waitForExistence(timeout: 10))
+        app.buttons["mode-hard"].tap(); XCTAssertTrue(app.buttons["mode-hard"].isSelected)
+        app.buttons["posture-normal"].tap(); capture("29-hard-menu", app: app)
+        app.buttons["play"].tap()
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+        capture("30-hard-opening", app: app)
+        pauseByTouch(app); XCTAssertFalse(app.buttons["mode-classic"].exists)
+        app.terminate(); app.launch()
+        XCTAssertTrue(app.buttons["mode-hard"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["mode-hard"].isSelected)
+        app.buttons["mode-classic"].tap(); XCTAssertTrue(app.buttons["mode-classic"].isSelected)
+    }
+
     func testInkAndOriginalCanSwitchDuringPauseAndPersist() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--visual-qa"]

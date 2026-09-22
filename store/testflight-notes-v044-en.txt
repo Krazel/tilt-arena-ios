@@ -1,0 +1,5 @@
+New Hard mode: 64 enemies from the start, faster enemies and frequent reinforcements. Classic keeps its progression, with a separate best score for each mode.
+
+Subtle orb colors preserve the original cream brush rim and ink texture, with gentle random drift and rotation.
+
+Ice remains active for 2 seconds and explosions for 1.2 seconds. The temporary style control is small and separate from the menu.

@@ -3,6 +3,16 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    func testSubtlePigmentPreservesCreamRimAndInkTextureLuminance() {
+        let target = [0.5, 0.388, 0.149], rim = [0.93, 0.89, 0.78]
+        XCTAssertEqual(InkArt.pigment(rim, target: target), rim)
+        let dark = InkArt.pigment([0.08, 0.25, 0.28], target: target)
+        let light = InkArt.pigment([0.12, 0.32, 0.35], target: target)
+        let lum: ([Double]) -> Double = { 0.2126*$0[0] + 0.7152*$0[1] + 0.0722*$0[2] }
+        XCTAssertEqual(lum(dark), lum([0.08, 0.25, 0.28]), accuracy: 0.0001)
+        XCTAssertGreaterThan(lum(light), lum(dark)); XCTAssertGreaterThan(dark[0], dark[2])
+    }
+
     func testThemePersistenceDoesNotTouchRecordsOrCalibration() {
         let suite = "TiltArenaThemeTests.\(UUID().uuidString)"
         let saved = UserDefaults(suiteName: suite)!

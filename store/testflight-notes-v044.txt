@@ -1,0 +1,5 @@
+Nuevo modo Difícil: 64 enemigos desde el inicio, enemigos más rápidos y refuerzos frecuentes. Clásico conserva su progresión y cada modo tiene su propio récord.
+
+Color sutil en los orbes, conservando el borde crema y la textura original. Giro y movimiento suaves al azar.
+
+Hielo activo durante 2 segundos y explosión durante 1,2 segundos. Selector provisional de estilo pequeño y separado del menú.

@@ -8,13 +8,23 @@ struct TiltArenaNativeApp: App {
     }
 }
 
+enum GameMode: String, CaseIterable, Identifiable {
+    case classic, hard
+    var id: String { rawValue }
+    var title: String { self == .hard ? GameText.hardMode : GameText.classicMode }
+    var description: String { self == .hard ? GameText.hardDescription : GameText.classicDescription }
+    static func read(defaults: UserDefaults = .standard) -> GameMode {
+        GameMode(rawValue: defaults.string(forKey: "classic.mode") ?? "classic") ?? .classic
+    }
+}
+
 enum ClassicScoreRecord {
     // Preserve the old fire-inflated record under its original key.
     static let key = "classic.scoring.v2.best"
-    static func read(defaults: UserDefaults = .standard) -> Int { defaults.integer(forKey: key) }
-    static func save(_ score: Int, defaults: UserDefaults = .standard) -> Int {
-        let best = max(read(defaults: defaults), score)
-        defaults.set(best, forKey: key)
+    static func read(defaults: UserDefaults = .standard, mode: GameMode = .classic) -> Int { defaults.integer(forKey: mode == .hard ? "hard.scoring.v2.best" : key) }
+    static func save(_ score: Int, defaults: UserDefaults = .standard, mode: GameMode = .classic) -> Int {
+        let best = max(read(defaults: defaults, mode: mode), score)
+        defaults.set(best, forKey: mode == .hard ? "hard.scoring.v2.best" : key)
         return best
     }
 }
@@ -26,7 +36,8 @@ final class GameSession: ObservableObject {
     @Published var resultScore = 0
     @Published var resultCombo = 0
     @Published var resultTime = 0
-    @Published var best = ClassicScoreRecord.read()
+    @Published var mode = GameMode.read()
+    @Published var best = ClassicScoreRecord.read(mode: GameMode.read())
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
     @Published var theme = VisualTheme.read()
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
@@ -51,6 +62,11 @@ final class GameSession: ObservableObject {
         UserDefaults.standard.set(posture.rawValue, forKey: "classic.posture")
         UserDefaults.standard.set(2, forKey: "classic.postureRevision")
     }
+    func selectMode(_ value: GameMode) {
+        guard phase == .menu else { return }
+        mode = value; best = ClassicScoreRecord.read(mode: value)
+        UserDefaults.standard.set(value.rawValue, forKey: "classic.mode")
+    }
     func saveCustom(_ profile: TiltProfile) {
         custom = profile; hasCustom = true; posture = .custom
         UserDefaults.standard.set(profile.screenX, forKey: "classic.neutralX")
@@ -67,7 +83,7 @@ final class GameSession: ObservableObject {
     }
     func finish(_ frame: ClassicFrame) {
         resultScore = frame.score; resultCombo = frame.bestCombo; resultTime = Int(frame.time)
-        best = ClassicScoreRecord.save(frame.score)
+        best = ClassicScoreRecord.save(frame.score, mode: GameMode(rawValue: frame.mode) ?? .classic)
         phase = .gameOver
     }
 }
@@ -205,6 +221,23 @@ struct GameView: View {
                     Label(game.muted ? GameText.disabled : GameText.enabled, systemImage: game.muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                         .font(.system(size: 12)).frame(minHeight: 36)
                 }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
+            }
+            VStack(alignment: .leading, spacing: 4) {
+                Text(GameText.gameMode).font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
+                if game.phase == .menu {
+                    HStack(spacing: 7) {
+                        ForEach(GameMode.allCases) { mode in
+                            Button { game.selectMode(mode) } label: {
+                                Text(mode.title).font(.system(size: 12, weight: .semibold))
+                                    .frame(maxWidth: .infinity, minHeight: 32)
+                                    .foregroundColor(game.mode == mode ? .black : paper)
+                                    .background(game.mode == mode ? accent : paper.opacity(0.07), in: RoundedRectangle(cornerRadius: 4))
+                            }.buttonStyle(.plain).accessibilityIdentifier("mode-\(mode.rawValue)")
+                            .accessibilityAddTraits(game.mode == mode ? .isSelected : [])
+                        }
+                    }
+                }
+                Text(game.mode.description).font(.system(size: 10)).foregroundColor(.white.opacity(0.7))
             }
         }
     }

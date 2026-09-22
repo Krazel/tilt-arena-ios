@@ -3,6 +3,21 @@ import SpriteKit
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    func testHardModeBridgeOpeningAndSeparateRecords() throws {
+        let bridge = try ClassicBridge()
+        let hard = try bridge.create(seed: 17, mode: .hard)
+        XCTAssertEqual(hard.mode, "hard"); XCTAssertEqual(hard.enemies.count, 64)
+        XCTAssertTrue(hard.enemies.allSatisfy { $0.telegraph }); XCTAssertEqual(hard.pickups.count, 2)
+        let normal = try bridge.create(seed: 17)
+        XCTAssertEqual(normal.mode, "classic"); XCTAssertTrue(normal.enemies.isEmpty)
+        let suite = "TiltArenaModeTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        XCTAssertEqual(ClassicScoreRecord.save(6966, defaults: defaults), 6966)
+        XCTAssertEqual(ClassicScoreRecord.save(310, defaults: defaults, mode: .hard), 310)
+        XCTAssertEqual(ClassicScoreRecord.read(defaults: defaults), 6966)
+        XCTAssertEqual(ClassicScoreRecord.read(defaults: defaults, mode: .hard), 310)
+    }
     func testNewScoringRecordPreservesLegacyAndSurvivesRelaunch() {
         let suite = "TiltArenaScoreTests.\(UUID().uuidString)"
         let defaults = UserDefaults(suiteName: suite)!

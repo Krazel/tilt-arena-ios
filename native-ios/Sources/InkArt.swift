@@ -28,21 +28,40 @@ enum InkArt {
         default: return paper
         }
     }
-    static let orbColors = ["nuke":"d5a135", "wave":"9d70c6", "missiles":"d6cc61", "frost":"64bdcf",
-        "bubble":"6aa06a", "spikes":"618acb", "vortex":"c568a4", "lightning":"c6d3cf", "burn":"d76b3c", "boomerang":"b78b68"]
+    static let orbColors = ["nuke":"806326", "wave":"69556f", "missiles":"858252", "frost":"367582",
+        "bubble":"526444", "spikes":"466277", "vortex":"76546a", "lightning":"657986", "burn":"975937", "boomerang":"796746"]
+    /// Recolor teal ink only; the authored cream rim and alpha remain untouched.
+    /// Match the source luminance so every paper grain/highlight keeps its contrast.
+    static func pigment(_ rgb: [Double], target: [Double]) -> [Double] {
+        let mask = max(0, min(1, (min(rgb[1], rgb[2]) - rgb[0] - 0.015) / 0.09))
+        let luma: ([Double]) -> Double = { 0.2126 * $0[0] + 0.7152 * $0[1] + 0.0722 * $0[2] }
+        let scale = luma(rgb) / max(0.001, luma(target))
+        return (0..<3).map { rgb[$0] * (1-mask) + min(1, target[$0] * scale) * mask }
+    }
     private static let coloredOrbs: [String: SKTexture] = {
-        guard let source = UIImage(named: "ink-tide-sprites") else { return [:] }
-        let format = UIGraphicsImageRendererFormat(); format.scale = 1
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 192, height: 192), format: format)
+        guard let source = UIImage(named: "ink-tide-sprites")?.cgImage,
+              let cell = source.cropping(to: CGRect(x: source.width/2, y: 0, width: source.width/4, height: source.height/2)) else { return [:] }
+        let w = cell.width, h = cell.height
         return orbColors.mapValues { hex in
-            SKTexture(image: renderer.image { context in
-                // Cell 2 of the 4×2 atlas. Source-atop preserves alpha and paper
-                // texture; SpriteKit's multiplicative tint made the colors muddy.
-                source.draw(in: CGRect(x: -384, y: 0, width: 768, height: 384))
-                context.cgContext.setBlendMode(.sourceAtop)
-                context.cgContext.setFillColor(UIColor(hex: hex).withAlphaComponent(0.82).cgColor)
-                context.cgContext.fill(CGRect(x: 0, y: 0, width: 192, height: 192))
-            })
+            var bytes = [UInt8](repeating: 0, count: w * h * 4)
+            let color = UIColor(hex: hex); var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, alpha: CGFloat = 0
+            color.getRed(&r, green: &g, blue: &b, alpha: &alpha)
+            let target = [Double(r), Double(g), Double(b)]
+            return bytes.withUnsafeMutableBytes { buffer in
+                guard let ctx = CGContext(data: buffer.baseAddress, width: w, height: h, bitsPerComponent: 8,
+                    bytesPerRow: w * 4, space: CGColorSpaceCreateDeviceRGB(),
+                    bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue) else { return cells[2] }
+                ctx.draw(cell, in: CGRect(x: 0, y: 0, width: w, height: h))
+                let data = buffer.bindMemory(to: UInt8.self)
+                for i in stride(from: 0, to: data.count, by: 4) {
+                    let a = Double(data[i+3]); if a == 0 { continue }
+                    let rgb = (0..<3).map { Double(data[i+$0]) / a }
+                    let changed = pigment(rgb, target: target)
+                    for c in 0..<3 { data[i+c] = UInt8(max(0, min(255, (changed[c] * a).rounded()))) }
+                }
+                guard let image = ctx.makeImage() else { return cells[2] }
+                return SKTexture(cgImage: image)
+            }
         }
     }()
     static func node(style: String) -> SKNode {

@@ -65,6 +65,7 @@
       this.rng = new RNG(seed);
       this.pickupRng = new RNG(seed ^ 0x51f15e);
       this.options = options || {};
+      this.mode = this.options.mode === 'hard' ? 'hard' : 'classic';
       this.bounds = Object.assign({}, BOUNDS);
       this.powers = this.options.powers || POWERS;
       if (!this.powers.length || this.powers.some(p=>!POWERS.includes(p))) throw Error('Invalid arsenal');
@@ -78,6 +79,9 @@
       if (this.options.spawning !== false) {
         this.addPickup('nuke', 260, 310);
         this.addPickup('missiles', 700, 330);
+        if(this.mode==='hard'){
+          this.spawnOpening(); this.spawnAt=0.75; this.patternAt=3.5;
+        }
       }
     }
     resize(left, right, bottom, top) {
@@ -228,7 +232,7 @@
     }
     addEnemy(x,y,options) {
       const o=options||{};
-      const e=Object.assign({id:++this.id,x,y,speed:49+Math.min(60,this.time*0.23),
+      const e=Object.assign({id:++this.id,x,y,speed:this.mode==='hard'?82+Math.min(63,this.time*0.35):49+Math.min(60,this.time*0.23),
         activeAt:this.time+TUNING.telegraph,frozenUntil:0,vx:0,vy:0,formationUntil:0,dead:false},o);
       this.enemies.push(e);return e;
     }
@@ -277,9 +281,20 @@
         this.event('spawnPickup',{x:best.x,y:best.y,color:COLORS[this.pickups[this.pickups.length-1].power]});
       }
     }
+    spawnOpening() {
+      // Spread 64 warned dots across all four edges, with an open center.
+      const b=this.bounds;
+      for(let edge=0;edge<4;edge++)for(let i=0;i<16;i++) {
+        const t=(i+0.5)/16;
+        const x=edge<2?(edge===0?b.left+18:b.right-18):b.left+18+t*(b.right-b.left-36);
+        const y=edge<2?b.bottom+18+t*(b.top-b.bottom-36):(edge===2?b.bottom+18:b.top-18);
+        if(distance({x,y},this.player)>TUNING.spawnClearance)this.addEnemy(x,y);
+      }
+    }
     spawnDirector() {
+      const hard=this.mode==='hard',pressure=hard?85+this.time*1.4:this.time;
       if(this.time>=this.spawnAt) {
-        const n=2+Math.floor(Math.min(12,this.time/12));
+        const n=2+Math.floor(Math.min(12,pressure/12));
         for(let i=0;i<n && this.enemies.length<TUNING.maxEnemies;i++) {
           const edge=Math.floor(this.rng.next()*4);
           const b=this.bounds;
@@ -289,11 +304,11 @@
           }
           if(distance({x,y},this.player)>TUNING.spawnClearance) this.addEnemy(x,y);
         }
-        this.spawnAt=this.time+Math.max(0.48,1.6-this.time*0.006);
+        this.spawnAt=this.time+Math.max(hard?0.42:0.48,(1.6-pressure*0.006)*(hard?0.75:1));
       }
       if(this.time>=this.patternAt) {
         this.spawnPattern(this.rng.pick(['line','arrow','ring']));
-        this.patternAt=this.time+Math.max(5,12-this.time*0.025);
+        this.patternAt=this.time+Math.max(hard?3.8:5,(12-pressure*0.025)*(hard?0.6:1));
       }
       if(this.time>=this.pickupAt) {
         this.spawnPickup();
@@ -321,8 +336,8 @@
         if(distance(point,this.player)<TUNING.spawnClearance)continue;
         this.addEnemy(clamp(point.x,b.left+16,b.right-16),clamp(point.y,b.bottom+16,b.top-16),{
           formationUntil:this.time+TUNING.telegraph+2.6,
-          vx:kind==='line'?(right?-68:68):Math.cos(a)*90,
-          vy:kind==='line'?0:Math.sin(a)*90});
+          vx:(kind==='line'?(right?-68:68):Math.cos(a)*90)*(this.mode==='hard'?1.3:1),
+          vy:(kind==='line'?0:Math.sin(a)*90)*(this.mode==='hard'?1.3:1)});
       }
       this.event('pattern',{pattern:kind});
     }
@@ -523,7 +538,7 @@
     snapshot() {
       const chargingWave=this.waveAt.find(w=>!w.dead);
       const chargingBoomerang=this.boomerangAt[0];
-      return {state:this.state,time:this.time,score:this.score,combo:this.combo,
+      return {state:this.state,mode:this.mode,time:this.time,score:this.score,combo:this.combo,
         comboBase:SCORING.comboFactor*this.combo,pendingBonus:SCORING.comboFactor*this.combo*this.combo,
         comboRemaining:Math.max(0,this.comboUntil-this.time)/TUNING.comboWindow,
         bestCombo:this.bestCombo,kills:this.kills,player:Object.assign({},this.player,{
@@ -541,7 +556,7 @@
     }
   }
   let game=null;
-  const API={create(seed,spawning=true){game=new ClassicGame(seed,{spawning});return JSON.stringify(game.snapshot());},
+  const API={create(seed,spawning=true,mode='classic'){game=new ClassicGame(seed,{spawning,mode});return JSON.stringify(game.snapshot());},
     tick(dt,x,y){return JSON.stringify(game.advance(dt,{x,y}));},
     pause(){game.pause();},resume(){game.resume();},
     resize(l,r,b,t){return JSON.stringify(game.resize(l,r,b,t));},

@@ -161,9 +161,9 @@ final class ClassicScene: SKScene {
                 for node in objects.values { node.removeFromParent() }; objects.removeAll()
                 effects.removeAllChildren()
                 #if DEBUG
-                gameFrame = try bridge?.create(spawning: !uiTesting)
+                gameFrame = try bridge?.create(spawning: !uiTesting || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa"), mode: session.mode)
                 #else
-                gameFrame = try bridge?.create()
+                gameFrame = try bridge?.create(mode: session.mode)
                 #endif
                 gameFrame = try resizeEngine()
                 #if DEBUG
@@ -218,7 +218,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
-        if explosionPreview || lingeringAreasPreview { return }
+        if explosionPreview || lingeringAreasPreview || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") { return }
         if newPowersPreview {
             // Rendered once by play(); don't replay transient events each frame.
             if previewStarted == nil { previewStarted = currentTime }

@@ -13,7 +13,7 @@ version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_p
 build=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_plist")
 tar -czf "../artifacts/ios-verification/TiltArena-${version}-build${build}-simulator.tar.gz" -C DerivedData/Build/Products/Debug-iphonesimulator TiltArena.app
 device_id=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; d=json.load(sys.stdin); print(next(x["udid"] for group in d["devices"].values() for x in group if x["name"].startswith("iPhone")))')
-test_selection=()
+test_selection=(-only-testing:TiltArenaTests -only-testing:TiltArenaUITests)
 if [ "${QA_VISUAL_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
     -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes
