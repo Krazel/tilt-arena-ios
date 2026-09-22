@@ -285,12 +285,11 @@
       // Independent scattered dots, never an opening line or perimeter formation.
       const b=this.bounds;
       for(let attempt=0;attempt<480 && this.enemies.length<48;attempt++) {
-        const edge=Math.floor(this.rng.next()*4),depth=this.rng.range(16,52);
-        let x=this.rng.range(b.left+16,b.right-16),y=this.rng.range(b.bottom+16,b.top-16);
-        if(edge===0)x=b.left+depth;if(edge===1)x=b.right-depth;
-        if(edge===2)y=b.bottom+depth;if(edge===3)y=b.top-depth;
+        const x=this.rng.range(b.left+16,b.right-16),y=this.rng.range(b.bottom+16,b.top-16);
         const point={x,y};
-        if(distance(point,this.player)>TUNING.spawnClearance && this.enemies.every(e=>distance(point,e)>22))this.addEnemy(x,y);
+        // A normalized safe center remains clear after resizing to any supported arena.
+        const fromCenter=Math.hypot((x-this.player.x)/(b.right-b.left),(y-this.player.y)/(b.top-b.bottom));
+        if(fromCenter>0.4 && this.enemies.every(e=>distance(point,e)>22))this.addEnemy(x,y,{activeAt:1.2});
       }
     }
     spawnDirector() {

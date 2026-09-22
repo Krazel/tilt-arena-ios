@@ -4,7 +4,7 @@ const {ClassicGame,TUNING}=moduleExport.exports;
 test('hard opens with 48 scattered warned dots, safe center and two usable pickups; classic is unchanged',()=>{
  const hard=new ClassicGame(91,{mode:'hard'}),classic=new ClassicGame(91);
  assert.equal(hard.snapshot().mode,'hard');assert.equal(hard.enemies.length,48);assert.equal(classic.enemies.length,0);
- assert.equal(hard.pickups.length,2);assert(hard.enemies.every(e=>e.activeAt===.8 && e.speed===82));
+ assert.equal(hard.pickups.length,2);assert(hard.enemies.every(e=>e.activeAt===1.2 && e.speed===82));
  for(const bounds of [[24,936,52,592],[0,300,0,300],[118,1272,58,592]]){
   const g=new ClassicGame(91,{mode:'hard'});g.resize(...bounds);
   assert(g.enemies.every(e=>Math.hypot(e.x-g.player.x,e.y-g.player.y)>TUNING.spawnClearance));
