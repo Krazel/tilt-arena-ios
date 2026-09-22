@@ -1,0 +1,1 @@
+Hard mode has a gentler opening: 48 randomly scattered enemies instead of 64 aligned dots. The first formation arrives after 10 seconds, with gentler reinforcements for the first 12 seconds. The established hard curve follows. Classic mode and controls are unchanged.

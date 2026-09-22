@@ -80,7 +80,7 @@
         this.addPickup('nuke', 260, 310);
         this.addPickup('missiles', 700, 330);
         if(this.mode==='hard'){
-          this.spawnOpening(); this.spawnAt=0.75; this.patternAt=3.5;
+          this.spawnOpening(); this.spawnAt=1.25; this.patternAt=10;
         }
       }
     }
@@ -282,17 +282,20 @@
       }
     }
     spawnOpening() {
-      // Spread 64 warned dots across all four edges, with an open center.
+      // Independent scattered dots, never an opening line or perimeter formation.
       const b=this.bounds;
-      for(let edge=0;edge<4;edge++)for(let i=0;i<16;i++) {
-        const t=(i+0.5)/16;
-        const x=edge<2?(edge===0?b.left+18:b.right-18):b.left+18+t*(b.right-b.left-36);
-        const y=edge<2?b.bottom+18+t*(b.top-b.bottom-36):(edge===2?b.bottom+18:b.top-18);
-        if(distance({x,y},this.player)>TUNING.spawnClearance)this.addEnemy(x,y);
+      for(let attempt=0;attempt<480 && this.enemies.length<48;attempt++) {
+        const edge=Math.floor(this.rng.next()*4),depth=this.rng.range(16,52);
+        let x=this.rng.range(b.left+16,b.right-16),y=this.rng.range(b.bottom+16,b.top-16);
+        if(edge===0)x=b.left+depth;if(edge===1)x=b.right-depth;
+        if(edge===2)y=b.bottom+depth;if(edge===3)y=b.top-depth;
+        const point={x,y};
+        if(distance(point,this.player)>TUNING.spawnClearance && this.enemies.every(e=>distance(point,e)>22))this.addEnemy(x,y);
       }
     }
     spawnDirector() {
-      const hard=this.mode==='hard',pressure=hard?85+this.time*1.4:this.time;
+      // Ease only the first 12 seconds, then use the established hard curve.
+      const hard=this.mode==='hard',pressure=hard?85+this.time*1.4-20*Math.max(0,1-this.time/12):this.time;
       if(this.time>=this.spawnAt) {
         const n=2+Math.floor(Math.min(12,pressure/12));
         for(let i=0;i<n && this.enemies.length<TUNING.maxEnemies;i++) {

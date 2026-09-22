@@ -1,0 +1,1 @@
+Modo Difícil: inicio un poco más accesible, con 48 enemigos dispersos al azar en lugar de 64 alineados. Primera formación a los 10 segundos; refuerzos más suaves durante los primeros 12 segundos. Después se mantiene la curva difícil. Clásico y controles sin cambios.
