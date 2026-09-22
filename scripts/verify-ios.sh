@@ -17,6 +17,7 @@ test_selection=(-only-testing:TiltArenaTests -only-testing:TiltArenaUITests)
 if [ "${QA_VISUAL_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes
     -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes
     -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist)
 fi

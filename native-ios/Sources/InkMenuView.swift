@@ -3,6 +3,8 @@ import UIKit
 
 /// The same separate alpha assets and 874×402 layout used by the approved web menu.
 enum InkMenuArt {
+    // These are loose bundle resources, so load with UIKit rather than SwiftUI's asset-catalog lookup.
+    static let panel = UIImage(named: "ink-menu-panel") ?? UIImage()
     enum Piece: CaseIterable, Hashable { case titleEn, titleEs, playEn, playEs, gold, charcoal
         var rect: CGRect {
             switch self {
@@ -48,7 +50,7 @@ struct InkMenuView: View {
         GeometryReader { geometry in
             let scale = min(geometry.size.width / 874, geometry.size.height / 402)
             ZStack(alignment: .topLeading) {
-                Image("ink-menu-panel").resizable().at(InkMenuLayout.panel).accessibilityHidden(true)
+                Image(uiImage: InkMenuArt.panel).resizable().at(InkMenuLayout.panel).accessibilityHidden(true)
                 Rectangle().fill(paper.opacity(0.5)).at(InkMenuLayout.divider).accessibilityHidden(true)
                 main.at(InkMenuLayout.main)
                 settings.at(InkMenuLayout.settings)
@@ -63,6 +65,7 @@ struct InkMenuView: View {
     private var main: some View {
         ZStack(alignment: .topLeading) {
             Text("KRAZEL GAMES").font(.system(size: 10.5, weight: .bold)).tracking(4.7)
+                .foregroundColor(Color(InkArt.gold))
                 .at(CGRect(x: 0, y: 0, width: 317, height: 13))
             title.at(CGRect(x: 0, y: 20, width: 317, height: 51))
             Text(ended ? "COMBO ×\(game.resultCombo)  ·  \(game.resultTime) s" : paused ? (game.message.isEmpty ? GameText.arenaWaits : game.message) : GameText.tagline)

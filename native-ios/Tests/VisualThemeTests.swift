@@ -4,7 +4,7 @@ import SpriteKit
 
 final class VisualThemeTests: XCTestCase {
     func testApprovedMenuArtworkAndBrushFontAreBundled() throws {
-        XCTAssertEqual(try XCTUnwrap(UIImage(named: "ink-menu-panel")?.cgImage).width, 1848)
+        XCTAssertEqual(try XCTUnwrap(InkMenuArt.panel.cgImage).width, 1848)
         XCTAssertEqual(InkMenuArt.pieces.count, 6)
         for piece in InkMenuArt.Piece.allCases {
             let image = try XCTUnwrap(InkMenuArt.pieces[piece]?.cgImage)
