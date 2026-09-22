@@ -65,6 +65,7 @@ enum InkArt {
         }
     }()
     static func node(style: String) -> SKNode {
+        if let approved = ApprovedOrbArt.node(for: style) { return approved }
         switch style {
         case "arrow", "missileShot":
             let root = SKNode(), dart = sprite(0, size: style == "arrow" ? 62 : 29)

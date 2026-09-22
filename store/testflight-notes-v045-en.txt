@@ -1,0 +1,1 @@
+Bomb, wave, ice, shield and lightning orbs now use the exact approved Subtle Color artwork, including its painted rim, texture and symbol. Orb size, movement, powers and difficulty are unchanged.

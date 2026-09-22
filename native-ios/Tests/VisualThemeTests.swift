@@ -3,6 +3,21 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    func testApprovedDrawingsLoadAsCompleteMaskedImagesWithoutReplacementGlyphs() throws {
+        XCTAssertEqual(Set(ApprovedOrbArt.regions.keys), Set(["nuke", "wave", "frost", "bubble", "lightning"]))
+        for power in ApprovedOrbArt.regions.keys {
+            let node = try XCTUnwrap(InkArt.node(style: power) as? SKCropNode)
+            XCTAssertNotNil(node.maskNode)
+            XCTAssertEqual(node.children.count, 1)
+            let art = try XCTUnwrap(node.children.first as? SKSpriteNode)
+            XCTAssertEqual(try XCTUnwrap(art.texture).size(), CGSize(width: 256, height: 256))
+            XCTAssertEqual(art.colorBlendFactor, 0)
+            XCTAssertTrue(art.children.isEmpty)
+            XCTAssertGreaterThan(art.size.width * 56 / 42, 50)
+            XCTAssertLessThan(art.size.width * 56 / 42, 60)
+        }
+        XCTAssertNil(ApprovedOrbArt.node(for: "missiles"))
+    }
     func testSubtlePigmentPreservesCreamRimAndInkTextureLuminance() {
         let target = [0.5, 0.388, 0.149], rim = [0.93, 0.89, 0.78]
         XCTAssertEqual(InkArt.pigment(rim, target: target), rim)
