@@ -1,0 +1,3 @@
+Instant calibration: capture your posture when you tap using the latest valid motion reading, without waiting for 45 stable samples. Recalibrating from pause preserves the run, and the saved posture remains available when resuming. If the sensor is still starting, calibration waits only for its first valid reading.
+
+Gameplay and both visual themes are unchanged. The modular menu currently being reviewed in the browser is not included in this iOS build yet.

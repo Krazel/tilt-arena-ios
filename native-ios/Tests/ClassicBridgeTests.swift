@@ -169,10 +169,33 @@ final class ClassicBridgeTests: XCTestCase {
         session.scene.play(restart: false)
         XCTAssertEqual(session.phase, .running)
         session.scene.pauseRun()
+        let pausedFrame = session.scene.frameForVerification
         session.scene.calibrate(restart: false)
+        XCTAssertEqual(session.phase, .running, "A ready calibration must complete without waiting for update frames")
+        XCTAssertTrue(session.hasCustom)
+        XCTAssertEqual(session.scene.frameForVerification?.time, pausedFrame?.time)
+        XCTAssertEqual(session.scene.frameForVerification?.score, pausedFrame?.score)
         session.scene.cancelCalibration()
-        XCTAssertEqual(session.phase, .paused)
+        XCTAssertEqual(session.phase, .running, "A completed calibration cannot be cancelled later")
         session.scene.halt()
+    }
+    func testImmediateCalibrationUsesFreshGravityInEitherLandscapeDirection() throws {
+        let gx = 0.2, gy = 0.3, gz = -sqrt(1 - 0.2*0.2 - 0.3*0.3)
+        for right in [false, true] {
+            let profile = try XCTUnwrap(TiltProfile.capture(x: gx, y: gy, z: gz,
+                timestamp: 100, now: 100.02, landscapeRight: right))
+            let delta = profile.motionDelta(x: gx, y: gy, z: gz, landscapeRight: right)
+            XCTAssertEqual(delta.x, 0, accuracy: 0.000001)
+            XCTAssertEqual(delta.y, 0, accuracy: 0.000001)
+        }
+    }
+    func testImmediateCalibrationRejectsStaleAndInvalidSensorReadings() {
+        for (timestamp, now) in [(99.0, 100.0), (101.0, 100.0), (Double.nan, 100.0)] {
+            XCTAssertNil(TiltProfile.capture(x: 0, y: 0, z: -1, timestamp: timestamp, now: now, landscapeRight: false))
+        }
+        for z in [0, 5, Double.nan, Double.infinity] {
+            XCTAssertNil(TiltProfile.capture(x: 0, y: 0, z: z, timestamp: 100, now: 100, landscapeRight: false))
+        }
     }
     func testChargeAndTrailDecodeFromBundledJavaScriptCore() throws {
         let bridge = try ClassicBridge()

@@ -51,7 +51,7 @@ enum GameText {
     static var best: String { text("BEST", "RÉCORD") }
     static var chainPowers: String { text("CHAIN THE POWERS", "ENLAZA LAS ARMAS") }
 
-    static var calibrationHold: String { text("Hold the iPhone still and comfortably for a moment.", "Mantén el iPhone quieto y cómodo un instante.") }
+    static var calibrationHold: String { text("Waiting for the motion sensor…", "Esperando al sensor de movimiento…") }
     static var simulatorDrag: String { text("Simulator: drag from anywhere to move the arrow.", "Simulador: arrastra desde cualquier punto para mover la flecha.") }
     static var noMotionSensor: String { text("This device does not provide the required motion sensor.", "Este dispositivo no ofrece el sensor de movimiento necesario.") }
     static var sensorPermission: String { text("No sensor data is arriving. Check Motion permissions in Settings and try again.", "No llega información del sensor. Revisa los permisos de movimiento en Ajustes y vuelve a intentarlo.") }

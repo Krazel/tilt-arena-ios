@@ -38,6 +38,15 @@ struct TiltProfile {
     static func sampled(x: Double, y: Double, landscapeRight: Bool) -> TiltProfile {
         TiltProfile(screenX: landscapeRight ? -y : y, screenY: landscapeRight ? x : -x)
     }
+    /// A single fresh, filtered Core Motion gravity reading defines the neutral.
+    /// Reject missing/stale/invalid readings instead of saving a false posture.
+    static func capture(x: Double, y: Double, z: Double, timestamp: Double,
+                        now: Double, landscapeRight: Bool) -> TiltProfile? {
+        guard [x, y, z, timestamp, now].allSatisfy({ $0.isFinite }),
+              now >= timestamp, now - timestamp <= 0.25,
+              (0.8...1.2).contains(sqrt(x*x + y*y + z*z)) else { return nil }
+        return sampled(x: x, y: y, landscapeRight: landscapeRight)
+    }
     func deviceNeutral(landscapeRight: Bool) -> (x: Double, y: Double) {
         landscapeRight ? (screenY, -screenX) : (-screenY, screenX)
     }

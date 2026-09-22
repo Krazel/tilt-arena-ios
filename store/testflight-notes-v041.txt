@@ -1,0 +1,3 @@
+Calibración inmediata: guarda la postura al pulsar usando la lectura reciente del sensor, sin esperar 45 muestras estables. Recalibrar desde pausa conserva la partida y la postura guardada sigue disponible para reanudar. Si el sensor aún no entrega datos, se espera solo su primera lectura válida.
+
+El resto del juego y los dos estilos visuales se mantienen. El menú modular que estamos revisando en navegador todavía no forma parte de esta build iOS.

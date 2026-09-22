@@ -27,11 +27,9 @@ final class ClassicScene: SKScene {
     private let comboBar = SKSpriteNode(color: UIColor(hex: "d5f56b"), size: CGSize(width: 240, height: 3))
     private var gameFrame: ClassicFrame?, lastTime: Double?
     private var calibratedOrientation: UIInterfaceOrientation = .unknown
-    private var samples: [(x: Double, y: Double)] = []
-    private var calibrationStart = 0.0, motionTimestamp = -1.0
+    private var calibrationStart = 0.0
     private var restartAfterCalibration = true
     private var touchVector = (x: 0.0, y: 0.0), touchOrigin: CGPoint?
-    private var calibrationFrames = 0
     private var calibrationReturnPhase: GameSession.Phase = .menu
     private var sensorGraceUntil = 0.0
     private var trailTime = 0.0
@@ -104,7 +102,6 @@ final class ClassicScene: SKScene {
         catch { session.fail(error); return }
         calibrationReturnPhase = session.phase
         startMotion(); restartAfterCalibration = restart
-        samples = []; calibrationFrames = 0; motionTimestamp = -1
         calibrationStart = ProcessInfo.processInfo.systemUptime
         calibratedOrientation = view?.window?.windowScene?.interfaceOrientation ?? .landscapeLeft
         session.message = GameText.calibrationHold
@@ -117,33 +114,25 @@ final class ClassicScene: SKScene {
         }
         #endif
         session.phase = .calibrating
+        // Core Motion is already running in the menu. Capture its current
+        // filtered gravity now; wait only if the sensor has not produced it yet.
+        sampleCalibration()
     }
     private func sampleCalibration() {
         let orientation = view?.window?.windowScene?.interfaceOrientation ?? calibratedOrientation
-        if orientation != calibratedOrientation {
-            calibratedOrientation = orientation; samples = []; calibrationFrames = 0
-        }
+        calibratedOrientation = orientation
         #if targetEnvironment(simulator)
-        calibrationFrames += 1
-        if calibrationFrames > 45 { beginAfterCalibration() }
+        beginAfterCalibration()
         #else
         let now = ProcessInfo.processInfo.systemUptime
-        if let m = motion.deviceMotion, m.timestamp != motionTimestamp {
-            motionTimestamp = m.timestamp; samples.append((m.gravity.x, m.gravity.y))
-            if samples.count > 45 { samples.removeFirst() }
-            if samples.count == 45 {
-                let nx = samples.map(\.x).reduce(0, +) / 45, ny = samples.map(\.y).reduce(0, +) / 45
-                let spread = samples.map { hypot($0.x - nx, $0.y - ny) }.max() ?? 1
-                if spread < 0.025 {
-                    session?.saveCustom(TiltProfile.sampled(x: nx, y: ny, landscapeRight: calibratedOrientation == .landscapeRight))
-                    beginAfterCalibration(); return
-                }
-            }
+        if let m = motion.deviceMotion,
+           let profile = TiltProfile.capture(x: m.gravity.x, y: m.gravity.y, z: m.gravity.z,
+                timestamp: m.timestamp, now: now, landscapeRight: calibratedOrientation == .landscapeRight) {
+            session?.saveCustom(profile)
+            beginAfterCalibration(); return
         }
-        if now - calibrationStart > 12 {
-            session?.message = samples.isEmpty
-                ? GameText.sensorPermission
-                : GameText.unstablePosture
+        if now - calibrationStart > 2 {
+            session?.message = GameText.sensorPermission
             session?.phase = .failed
         }
         #endif
@@ -155,6 +144,7 @@ final class ClassicScene: SKScene {
         play(restart: restartAfterCalibration)
     }
     func cancelCalibration() {
+        guard session?.phase == .calibrating else { return }
         session?.phase = calibrationReturnPhase == .paused ? .paused : .menu
         session?.message = ""
     }
