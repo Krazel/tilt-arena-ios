@@ -120,6 +120,20 @@ final class ClassicFlowTests: XCTestCase {
         Thread.sleep(forTimeInterval: 0.5)
         capture("05-native-ice-and-blast", app: app)
     }
+    func testLingeringAreasAndColoredOrbsInBothThemes() {
+        let app = XCUIApplication()
+        for theme in ["ink", "classic"] {
+            app.launchArguments = ["--ui-testing", "--lingering-areas-qa", "--theme-\(theme)-qa"]
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            XCTAssertTrue(app.otherElements["temporary-theme-control"].exists)
+            capture(theme == "ink" ? "27-small-theme-menu" : "28-small-theme-original-menu", app: app)
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            capture(theme == "ink" ? "25-lingering-ink" : "26-lingering-original", app: app)
+            app.terminate()
+        }
+    }
     private func pauseByTouch(_ app: XCUIApplication) {
         app.otherElements["arena-running"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.buttons["resume"].waitForExistence(timeout: 5))

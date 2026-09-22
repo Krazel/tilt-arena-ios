@@ -20,7 +20,7 @@ struct ClassicFrame: Decodable {
         let id: Int
         let x, y: Double
         let power: String
-        let remaining: Double
+        let remaining, angle: Double
     }
     struct Projectile: Decodable {
         let id: Int
@@ -33,7 +33,7 @@ struct ClassicFrame: Decodable {
         let id: Int
         let x, y: Double
         let kind: String
-        let remaining, angle, radius: Double
+        let remaining, angle, radius, duration: Double
     }
     struct Event: Decodable {
         let kind: String
@@ -161,6 +161,18 @@ final class ClassicBridge {
           g.activate('vortex',{x:\(right)-220,y:280});
           ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+70+i*(\(right)-\(left)-140)/(ClassicDiagnostics.POWERS.length-1),490));
           for(let i=0;i<ClassicDiagnostics.POWERS.length;i++)g.addEnemy(\(left)+70+i*(\(right)-\(left)-140)/(ClassicDiagnostics.POWERS.length-1),475,{activeAt:0,speed:0});
+          g.events=[];return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
+    func lingeringAreasFrame(left: Double, right: Double) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.resize(\(left),\(right),52,592);g.player.x=(\(left)+\(right))/2;g.player.y=100;
+          g.activate('frost',{x:\(left)+245,y:290});g.activate('nuke',{x:\(right)-215,y:290});
+          ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+60+i*(\(right)-\(left)-120)/9,520));
+          for(let i=0;i<108;i++)g.advance(1/120,{x:0,y:0});
           g.events=[];return JSON.stringify(g.snapshot());})()
         """
         guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }

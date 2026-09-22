@@ -28,6 +28,8 @@ enum InkArt {
         default: return paper
         }
     }
+    static let orbColors = ["nuke":"d5a135", "wave":"9d70c6", "missiles":"d6cc61", "frost":"64bdcf",
+        "bubble":"6aa06a", "spikes":"618acb", "vortex":"c568a4", "lightning":"c6d3cf", "burn":"d76b3c", "boomerang":"b78b68"]
     static func node(style: String) -> SKNode {
         switch style {
         case "arrow", "missileShot":
@@ -43,7 +45,9 @@ enum InkArt {
         case "vortexField": return sprite(5, size: 450)
         case "boomerangShot": return sprite(7, size: 78)
         default:
-            let root = SKNode(); root.addChild(sprite(2, size: 60))
+            let root = SKNode(), orb = sprite(2, size: 60)
+            orb.color = UIColor(hex: orbColors[style] ?? "55969a"); orb.colorBlendFactor = 0.82
+            root.addChild(orb)
             // Keep the learned power symbols, with paper ink instead of glass.
             let original = ClassicArt.node(style: style)
             for child in Array(original.children.dropFirst(2)) {

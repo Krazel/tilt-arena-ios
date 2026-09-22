@@ -1,0 +1,5 @@
+Each power orb now has its own color, with gentle random drift and rotation. Some stay still.
+
+The explosion remains active for 1.2 seconds and the ice area for 2 seconds, affecting enemies that enter while they last.
+
+The temporary visual comparison controls are now tiny and separate from the main menu. Tap the arena to pause and Resume to continue.

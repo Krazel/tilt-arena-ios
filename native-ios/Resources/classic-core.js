@@ -13,6 +13,7 @@
     playerRadius: 8, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 300, vortexRadius: 140, vortexPlayerRadius: 300,
     lightningStartRadius: 220, lightningChainRadius: 90,
+    blastDuration: 1.2, frostDuration: 2, frozenDuration: 4, pickupSpeed: 18, pickupSpin: 0.6,
     boomerangCharge: 0.5, boomerangSpeed: 640, boomerangLife: 4.5, boomerangBounces: 6, maxBoomerangs: 3,
     fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050, waveCharge: 0.5});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang'];
@@ -62,6 +63,7 @@
   class ClassicGame {
     constructor(seed, options) {
       this.rng = new RNG(seed);
+      this.pickupRng = new RNG(seed ^ 0x51f15e);
       this.options = options || {};
       this.bounds = Object.assign({}, BOUNDS);
       this.powers = this.options.powers || POWERS;
@@ -137,7 +139,11 @@
       }
       if (this.options.spawning !== false) this.spawnDirector();
       for(const orb of this.pickups) {
-        if(!orb.dead && orb.until>this.time && swept(before,p,orb,TUNING.pickupReach)) {
+        if(orb.dead || orb.until<=this.time)continue;
+        const old={x:orb.x,y:orb.y};
+        this.movePickup(orb,dt);
+        const relative={x:p.x-(orb.x-old.x),y:p.y-(orb.y-old.y)};
+        if(swept(before,relative,old,TUNING.pickupReach)) {
           orb.dead = true;
           this.activate(orb.power,{x:orb.x,y:orb.y});
         }
@@ -164,7 +170,7 @@
       this.updateProjectiles(dt,before);
       for(const e of this.enemies) {
         if(e.dead || this.time<e.activeAt) continue;
-        const old = {x:e.x,y:e.y}, frozen = e.frozenUntil>this.time;
+        const old = {x:e.x,y:e.y}; let frozen = e.frozenUntil>this.time;
         if(!frozen) {
           if(p.spikesUntil>this.time) {
             // Fear overrides formation travel until the contact weapon expires.
@@ -179,6 +185,9 @@
           e.x=clamp(e.x,this.bounds.left+TUNING.dotRadius,this.bounds.right-TUNING.dotRadius);
           e.y=clamp(e.y,this.bounds.bottom+TUNING.dotRadius,this.bounds.top-TUNING.dotRadius);
         }
+        this.applyAreaEffects(e,old);
+        if(e.dead)continue;
+        frozen=e.frozenUntil>this.time;
         // Relative swept collision includes the dot's movement as well as the arrow's.
         const relativeEnd={x:p.x-(e.x-old.x),y:p.y-(e.y-old.y)};
         const armored = p.spikesUntil>this.time || p.fireChargeUntil>0 || p.burnUntil>this.time-dt+1e-9;
@@ -224,8 +233,20 @@
       this.enemies.push(e);return e;
     }
     addPickup(power,x,y) {
-      const o={id:++this.id,power,x,y,until:this.time+TUNING.pickupLife,dead:false};
+      const r=this.pickupRng,a=r.range(0,TAU),speed=r.next()<0.2?0:r.range(0,TUNING.pickupSpeed);
+      const o={id:++this.id,power,x,y,vx:Math.cos(a)*speed,vy:Math.sin(a)*speed,
+        angle:r.range(0,TAU),spin:r.next()<0.2?0:r.range(-TUNING.pickupSpin,TUNING.pickupSpin),
+        until:this.time+TUNING.pickupLife,dead:false};
       this.pickups.push(o);return o;
+    }
+    movePickup(o,dt) {
+      for(const [axis,velocity,low,high] of [['x','vx',this.bounds.left+28,this.bounds.right-28],['y','vy',this.bounds.bottom+28,this.bounds.top-28]]) {
+        o[axis]+=o[velocity]*dt;
+        if(o[axis]<low){o[axis]=low+(low-o[axis]);o[velocity]=Math.abs(o[velocity]);}
+        if(o[axis]>high){o[axis]=high-(o[axis]-high);o[velocity]=-Math.abs(o[velocity]);}
+        o[axis]=clamp(o[axis],low,high);
+      }
+      o.angle=(o.angle+o.spin*dt+TAU)%TAU;
     }
     choosePower() {
       let ticket=this.rng.next()*this.powers.reduce((sum,p)=>sum+POWER_WEIGHTS[p],0);
@@ -307,7 +328,7 @@
     }
     blast(point,radius,power) {
       for(const e of this.enemies)if(distance(point,e)<=radius)this.kill(e,'dot');
-      this.event('blast',{x:point.x,y:point.y,radius,color:COLORS[power]});
+      this.event('blast',{x:point.x,y:point.y,radius,power,color:COLORS[power]});
     }
     activate(power,point) {
       const p=this.player,at=point||p;
@@ -315,7 +336,9 @@
       this.score+=POWERS.includes(power)?SCORING.pickup:0;
       this.event('pickup',{power,x:at.x,y:at.y,color:COLORS[power]});
       switch(power) {
-      case 'nuke':this.blast(at,155,power);break;
+      case 'nuke':
+        this.fields.push({id:++this.id,kind:'blast',x:at.x,y:at.y,radius:155,duration:TUNING.blastDuration,until:this.time+TUNING.blastDuration});
+        this.blast(at,155,power);break;
       case 'wave':this.waveAt.push({at:this.time+TUNING.waveCharge});break;
       case 'missiles':
         for(let i=0;i<5;i++) {
@@ -324,7 +347,8 @@
             vx:Math.cos(a)*285,vy:Math.sin(a)*285,angle:a,radius:5,until:this.time+3.2,target:null});
         }break;
       case 'frost':
-        for(const e of this.enemies)if(!e.dead && this.time>=e.activeAt && distance(at,e)<205)e.frozenUntil=this.time+4;
+        this.fields.push({id:++this.id,kind:'frost',x:at.x,y:at.y,radius:205,duration:TUNING.frostDuration,until:this.time+TUNING.frostDuration});
+        for(const e of this.enemies)if(!e.dead && this.time>=e.activeAt && distance(at,e)<205)e.frozenUntil=this.time+TUNING.frozenDuration;
         this.event('freeze',{x:at.x,y:at.y,radius:205,color:COLORS.frost});break;
       case 'bubble':p.bubble=true;break;
       case 'spikes':p.spikesUntil=this.time+5;break;
@@ -369,6 +393,13 @@
       }
       return {x:x/Math.max(1,count),y:y/Math.max(1,count)};
     }
+    applyAreaEffects(e,from=e) {
+      if(e.dead || this.time<e.activeAt)return;
+      for(const f of this.fields)if(f.until>this.time && (f.kind==='blast'||f.kind==='frost') && swept(from,e,f,f.radius)) {
+        if(f.kind==='blast'){this.kill(e,'dot');return;}
+        e.frozenUntil=Math.max(e.frozenUntil,this.time+TUNING.frozenDuration);
+      }
+    }
     updateFields(dt) {
       const p=this.player;
       if(p.burnUntil>this.time-dt+1e-9 && this.time+1e-9>=this.trailAt) {
@@ -379,6 +410,7 @@
           this.fields.push({id:++this.id,kind:'fire',...at,angle:p.angle,radius:22,until:this.time+3.2});
         this.trailAt=this.time+0.025;
       }
+      for(const e of this.enemies)this.applyAreaEffects(e);
       for(const f of this.fields)if(f.until>this.time) {
         if(f.kind==='fire') {
           for(const e of this.enemies)if(!e.dead&&distance(e,f)<f.radius+TUNING.dotRadius)this.kill(e,'dot');
@@ -502,9 +534,9 @@
           boomerangChargeProgress:chargingBoomerang?clamp(1-(chargingBoomerang.at-this.time)/TUNING.boomerangCharge,0,1):0}),
         enemies:this.enemies.map(e=>({id:e.id,x:e.x,y:e.y,telegraph:this.time<e.activeAt,
           frozen:this.time<e.frozenUntil,thawing:e.frozenUntil>this.time&&e.frozenUntil-this.time<1})),
-        pickups:this.pickups.map(o=>({id:o.id,x:o.x,y:o.y,power:o.power,remaining:o.until-this.time})),
+        pickups:this.pickups.map(o=>({id:o.id,x:o.x,y:o.y,power:o.power,angle:o.angle,remaining:o.until-this.time})),
         projectiles:this.projectiles.map(o=>({id:o.id,x:o.x,y:o.y,kind:o.kind,angle:o.angle,bounces:o.bounces,relaunches:o.relaunches})),
-        fields:this.fields.map(f=>({id:f.id,x:f.x,y:f.y,kind:f.kind,angle:f.angle||0,radius:f.radius||TUNING.vortexRadius,remaining:f.until-this.time})),
+        fields:this.fields.map(f=>({id:f.id,x:f.x,y:f.y,kind:f.kind,angle:f.angle||0,radius:f.radius||TUNING.vortexRadius,duration:f.duration||(f.kind==='fire'?3.2:4),remaining:f.until-this.time})),
         events:this.events.slice()};
     }
   }

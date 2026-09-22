@@ -1,0 +1,5 @@
+Cada orbe tiene ahora su propio color, con movimiento y giro suaves al azar. Algunos se quedan quietos.
+
+La explosión permanece activa 1,2 segundos y la zona de hielo 2 segundos, afectando a los enemigos que entren mientras duren.
+
+Los controles provisionales para comparar estilos ahora son pequeños y están separados del menú principal. Toca la arena para pausar y Reanudar para continuar.

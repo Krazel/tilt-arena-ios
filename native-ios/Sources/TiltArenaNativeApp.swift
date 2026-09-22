@@ -105,6 +105,10 @@ struct GameView: View {
                     }.frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
+        }.overlay(alignment: .bottomTrailing) {
+            if showSettings {
+                temporaryThemeControl.padding(.trailing, 8).padding(.bottom, 2)
+            }
         }.tint(accent).foregroundColor(paper)
         .onAppear { game.scene.reduceEffects = reduceMotion; game.scene.sound.setMuted(game.muted) }
         .onChange(of: appPhase) { phase in
@@ -156,21 +160,24 @@ struct GameView: View {
             }
         }.frame(maxWidth: .infinity)
     }
+    // Temporary comparison control, independent of the player-facing settings.
+    // Remove this overlay when the visual direction is final.
+    private var temporaryThemeControl: some View {
+        HStack(spacing: 2) {
+            ForEach(VisualTheme.allCases) { theme in
+                Button { game.theme = theme } label: {
+                    Text(theme.title).font(.system(size: 9, weight: .medium))
+                        .foregroundColor(game.theme == theme ? paper : paper.opacity(0.5))
+                        .padding(.horizontal, 6).frame(height: 24)
+                        .contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityIdentifier("theme-\(theme.rawValue)")
+                .accessibilityAddTraits(game.theme == theme ? .isSelected : [])
+            }
+        }.padding(.horizontal, 3).background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 4))
+        .accessibilityElement(children: .contain).accessibilityIdentifier("temporary-theme-control")
+    }
     private var settings: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 6) {
-                Text(GameText.visualStyle).font(.system(size: 9, weight: .bold)).tracking(1).foregroundColor(accent)
-                Spacer(minLength: 0)
-                ForEach(VisualTheme.allCases) { theme in
-                    Button { game.theme = theme } label: {
-                        Text(theme.title).font(.system(size: 11, weight: .semibold))
-                            .padding(.horizontal, 9).frame(minHeight: 34)
-                            .foregroundColor(game.theme == theme ? .black : paper)
-                            .background(game.theme == theme ? accent : paper.opacity(0.06), in: RoundedRectangle(cornerRadius: ink ? 3 : 9))
-                    }.buttonStyle(.plain).accessibilityIdentifier("theme-\(theme.rawValue)")
-                    .accessibilityAddTraits(game.theme == theme ? .isSelected : [])
-                }
-            }.padding(.bottom, 4)
             Text(GameText.controlPosture).font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
             HStack(spacing: 7) {
                 ForEach(TiltPosture.allCases) { posture in

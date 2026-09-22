@@ -31,6 +31,24 @@ final class VisualThemeTests: XCTestCase {
         session.scene.play(restart: false); XCTAssertEqual(session.phase, .running)
         session.scene.halt(); view.presentScene(nil)
     }
+    @MainActor func testLingeringFieldsDecodeAndArtFollowsRemainingGameTime() throws {
+        let frame = try ClassicBridge().lingeringAreasFrame(left: 100, right: 1300)
+        XCTAssertEqual(frame.time, 0.9, accuracy: 0.0001)
+        XCTAssertEqual(frame.fields.count, 2); XCTAssertEqual(frame.pickups.count, 10)
+        XCTAssertTrue(frame.pickups.allSatisfy { $0.angle.isFinite })
+        for field in frame.fields {
+            XCTAssertGreaterThan(field.remaining, 0.29)
+            for theme in VisualTheme.allCases {
+                let effect = ClassicAreaEffect(kind: field.kind, radius: CGFloat(field.radius), theme: theme, reduced: false)
+                effect.update(remaining: field.remaining, duration: field.duration)
+                XCTAssertEqual(effect.alpha, 1)
+                XCTAssertGreaterThan(effect.calculateAccumulatedFrame().width, CGFloat(field.radius))
+                effect.update(remaining: 0, duration: field.duration)
+                XCTAssertEqual(effect.alpha, 0)
+            }
+        }
+        XCTAssertEqual(Set(InkArt.orbColors.values).count, 10)
+    }
     func testProductionInkAtlasHasAlphaAndAllEightCellsContainVisibleArt() throws {
         let image = try XCTUnwrap(UIImage(named: "ink-tide-sprites")?.cgImage)
         XCTAssertNotEqual(image.alphaInfo, .none)

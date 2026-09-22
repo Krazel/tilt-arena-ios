@@ -36,6 +36,7 @@ final class ClassicScene: SKScene {
     #if DEBUG
     var frameForVerification: ClassicFrame? { gameFrame }
     private let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
+    private let lingeringAreasPreview = ProcessInfo.processInfo.arguments.contains("--lingering-areas-qa")
     private let visualPreview = ProcessInfo.processInfo.arguments.contains("--visual-qa")
     private let freezeVFXPreview = ProcessInfo.processInfo.arguments.contains("--freeze-vfx-qa")
     private let selectedVFXPreview = ProcessInfo.processInfo.arguments.contains("--selected-vfx-qa")
@@ -166,6 +167,7 @@ final class ClassicScene: SKScene {
                 #endif
                 gameFrame = try resizeEngine()
                 #if DEBUG
+                if lingeringAreasPreview { gameFrame = try bridge?.lingeringAreasFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, bouncing: bouncingPreview, electricity: electricityPreview, charging: boomerangChargePreview, recaught: recaughtPreview) }
@@ -216,7 +218,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
-        if explosionPreview { return }
+        if explosionPreview || lingeringAreasPreview { return }
         if newPowersPreview {
             // Rendered once by play(); don't replay transient events each frame.
             if previewStarted == nil { previewStarted = currentTime }
@@ -398,6 +400,7 @@ final class ClassicScene: SKScene {
         for orb in frame.pickups {
             let key="o\(orb.id)";alive.insert(key)
             let node=sprite(key:key,style:orb.power);node.position=CGPoint(x:orb.x,y:orb.y);node.zPosition=3
+            node.zRotation=reduceEffects ? 0 : orb.angle
             node.setScale((56.0 / 42.0) * (reduceEffects ? 1 : 1+0.04*sin(frame.time*4+Double(orb.id))))
             node.alpha=orb.remaining<2 ? 0.55+0.45*sin(frame.time*10) : 1
         }
@@ -411,6 +414,17 @@ final class ClassicScene: SKScene {
         }
         for field in frame.fields {
             let key="f\(field.id)";alive.insert(key)
+            if field.kind == "blast" || field.kind == "frost" {
+                let node: ClassicAreaEffect
+                if let existing = objects[key] as? ClassicAreaEffect { node = existing }
+                else {
+                    node = ClassicAreaEffect(kind: field.kind, radius: CGFloat(field.radius), theme: theme, reduced: reduceEffects)
+                    world.addChild(node); objects[key] = node
+                }
+                node.position = CGPoint(x: field.x, y: field.y); node.zPosition = 1
+                node.update(remaining: field.remaining, duration: field.duration)
+                continue
+            }
             let style = field.kind == "vortex" ? "vortexField" : "fire"
             let node=sprite(key:key,style:style)
             node.position=CGPoint(x:field.x,y:field.y);node.zPosition=1
@@ -439,5 +453,9 @@ final class ClassicScene: SKScene {
         if frame.events.contains(where:{$0.kind=="pickup"}) { sound.play("pickup") }
         else if frame.events.contains(where:{$0.kind=="kill"}) { sound.play("hit") }
     }
-    private func showEffect(_ event: ClassicFrame.Event) { vfx.show(event, reduced: reduceEffects) }
+    private func showEffect(_ event: ClassicFrame.Event) {
+        // These powers are drawn from their live fields, so visuals cannot outlive damage.
+        if event.kind == "freeze" || (event.kind == "blast" && event.power == "nuke") { return }
+        vfx.show(event, reduced: reduceEffects)
+    }
 }

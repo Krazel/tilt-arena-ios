@@ -59,7 +59,8 @@ test('swept collision catches crossing rather than only endpoint overlap',()=>{
 });
 test('telegraphs are harmless until active, and cannot be farmed for points',()=>{
   const g=fresh();g.addEnemy(480,320,{speed:0});g.activate('nuke');run(g,0.5);
-  assert.equal(g.kills,0);assert.equal(g.state,'running');run(g,0.4);assert.equal(g.state,'gameOver');
+  assert.equal(g.kills,0);assert.equal(g.state,'running');run(g,0.4);
+  assert.equal(g.state,'running');assert.equal(g.kills,1,'the lingering blast hits only after the telegraph activates');
 });
 test('nuke has local radius; frost freezes without killing and permits ramming',()=>{
   const g=fresh();dot(g,550,320);dot(g,800,320);g.activate('nuke');
