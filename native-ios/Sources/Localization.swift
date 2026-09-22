@@ -48,6 +48,7 @@ enum GameText {
     static var muteSound: String { text("Mute sound", "Silenciar sonido") }
     static var arenaAccessibility: String { text("Classic arena. Tilt the iPhone to dodge dots and collect powers.", "Arena clásica. Inclina el iPhone para esquivar puntos y recoger poderes.") }
     static var pauseAccessibility: String { text("Pause run", "Pausar partida") }
+    static var pauseHint: String { text("Tap anywhere to pause.", "Toca cualquier parte de la pantalla para pausar.") }
     static var best: String { text("BEST", "RÉCORD") }
     static var chainPowers: String { text("CHAIN THE POWERS", "ENLAZA LAS ARMAS") }
 

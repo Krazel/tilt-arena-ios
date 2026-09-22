@@ -1,0 +1,3 @@
+Tap anywhere on the screen during a game to open the pause menu. The pause button has been removed to keep the arena clear.
+
+Tap Resume to continue the same game with your saved posture. Calibration remains immediate.

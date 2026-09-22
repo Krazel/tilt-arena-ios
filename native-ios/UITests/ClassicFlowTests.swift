@@ -9,12 +9,12 @@ final class ClassicFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["theme-inkTide"].isSelected)
         capture("20-ink-menu", app: app)
         app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
         capture("21-ink-arena", app: app)
-        app.buttons["pause"].tap(); app.buttons["theme-classic"].tap()
+        pauseByTouch(app); app.buttons["theme-classic"].tap()
         XCTAssertTrue(app.buttons["theme-classic"].isSelected)
         app.buttons["resume"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
         capture("22-original-preserved", app: app)
         app.terminate(); app.launchArguments = ["--ui-testing"]; app.launch()
         XCTAssertTrue(app.buttons["theme-classic"].waitForExistence(timeout: 10))
@@ -31,7 +31,7 @@ final class ClassicFlowTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             capture(tail ? "17-explosion-dissipation" : "16-explosion-hot-core", app: app)
             app.terminate()
         }
@@ -49,7 +49,7 @@ final class ClassicFlowTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             Thread.sleep(forTimeInterval: 0.3)
             capture(name, app: app); app.terminate()
         }
@@ -61,7 +61,7 @@ final class ClassicFlowTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             capture(warning ? "12-spikes-expiry-warning" : "11-spikes-over-shield", app: app)
             app.terminate()
         }
@@ -77,7 +77,7 @@ final class ClassicFlowTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             capture(name, app: app); app.terminate()
         }
     }
@@ -88,7 +88,7 @@ final class ClassicFlowTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-            XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             capture(charging ? "06-selected-vfx-charge" : "07-selected-vfx-fire-trail", app: app)
             app.terminate()
         }
@@ -101,9 +101,9 @@ final class ClassicFlowTests: XCTestCase {
         XCTAssert(["Calibrate & play", "Calibrar y jugar"].contains(app.buttons["play"].label))
         capture("00-default-calibration", app: app)
         app.buttons["play"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
-        app.buttons["pause"].tap(); app.buttons["resume"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+        pauseByTouch(app); app.buttons["resume"].tap()
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 3))
         XCTAssertFalse(app.staticTexts["Tu postura"].exists)
         app.terminate(); app.launchArguments = ["--ui-testing"]; app.launch()
         XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
@@ -115,10 +115,39 @@ final class ClassicFlowTests: XCTestCase {
         app.launchArguments = ["--ui-testing", "--visual-qa", "--freeze-vfx-qa"]; app.launch()
         XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
         app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
         // The debug fixture holds effects at their peak after 0.22 seconds.
         Thread.sleep(forTimeInterval: 0.5)
         capture("05-native-ice-and-blast", app: app)
+    }
+    private func pauseByTouch(_ app: XCUIApplication) {
+        app.otherElements["arena-running"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertTrue(app.buttons["resume"].waitForExistence(timeout: 5))
+    }
+    func testTouchAnywherePausesAndResumeDoesNotReopenMenu() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--visual-qa"]; app.launch()
+        XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+        app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+        for point in [CGVector(dx: 0.5, dy: 0.5), CGVector(dx: 0.08, dy: 0.12),
+                      CGVector(dx: 0.92, dy: 0.12), CGVector(dx: 0.08, dy: 0.88), CGVector(dx: 0.92, dy: 0.88)] {
+            let arena = app.otherElements["arena-running"]
+            XCTAssertTrue(arena.waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["pause"].exists)
+            arena.coordinate(withNormalizedOffset: point).tap()
+            XCTAssertTrue(app.buttons["resume"].waitForExistence(timeout: 5))
+            XCTAssertFalse(arena.exists)
+            app.buttons["resume"].tap()
+            XCTAssertTrue(arena.waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["resume"].exists)
+        }
+        capture("23-touch-pause-button-free", app: app)
+        let arena = app.otherElements["arena-running"]
+        arena.coordinate(withNormalizedOffset: CGVector(dx: 0.4, dy: 0.5))
+            .press(forDuration: 0.1, thenDragTo: arena.coordinate(withNormalizedOffset: CGVector(dx: 0.6, dy: 0.5)))
+        XCTAssertTrue(arena.exists, "Simulator movement drags must not open the pause menu")
+        pauseByTouch(app)
+        capture("24-touch-pause-menu", app: app)
     }
     private func capture(_ name: String, app: XCUIApplication) {
         // Capture the display: app-window screenshots crop landscape on this simulator.
@@ -132,19 +161,19 @@ final class ClassicFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["posture-inclined"].isSelected)
         capture("01-menu-wide", app: app)
         app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
-        app.buttons["pause"].tap()
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+        pauseByTouch(app)
         XCTAssertTrue(app.buttons["resume"].waitForExistence(timeout: 5))
         capture("02-pause", app: app)
         app.buttons["resume"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 3))
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 3))
         XCTAssertFalse(app.staticTexts["Your posture"].exists || app.staticTexts["Tu postura"].exists)
-        app.buttons["pause"].tap()
+        pauseByTouch(app)
         let recalibrate = app.buttons["Recalibrate"].exists ? app.buttons["Recalibrate"] : app.buttons["Recalibrar"]
         recalibrate.tap()
         // Simulator calibration completes automatically. The saved profile is reusable.
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
-        app.buttons["pause"].tap()
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+        pauseByTouch(app)
         XCTAssertTrue(app.buttons["posture-custom"].isSelected)
         capture("03-custom-saved", app: app)
     }
@@ -152,7 +181,7 @@ final class ClassicFlowTests: XCTestCase {
         let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--visual-qa"]; app.launch()
         XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
         app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-        XCTAssertTrue(app.buttons["pause"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
         capture("04-native-art-and-vfx-fixture", app: app)
     }
 }

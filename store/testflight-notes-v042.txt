@@ -1,0 +1,3 @@
+Toca cualquier parte de la pantalla durante la partida para abrir el menú de pausa. Hemos quitado el botón de pausa para dejar despejada la arena.
+
+Pulsa Reanudar para continuar la misma partida con tu postura guardada. La calibración sigue siendo inmediata.

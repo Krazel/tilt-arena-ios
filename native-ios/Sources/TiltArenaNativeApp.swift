@@ -83,21 +83,9 @@ struct GameView: View {
     private var showSettings: Bool { game.phase == .menu || game.phase == .paused || game.phase == .gameOver }
     var body: some View {
         ZStack {
-            ArenaView(scene: game.scene).ignoresSafeArea()
-                .accessibilityLabel(GameText.arenaAccessibility)
-            GeometryReader { geometry in
-                if game.phase == .running {
-                    VStack {
-                        HStack {
-                            Spacer()
-                            Button { game.scene.pauseRun() } label: {
-                                Image(systemName: "pause.fill").font(.headline)
-                                    .frame(width: 44, height: 44).background(.black.opacity(0.35), in: Circle())
-                            }.accessibilityLabel(GameText.pauseAccessibility).accessibilityIdentifier("pause")
-                        }
-                        Spacer()
-                    }.padding(.horizontal, 12)
-                } else {
+            ArenaView(scene: game.scene, isRunning: game.phase == .running).ignoresSafeArea()
+            if game.phase != .running {
+                GeometryReader { geometry in
                     ZStack {
                         Color.black.opacity(0.26).ignoresSafeArea()
                         ScrollView {
