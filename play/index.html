@@ -12,12 +12,11 @@ canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}
 #ui{position:absolute;inset:0;width:874px;height:402px;transform:scale(var(--display-scale,1));transform-origin:top left;pointer-events:none}
 #ui[data-theme="classic"]{--paper:#f0f5d9;--accent:#d5f56b;--panel:#131f0e}
 button{font:inherit;color:inherit;border:0;background:transparent;cursor:pointer}button:hover{filter:brightness(1.12)}button:focus-visible{outline:2px solid var(--paper);outline-offset:3px}button:disabled{opacity:.5;cursor:wait}[hidden]{display:none!important}
-#score,#best,#combo{position:absolute;background:#181817;border-radius:0;outline:0.628125px solid #c79a498c;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+#score,#best,#combo{position:absolute;background:transparent;font-weight:800;font-variant-numeric:tabular-nums}
 #score{left:74.5625px;top:6.28125px;width:125.625px;height:18.84375px;padding-left:3.76875px;font-size:13.81875px;line-height:18.84375px}
 #best{left:616.025px;top:6.28125px;width:143.2125px;height:18.84375px;padding-right:3.76875px;text-align:right;font-size:10.05px;line-height:18.84375px}
 #combo{left:74.5625px;top:370.69375px;width:169.59375px;height:23.240625px;padding:0 3.76875px;font-size:11.30625px;line-height:18.84375px}
 #combo-bar{position:absolute;left:3.76875px;top:18.528125px;width:150.75px;height:1.884375px;background:var(--accent);transform-origin:left}
-#ui[data-theme="classic"] #score,#ui[data-theme="classic"] #best,#ui[data-theme="classic"] #combo{background:#131f0e;outline-color:#d5f56b8c}
 #overlay{position:absolute;inset:0;background:#0004;pointer-events:auto}
 .card{position:absolute;left:74px;top:11px;width:726px;height:360px;padding:22px;border-radius:24px;background:var(--panel);outline:1px solid #c79a4970;overflow:hidden;isolation:isolate}
 .card::before{content:"";position:absolute;inset:0;z-index:-1;background:url('/ink-tide-arena.png') center/cover;opacity:.065}

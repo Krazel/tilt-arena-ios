@@ -1,1 +1,1 @@
-Puntuación, récord y combo ahora tienen su propio fondo rectangular oscuro, con borde discreto, en los dos estilos visuales. Se conservan la posición y el tamaño del texto y la barra del combo. Sin cambios de jugabilidad.
+Eliminados los fondos rectangulares de puntuación, récord y cadena/combo. Los textos conservan su posición y tamaño, directamente sobre la arena, en ambos estilos visuales. Barra del combo y jugabilidad sin cambios.

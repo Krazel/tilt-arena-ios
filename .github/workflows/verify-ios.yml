@@ -6,6 +6,10 @@ on:
         description: Recheck native visual rendering after an already verified simulation change
         type: boolean
         default: false
+      hud_only:
+        description: Verify HUD appearance and theme switching using the existing native flow
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -24,6 +28,7 @@ jobs:
       - run: bash scripts/verify-ios.sh
         env:
           QA_VISUAL_ONLY: ${{ inputs.visual_only }}
+          QA_HUD_ONLY: ${{ inputs.hud_only }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

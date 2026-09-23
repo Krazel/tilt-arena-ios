@@ -1,0 +1,77 @@
+/* Independent alpha artwork + independently laid-out menu components.
+   No complete-menu screenshot is used as a runtime background. */
+@font-face{font-family:InkBrush;src:url('/Knewave-Regular.ttf') format('truetype');font-display:swap}
+.panel-art{display:none}
+.posture-block{display:contents}
+#posture-hint{font-size:10px;line-height:13px;color:var(--accent);margin:0;min-height:13px}
+.tile[aria-pressed="true"]{background:var(--accent);color:#151512}
+#fullscreen{display:none}
+#ui[data-theme="inkTide"]{--paper:#e8deca;--accent:#eeb052;--atlas:url('/menu-components.png');--title-size:var(--titleEn-size);--title-position:var(--titleEn-position);--play-size:var(--playEn-size);--play-position:var(--playEn-position);--play-width:49px}
+html[lang="es"] #ui[data-theme="inkTide"]{--title-size:var(--titleEs-size);--title-position:var(--titleEs-position);--play-size:var(--playEs-size);--play-position:var(--playEs-position);--play-width:64px}
+#ui[data-theme="inkTide"] #overlay{background:transparent}
+#ui[data-theme="inkTide"] .card{left:0;top:0;width:874px;height:402px;padding:0;background:none;outline:none;border:0;border-radius:0;overflow:visible}
+#ui[data-theme="inkTide"] .card::before,#ui[data-theme="inkTide"] .card::after{display:none}
+#ui[data-theme="inkTide"] .panel-art{display:block;position:absolute;z-index:-1;left:var(--panel-x);top:var(--panel-y);width:var(--panel-width);height:var(--panel-height);background:url('/menu-panel.png') center/100% 100% no-repeat;pointer-events:none}
+#ui[data-theme="inkTide"] .columns{display:contents}
+#ui[data-theme="inkTide"] .main{display:block;position:absolute;left:var(--main-x);top:var(--main-y);width:var(--main-width);min-height:272px}
+#ui[data-theme="inkTide"] .divider{display:block;position:absolute;left:var(--divider-x);top:var(--divider-y);height:var(--divider-height);width:1px;background:var(--paper);opacity:.5;filter:url('#ink-edge')}
+#ui[data-theme="inkTide"] .eyebrow{position:absolute;left:0;top:0;width:100%;height:13px;font:700 10.5px/13px Arial,sans-serif;letter-spacing:4.7px;text-align:center}
+#ui[data-theme="inkTide"] h1{position:absolute;left:0;top:17px;width:100%;height:57px;margin:0;font:46px/57px InkBrush,sans-serif;letter-spacing:0;text-align:center}
+#ui[data-theme="inkTide"][data-phase="menu"] h1{color:transparent}
+#ui[data-theme="inkTide"][data-phase="menu"] h1::after{content:"";position:absolute;width:226px;height:51px;left:50%;top:3px;transform:translateX(-50%);background-image:var(--atlas);background-size:var(--title-size);background-position:var(--title-position);background-repeat:no-repeat;pointer-events:none}
+#ui[data-theme="inkTide"] #subtitle{position:absolute;left:0;top:81px;width:100%;font:15px/20px Arial,sans-serif;text-align:center;color:#c4c1b7}
+#ui[data-theme="inkTide"] #menu-best{position:absolute;left:0;top:112px;width:100%;font:16px/20px ui-monospace,monospace;letter-spacing:3px;text-align:center}
+#ui[data-theme="inkTide"] .primary{position:absolute;left:0;top:139px;width:100%;height:47px;border-radius:0;background:transparent;color:#161713;font:23px/47px InkBrush,sans-serif;padding:0;isolation:isolate}
+#ui[data-theme="inkTide"] .primary::before{content:"";display:block;position:absolute;inset:0;background-image:var(--atlas);background-size:var(--gold-size);background-position:var(--gold-position);background-repeat:no-repeat;opacity:1;z-index:-1;border-radius:0;pointer-events:none}
+#ui[data-theme="inkTide"][data-phase="menu"] .primary:not(:disabled){color:transparent}
+#ui[data-theme="inkTide"][data-phase="menu"] .primary:not(:disabled)::after{content:"";position:absolute;width:var(--play-width);height:24px;left:50%;top:11px;transform:translateX(-50%);background-image:var(--atlas);background-size:var(--play-size);background-position:var(--play-position);background-repeat:no-repeat;pointer-events:none}
+#ui[data-theme="inkTide"] .secondary{position:absolute;left:0;top:197px;width:100%;height:43px;border-radius:0;background-image:var(--atlas);background-color:transparent;background-size:var(--charcoal-size);background-position:var(--charcoal-position);background-repeat:no-repeat;color:var(--paper);font:600 16px/43px Arial,sans-serif;padding:0}
+#ui[data-theme="inkTide"] #finish{position:absolute;left:0;top:251px;width:100%;height:18px;color:var(--paper);font-size:12px}
+#ui[data-theme="inkTide"] #error{position:absolute;left:0;top:252px;width:100%;margin:0;text-align:center;font-size:10px;line-height:13px;color:var(--paper)}
+#ui[data-theme="inkTide"][data-phase="paused"] #error{top:273px}
+#ui[data-theme="inkTide"] .settings{display:flex;flex-direction:column;gap:14px;position:absolute;left:var(--settings-x);top:var(--settings-y);width:var(--settings-width)}
+#ui[data-theme="inkTide"] .label{color:var(--paper);font:11px/15px ui-monospace,monospace;letter-spacing:2px}
+#ui[data-theme="inkTide"] .posture-block{display:flex;flex-direction:column;gap:5px;order:var(--posture-order)}
+#ui[data-theme="inkTide"] .tiles{display:grid;grid-template-columns:89px 91px 90px;gap:7px}
+#ui[data-theme="inkTide"] .tile{height:65px;border-radius:11px;background-image:var(--atlas);background-color:transparent;background-size:var(--charcoal-size);background-position:var(--charcoal-position);background-repeat:no-repeat;color:var(--paper);font:600 10.5px/14px Arial,sans-serif;gap:8px;padding:7px 0 5px}
+#ui[data-theme="inkTide"] .tile svg{width:28px;height:28px;filter:url('#ink-edge')}
+#ui[data-theme="inkTide"] .tile[aria-pressed="true"]{background-size:var(--gold-size);background-position:var(--gold-position);color:#161713}
+#ui[data-theme="inkTide"] #controls{margin:5px 0 0;min-height:30px;font:11.5px/15px Arial,sans-serif;color:#d6cfbf}
+#ui[data-theme="inkTide"] #posture-hint{font:10px/13px Arial,sans-serif;min-height:13px}
+#ui[data-theme="inkTide"] .sound-row{width:262px;height:27px;margin:0;font:11.5px/27px Arial,sans-serif;color:#d6cfbf;order:var(--sound-order)}
+#ui[data-theme="inkTide"] #sound{font:11.5px Arial,sans-serif;height:27px;gap:7px}
+#ui[data-theme="inkTide"] #sound svg{width:22px;height:22px;fill:var(--accent)}
+#ui[data-theme="inkTide"][data-phase="gameOver"] h1{font:26px/45px InkBrush,sans-serif;top:27px}
+#ui[data-theme="inkTide"][data-phase="gameOver"] #subtitle{top:77px;font-size:13px;line-height:17px}
+#ui[data-theme="inkTide"][data-phase="gameOver"] #menu-best{font:26px/30px InkBrush,sans-serif;top:100px}
+#ui[data-theme="inkTide"]:not([data-phase="running"]) #score,#ui[data-theme="inkTide"]:not([data-phase="running"]) #best,#ui[data-theme="inkTide"]:not([data-phase="running"]) #combo{z-index:2;background:transparent;color:var(--paper);font:11px/16px ui-monospace,monospace;letter-spacing:1.4px}
+#ui[data-theme="inkTide"]:not([data-phase="running"]) #score{left:114px;top:8px;width:auto;min-width:20px;padding:0 4px;background:transparent}
+#ui[data-theme="inkTide"]:not([data-phase="running"]) #best{left:656px;top:8px;width:106px;padding:0 4px;background:transparent}
+#ui[data-theme="inkTide"]:not([data-phase="running"]) #combo{left:124px;top:363px;width:auto;padding:0 4px;background:transparent}
+#ui[data-theme="inkTide"]:not([data-phase="running"]) #combo-bar{display:block;top:19px;left:0;transform:none!important;background:var(--accent);height:2px;filter:url('#ink-edge')}
+@media(forced-colors:active){#ui[data-theme="inkTide"] h1,#ui[data-theme="inkTide"] .primary{color:CanvasText!important;background:Canvas!important}#ui[data-theme="inkTide"] h1::after,#ui[data-theme="inkTide"] .primary::after{display:none}}
+/* Provisional art comparison: outside the menu, independently removable. */
+#theme-preview{position:absolute;left:var(--visualStyle-x);top:var(--visualStyle-y);width:var(--visualStyle-width);height:21px;display:flex;align-items:center;justify-content:flex-end;gap:3px;pointer-events:auto;color:#eee4c988;font:8px/18px Arial,sans-serif}
+#theme-preview button{font:8px/18px Arial,sans-serif;height:21px;padding:0 5px;color:#eee4c988;background:#16171388;border-radius:3px}
+#theme-preview button[aria-pressed="true"]{color:#eee4c9;text-decoration:underline;text-underline-offset:3px}
+#ui[data-phase="running"] #theme-preview,#ui[data-visual-style-visible="false"] #theme-preview,#ui[data-posture-visible="false"] .posture-block,#ui[data-sound-visible="false"] .sound-row{display:none!important}
+
+.mode-choice{order:3;display:flex;flex-direction:column;gap:4px}.mode-buttons{display:flex;gap:7px}.mode-buttons button{flex:1;min-height:30px;border:1px solid #eee4c950;border-radius:4px;font:600 12px Arial,sans-serif;color:var(--paper)}.mode-buttons button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#161713}
+#mode-description{margin:0;font:10px/13px Arial,sans-serif;color:#d6cfbf}
+#ui:not([data-phase="menu"]) .mode-buttons{display:none}
+
+#ui[data-theme="inkTide"][data-phase="menu"][data-mode="hard"] h1{color:var(--paper);font-size:54px;top:25px}
+#ui[data-mode="hard"] h1::after{display:none}
+
+/* The two destructive actions stay separate from resume and calibration. */
+#run-actions{display:flex;gap:9px}#run-actions button{flex:1;font-size:13px}
+#ui[data-theme="inkTide"] #run-actions{position:absolute;left:0;top:197px;width:100%;height:43px}
+#ui[data-theme="inkTide"] #run-actions .secondary{position:relative;top:0;left:0;width:auto;font:600 13px/43px Arial,sans-serif}
+#ui[data-theme="inkTide"][data-phase="paused"] #calibrate{left:365px;top:242px;width:284px;height:38px;font-size:14px;line-height:38px}
+
+#run-confirm{position:absolute;inset:0;z-index:10;display:grid;place-items:center;background:#000a;pointer-events:auto}
+.confirm-card{width:360px;padding:22px;background:var(--panel);border:1px solid var(--accent);border-radius:12px;text-align:center;box-shadow:0 10px 35px #0008}
+.confirm-card h2{margin:0 0 12px;font:700 21px/26px Arial,sans-serif}.confirm-card p{font:14px/20px Arial,sans-serif;color:var(--paper);margin:0 0 20px}
+.confirm-card>div{display:flex;gap:10px}.confirm-card button{flex:1;min-height:44px;background:#ffffff12;border-radius:6px;font-size:13px}#confirm-accept{background:var(--accent);color:#161713;font-weight:700}
+#ui[data-theme="inkTide"] .confirm-card{border:0;border-radius:0;background:url('/menu-panel.png') center/100% 100% no-repeat;padding:40px;width:440px}
+#ui[data-theme="inkTide"] .confirm-card h2{font-family:InkBrush,sans-serif;font-weight:400}

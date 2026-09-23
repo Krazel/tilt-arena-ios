@@ -1,1 +1,1 @@
-Score, best score and combo now each have a dark rectangular background with a subtle border in both visual styles. Text positions, text sizes and the combo timer are unchanged. No gameplay changes.
+Removed the rectangular backgrounds behind score, best score and chain/combo. Text keeps its position and size, directly over the arena, in both visual styles. Combo timer and gameplay are unchanged.
