@@ -10,7 +10,7 @@
   const distance = (a, b) => length(a.x - b.x, a.y - b.y);
   const BOUNDS = Object.freeze({left: 24, right: 936, bottom: 52, top: 592});
   const TUNING = Object.freeze({step: 1 / 120, speed: 600, response: 22, braking: 22,
-    playerRadius: 3, playerExtent: 23, dotRadius: 10, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
+    playerRadius: 3, playerExtent: 23, dotRadius: 10, shieldRadius: 32, pickupReach: 33, comboWindow: 2.5, telegraph: 0.8,
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 300, vortexRadius: 140, vortexPlayerRadius: 300,
     lightningStartRadius: 220, lightningChainRadius: 90,
     blastDuration: 1.2, frostDuration: 2, frozenDuration: 4, pickupSpeed: 18, pickupSpin: 0.6,
@@ -81,12 +81,12 @@
         this.spawnPickup(true); this.spawnPickup(true);
         const hard=this.mode==='hard';
         if(hard){
-          const initial=Math.floor(this.rng.range(8,13));
+          const initial=Math.floor(this.rng.range(3,6));
           for(let i=0;i<initial;i++)this.spawnOpening();
-          this.openingRemaining=Math.floor(this.rng.range(36,43))-this.enemies.length;
+          this.openingRemaining=Math.floor(this.rng.range(14,19))-this.enemies.length;
         }
-        this.spawnAt=this.rng.range(hard?0.15:0.6,hard?0.45:1.4);
-        this.patternAt=this.rng.range(hard?12:14,hard?16:20);
+        this.spawnAt=this.rng.range(hard?0.5:0.6,hard?0.9:1.4);
+        this.patternAt=this.rng.range(hard?20:14,hard?26:20);
         this.pickupAt=this.rng.range(2.2,3.4);
         this.events=[]; // Initial orbs are already visible; no transient spawn replay.
       }
@@ -202,8 +202,9 @@
         // Relative swept collision includes the dot's movement as well as the arrow's.
         const relativeEnd={x:p.x-(e.x-old.x),y:p.y-(e.y-old.y)};
         const armored = p.spikesUntil>this.time || p.fireChargeUntil>0 || p.burnUntil>this.time-dt+1e-9;
-        // Keep ice shattering and offensive armor reach; only hostile contact gets the smaller hurtbox.
-        const contactReach=armored?35:frozen?18:TUNING.playerRadius+TUNING.dotRadius;
+        // Offensive powers and frozen dots retain their own contact rules. A
+        // hostile dot hits the visible shield edge before reaching the arrow.
+        const contactReach=armored?35:frozen?18:(p.bubble?TUNING.shieldRadius:TUNING.playerRadius)+TUNING.dotRadius;
         if(swept(before,relativeEnd,old,contactReach)) {
           if(frozen || armored) this.kill(e, frozen?'ice':'dot');
           else if(p.bubble) {
@@ -241,7 +242,7 @@
     }
     addEnemy(x,y,options) {
       const o=options||{};
-      const e=Object.assign({id:++this.id,x,y,speed:this.mode==='hard'?82+Math.min(63,this.time*0.35):49+Math.min(60,this.time*0.23),
+      const e=Object.assign({id:++this.id,x,y,speed:this.mode==='hard'?62+Math.min(54,this.time*0.28):49+Math.min(60,this.time*0.23),
         activeAt:this.time+TUNING.telegraph,frozenUntil:0,vx:0,vy:0,formationUntil:0,dead:false},o);
       this.enemies.push(e);return e;
     }
@@ -304,12 +305,13 @@
       }
     }
     spawnDirector() {
-      // A gentler opening blends into the existing hard curve over 18 seconds.
-      const hard=this.mode==='hard',pressure=hard?85+this.time*1.4-30*Math.max(0,1-this.time/18):this.time;
+      // Hard stays above Classic but builds gradually throughout the run,
+      // without snapping back to the former steep curve after the opening.
+      const hard=this.mode==='hard',pressure=hard?20+this.time*1.12:this.time;
       if(this.time>=this.spawnAt) {
         if(this.openingRemaining>0){
           this.spawnOpening(); this.openingRemaining--;
-          this.spawnAt=this.time+this.rng.range(0.06,0.12);
+          this.spawnAt=this.time+this.rng.range(0.18,0.3);
         }else{
         const n=2+Math.floor(Math.min(12,pressure/12));
         if(this.enemies.length<TUNING.maxEnemies) {
@@ -322,12 +324,12 @@
           if(distance({x,y},this.player)>TUNING.spawnClearance) this.addEnemy(x,y);
         }
         // Preserve the average pressure, but stagger individual entries with jitter.
-        this.spawnAt=this.time+Math.max(hard?0.42:0.48,(1.6-pressure*0.006)*(hard?0.75:1))/n*this.rng.range(0.65,1.35);
+        this.spawnAt=this.time+Math.max(0.48,(1.6-pressure*0.006)*(hard?0.95:1))/n*this.rng.range(0.65,1.35);
         }
       }
       if(this.time>=this.patternAt) {
         this.spawnPattern(this.rng.pick(['line','arrow','ring']));
-        this.patternAt=this.time+Math.max(hard?3.8:5,(12-pressure*0.025)*(hard?0.6:1))*this.rng.range(0.8,1.2);
+        this.patternAt=this.time+Math.max(5,(12-pressure*0.025)*(hard?0.85:1))*this.rng.range(0.8,1.2);
       }
       if(this.time>=this.pickupAt) {
         this.spawnPickup();
@@ -355,8 +357,8 @@
         if(distance(point,this.player)<TUNING.spawnClearance)continue;
         this.addEnemy(clamp(point.x,b.left+16,b.right-16),clamp(point.y,b.bottom+16,b.top-16),{
           formationUntil:this.time+TUNING.telegraph+2.6,
-          vx:(kind==='line'?(right?-68:68):Math.cos(a)*90)*(this.mode==='hard'?1.3:1),
-          vy:(kind==='line'?0:Math.sin(a)*90)*(this.mode==='hard'?1.3:1)});
+          vx:(kind==='line'?(right?-68:68):Math.cos(a)*90)*(this.mode==='hard'?1.1:1),
+          vy:(kind==='line'?0:Math.sin(a)*90)*(this.mode==='hard'?1.1:1)});
       }
       this.event('pattern',{pattern:kind});
     }

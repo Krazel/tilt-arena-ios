@@ -79,6 +79,37 @@ test('bubble survives time, then consumes one hit in a local detonation',()=>{
   assert.equal(g.player.bubble,false);assert.equal(g.kills,2);assert.equal(g.state,'running');
   dot(g,480,320);g.advance(1/60);assert.equal(g.state,'gameOver');
 });
+test('shield absorbs hostile contact at its visible edge, not at the arrow center',()=>{
+  for(const offset of [41.9,42.1]) {
+    const g=fresh();g.activate('bubble');dot(g,480+offset,320);g.advance(TUNING.step);
+    assert.equal(g.player.bubble,offset>42);
+    assert.equal(g.kills,offset<42?1:0);assert.equal(g.state,'running');
+  }
+  const g=fresh();g.activate('bubble');
+  dot(g,521,320);dot(g,480,279);g.advance(TUNING.step);
+  assert.equal(g.player.bubble,false);assert.equal(g.kills,2);assert.equal(g.state,'running');
+  // After the absorbed hit, only the original small arrow hurtbox remains.
+  dot(g,520,320);g.advance(TUNING.step);assert.equal(g.state,'running');
+  dot(g,492,320);g.advance(TUNING.step);assert.equal(g.state,'gameOver');
+});
+test('shield contact is swept for moving arrows and moving enemies without expanding pickup reach',()=>{
+  const g=fresh();g.activate('bubble');g.player.vx=600;
+  dot(g,526,320);g.advance(TUNING.step,{x:1,y:0});
+  assert.equal(g.player.bubble,false);assert.equal(g.state,'running');
+  const incoming=fresh();incoming.activate('bubble');
+  incoming.addEnemy(480,370,{activeAt:0,speed:2000});incoming.advance(TUNING.step);
+  assert.equal(incoming.player.bubble,false);assert.equal(incoming.state,'running');
+  const pickups=fresh();pickups.activate('bubble');
+  Object.assign(pickups.addPickup('wave',520,320),{vx:0,vy:0});pickups.advance(TUNING.step);
+  assert.equal(pickups.pickups.length,1);assert.equal(pickups.waveAt.length,0);
+});
+test('the shield edge ignores telegraphs and retains harmless frozen contact',()=>{
+  const g=fresh();g.activate('bubble');g.addEnemy(510,320,{activeAt:1,speed:0});
+  g.advance(TUNING.step);assert.equal(g.player.bubble,true);assert.equal(g.kills,0);
+  const ice=fresh();ice.activate('bubble');
+  ice.addEnemy(496,320,{activeAt:0,speed:0,frozenUntil:2});ice.advance(TUNING.step);
+  assert.equal(ice.kills,1);assert.equal(ice.player.bubble,true);assert.equal(ice.state,'running');
+});
 test('missiles travel and retarget, never kill instantly at pickup',()=>{
   const g=fresh();for(let i=0;i<5;i++)dot(g,650+i*35,300+i*14);
   g.activate('missiles');assert.equal(g.kills,0);assert.equal(g.projectiles.length,5);

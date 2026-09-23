@@ -7,7 +7,7 @@ on:
         type: boolean
         default: false
       hud_only:
-        description: Verify HUD appearance and theme switching using the existing native flow
+        description: Focused native HUD, theme switching and difficulty selection checks
         type: boolean
         default: false
 permissions:

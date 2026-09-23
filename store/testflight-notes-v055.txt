@@ -1,0 +1,1 @@
+Modo Difícil bastante más gradual: menos enemigos iniciales, entrada más espaciada, enemigos más lentos y primeras formaciones más tardías. El escudo recibe el golpe en su borde visible y se rompe para proteger a la flecha. Velocidad y control del jugador sin cambios. Las nuevas franjas del marcador siguen en propuesta visual, pendientes de elección.

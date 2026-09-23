@@ -25,7 +25,7 @@ enum GameText {
     static var classicMode: String { text("Classic", "Clásico") }
     static var hardMode: String { text("Hard", "Difícil") }
     static var classicDescription: String { text("The pressure builds over time.", "La presión aumenta poco a poco.") }
-    static var hardDescription: String { text("A crowded arena from the start.", "Muchos enemigos desde el principio.") }
+    static var hardDescription: String { text("A tougher challenge, with a gradual start.", "Un reto mayor, con un inicio gradual.") }
     static var tagline: String { text("Dodge. Collect. Chain.", "Esquiva. Recoge. Encadena.") }
     static var play: String { text("Play", "Jugar") }
     static var calibrateAndPlay: String { text("Calibrate & play", "Calibrar y jugar") }

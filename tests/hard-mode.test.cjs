@@ -6,7 +6,7 @@ test('openings have two random safe pickups and enemies arrive separately in bot
   const openings=new Set(), powers=new Set(), clocks=new Set();
   for(let seed=1;seed<=100;seed++){
    const g=new ClassicGame(seed,{mode});
-   assert(mode==='hard' ? g.enemies.length>=8&&g.enemies.length<=12 : g.enemies.length===0);assert.equal(g.pickups.length,2);
+   assert(mode==='hard' ? g.enemies.length>=3&&g.enemies.length<=5 : g.enemies.length===0);assert.equal(g.pickups.length,2);
    openings.add(JSON.stringify(g.pickups.map(p=>[p.power,p.x,p.y])));
    clocks.add(g.spawnAt);g.pickups.forEach(p=>powers.add(p.power));
    assert(g.pickups.every(p=>Math.hypot(p.x-g.player.x,p.y-g.player.y)>85));
@@ -35,9 +35,11 @@ test('hard pressure rises sooner, remains bounded, and preserves player controls
    if(i%3600===0)counts[mode].push(g.enemies.length);
    assert(g.enemies.length<=550);assert(g.pickups.length<=5);
   }
-  assert(g.enemies.every(e=>e.speed<=(mode==='hard'?145:109)));
+  assert(g.enemies.every(e=>e.speed<=(mode==='hard'?116:109)));
  }
- assert(counts.hard[0]>=8&&counts.hard[0]<=12);assert(counts.hard[1]>counts.classic[1]*2);assert.equal(counts.hard.at(-1),550);
+ assert(counts.hard[0]>=3&&counts.hard[0]<=5);
+ assert(counts.hard[1]>counts.classic[1]);assert(counts.hard[1]<200);
+ assert.equal(counts.hard.at(-1),550);
  const a=new ClassicGame(9,{mode:'hard',spawning:false}),b=new ClassicGame(9,{spawning:false});
  for(let i=0;i<30;i++){a.advance(1/120,{x:1,y:0});b.advance(1/120,{x:1,y:0});}
  assert.deepEqual(a.player,b.player);
@@ -50,15 +52,15 @@ test('hard runs are deterministic across frame rates and pause does not refill o
  g.resume();g.advance(1/120,{x:0,y:0});assert.equal(g.snapshot().mode,'hard');assert(g.time>0);
 });
 
-test('hard opening is gentler across seeds and formations start at varied times after twelve seconds',()=>{
+test('hard opening is gentler across seeds and formations start at varied times after twenty seconds',()=>{
  const starts=new Set();
  for(let seed=1;seed<=100;seed++){
   const g=new ClassicGame(seed,{mode:'hard'});starts.add(g.patternAt);
-  assert(g.patternAt>=12&&g.patternAt<=16);
-  const opening=g.openingRemaining+g.enemies.length;assert(opening>=36&&opening<=42);
+  assert(g.patternAt>=20&&g.patternAt<=26);
+  const opening=g.openingRemaining+g.enemies.length;assert(opening>=14&&opening<=18);
   for(let i=0;i<1200;i++){g.time=i/120;g.spawnDirector();}
   assert(!g.events.some(e=>e.kind==='pattern'));
-  assert(g.enemies.length<130);
+  assert(g.enemies.length<60);
   g.time=g.patternAt;g.spawnDirector();assert(g.events.some(e=>e.kind==='pattern'));
  }
  assert.equal(starts.size,100);

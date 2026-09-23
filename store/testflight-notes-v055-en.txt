@@ -1,0 +1,1 @@
+Hard mode now builds up much more gradually: fewer initial enemies, more spaced arrivals, slower enemies and later first formations. The shield takes the hit at its visible outer edge and breaks to protect the arrow. Player speed and controls are unchanged. New HUD ribbons remain a visual proposal awaiting selection.

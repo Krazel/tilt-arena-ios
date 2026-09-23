@@ -27,6 +27,7 @@ if [ "${QA_VISUAL_ONLY:-false}" = "true" ]; then
 fi
 if [ "${QA_HUD_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
     -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist)
 fi
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
