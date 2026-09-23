@@ -80,7 +80,11 @@
       if (this.options.spawning !== false) {
         this.spawnPickup(true); this.spawnPickup(true);
         const hard=this.mode==='hard';
-        this.openingRemaining=hard?Math.floor(this.rng.range(30,37)):0;
+        if(hard){
+          const initial=Math.floor(this.rng.range(8,13));
+          for(let i=0;i<initial;i++)this.spawnOpening();
+          this.openingRemaining=Math.floor(this.rng.range(36,43))-this.enemies.length;
+        }
         this.spawnAt=this.rng.range(hard?0.15:0.6,hard?0.45:1.4);
         this.patternAt=this.rng.range(hard?12:14,hard?16:20);
         this.pickupAt=this.rng.range(2.2,3.4);
@@ -305,7 +309,7 @@
       if(this.time>=this.spawnAt) {
         if(this.openingRemaining>0){
           this.spawnOpening(); this.openingRemaining--;
-          this.spawnAt=this.time+this.rng.range(0.09,0.19);
+          this.spawnAt=this.time+this.rng.range(0.06,0.12);
         }else{
         const n=2+Math.floor(Math.min(12,pressure/12));
         if(this.enemies.length<TUNING.maxEnemies) {

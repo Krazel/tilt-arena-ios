@@ -13,9 +13,12 @@ version=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$app_p
 build=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$app_plist")
 tar -czf "../artifacts/ios-verification/TiltArena-${version}-build${build}-simulator.tar.gz" -C DerivedData/Build/Products/Debug-iphonesimulator TiltArena.app
 device_id=$(xcrun simctl list devices available -j | python3 -c 'import sys,json; d=json.load(sys.stdin); print(next(x["udid"] for group in d["devices"].values() for x in group if x["name"].startswith("iPhone")))')
+trap 'xcrun xcresulttool export attachments --path ../artifacts/ios-verification/TiltArena-tests.xcresult --output-path ../artifacts/ios-verification/screenshots || true' EXIT
+
 test_selection=(-only-testing:TiltArenaTests -only-testing:TiltArenaUITests)
 if [ "${QA_VISUAL_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testRestartAfterDeathIsImmediateInBothThemes
     -only-testing:TiltArenaUITests/ClassicFlowTests/testApprovedAudioCreditsAreAccessibleInBothLanguages
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
     -only-testing:TiltArenaUITests/ClassicFlowTests/testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes
@@ -26,7 +29,6 @@ xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \
   -derivedDataPath DerivedData -resultBundlePath ../artifacts/ios-verification/TiltArena-tests.xcresult \
   -parallel-testing-enabled NO "${test_selection[@]}" CODE_SIGNING_ALLOWED=NO test
-xcrun xcresulttool export attachments --path ../artifacts/ios-verification/TiltArena-tests.xcresult --output-path ../artifacts/ios-verification/screenshots
 xcrun simctl bootstatus "$device_id" -b
 xcrun simctl install "$device_id" DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app
 xcrun simctl launch "$device_id" com.dmkr.tiltarena

@@ -6,7 +6,7 @@ final class ClassicBridgeTests: XCTestCase {
     func testHardModeBridgeOpeningAndSeparateRecords() throws {
         let bridge = try ClassicBridge()
         let hard = try bridge.create(seed: 17, mode: .hard)
-        XCTAssertEqual(hard.mode, "hard"); XCTAssertEqual(hard.enemies.count, 48)
+        XCTAssertEqual(hard.mode, "hard"); XCTAssertTrue((8...12).contains(hard.enemies.count))
         XCTAssertTrue(hard.enemies.allSatisfy { $0.telegraph }); XCTAssertEqual(hard.pickups.count, 2)
         let normal = try bridge.create(seed: 17)
         XCTAssertEqual(normal.mode, "classic"); XCTAssertTrue(normal.enemies.isEmpty)

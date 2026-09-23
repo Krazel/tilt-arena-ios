@@ -123,7 +123,7 @@ struct GameView: View {
     private var paper: Color { ink ? Color(InkArt.paper) : .white }
     private var panel: Color { ink ? Color(UIColor(hex: "201f1c")) : Color(red: 0.075, green: 0.12, blue: 0.055) }
     private var showSettings: Bool { game.phase == .menu || game.phase == .paused || game.phase == .gameOver }
-    var body: some View {
+    private var gameContent: some View {
         ZStack {
             ArenaView(scene: game.scene, isRunning: game.phase == .running).ignoresSafeArea()
             if ink && showSettings {
@@ -167,9 +167,12 @@ struct GameView: View {
                     .toolbar { Button(GameLanguage.current == .spanish ? "Cerrar" : "Close") { game.uiClick(); showCredits = false } }
             }
         }.tint(accent).foregroundColor(paper)
-        .allowsHitTesting(pendingAction == nil)
-        .accessibilityHidden(pendingAction != nil)
-        .overlay {
+    }
+    var body: some View {
+        ZStack {
+            gameContent
+                .allowsHitTesting(pendingAction == nil)
+                .accessibilityHidden(pendingAction != nil)
             if let action = pendingAction {
                 RunConfirmationView(action: action, ink: ink, isFinished: game.phase == .gameOver) { accepted in
                     game.uiClick(); pendingAction = nil

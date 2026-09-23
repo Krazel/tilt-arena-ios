@@ -62,19 +62,22 @@ final class ClassicFlowTests: XCTestCase {
 
     func testHardModeSelectionPersistsAndOpeningIsCrowded() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--hard-opening-qa"]
-        app.launch()
-        XCTAssertTrue(app.buttons["mode-hard"].waitForExistence(timeout: 10))
-        app.buttons["mode-hard"].tap(); XCTAssertTrue(app.buttons["mode-hard"].isSelected)
-        app.buttons["posture-normal"].tap(); capture("29-hard-menu", app: app)
-        app.buttons["play"].tap()
-        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
-        capture("30-hard-opening", app: app)
-        pauseByTouch(app); XCTAssertFalse(app.buttons["mode-classic"].exists)
-        app.terminate(); app.launch()
-        XCTAssertTrue(app.buttons["mode-hard"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["mode-hard"].isSelected)
-        app.buttons["mode-classic"].tap(); XCTAssertTrue(app.buttons["mode-classic"].isSelected)
+        for language in ["en", "es"] {
+            app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--hard-opening-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
+            app.launch()
+            XCTAssertTrue(app.buttons["mode-hard"].waitForExistence(timeout: 10))
+            app.buttons["mode-hard"].tap(); XCTAssertTrue(app.buttons["mode-hard"].isSelected)
+            app.buttons["posture-normal"].tap(); capture("29-hard-menu-\(language)", app: app)
+            app.buttons["play"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            capture("30-hard-opening-\(language)", app: app)
+            pauseByTouch(app); XCTAssertFalse(app.buttons["mode-classic"].exists)
+            app.terminate(); app.launch()
+            XCTAssertTrue(app.buttons["mode-hard"].waitForExistence(timeout: 10))
+            XCTAssertTrue(app.buttons["mode-hard"].isSelected)
+            app.buttons["mode-classic"].tap(); XCTAssertTrue(app.buttons["mode-classic"].isSelected)
+            app.terminate()
+        }
     }
 
     func testInkAndOriginalCanSwitchDuringPauseAndPersist() {
