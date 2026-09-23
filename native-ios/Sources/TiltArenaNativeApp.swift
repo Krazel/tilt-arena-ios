@@ -167,10 +167,16 @@ struct GameView: View {
                     .toolbar { Button(GameLanguage.current == .spanish ? "Cerrar" : "Close") { game.uiClick(); showCredits = false } }
             }
         }.tint(accent).foregroundColor(paper)
-        .alert(pendingAction?.question ?? "", isPresented: Binding(get: { pendingAction != nil }, set: { if !$0 { pendingAction = nil } }), presenting: pendingAction) { action in
-            Button(GameText.cancel, role: .cancel) { game.uiClick(); pendingAction = nil }
-            Button(action.title, role: .destructive) { game.uiClick(); game.performConfirmed(action); pendingAction = nil }
-        } message: { _ in Text(GameText.leaveRunMessage) }
+        .allowsHitTesting(pendingAction == nil)
+        .accessibilityHidden(pendingAction != nil)
+        .overlay {
+            if let action = pendingAction {
+                RunConfirmationView(action: action, ink: ink, isFinished: game.phase == .gameOver) { accepted in
+                    game.uiClick(); pendingAction = nil
+                    if accepted { game.performConfirmed(action) }
+                }
+            }
+        }
         .onAppear { game.scene.reduceEffects = reduceMotion; game.scene.sound.setMuted(game.muted); game.updateAudioPhase() }
         .onChange(of: game.phase) { _ in game.updateAudioPhase() }
         .onChange(of: appPhase) { phase in
@@ -215,7 +221,7 @@ struct GameView: View {
                 Text(GameText.resultTitle).font(.title.bold())
                 Text(game.resultScore.formatted()).font(.system(size: 38, weight: .black, design: ink ? .serif : .rounded)).foregroundColor(accent)
                 Text("COMBO ×\(game.resultCombo)   ·   \(game.resultTime) s").font(.system(.callout, design: .monospaced))
-                primary(GameText.restartRun, id: "replay") { pendingAction = .restart }
+                primary(GameText.restartRun, id: "replay") { game.performConfirmed(.restart) }
                 secondary(GameText.mainMenu) { pendingAction = .mainMenu }.accessibilityIdentifier("main-menu")
             case .failed:
                 Text(GameText.moment).font(.title2.bold())
@@ -301,5 +307,53 @@ struct GameView: View {
             Text(title).font(.subheadline.weight(.semibold)).frame(maxWidth: .infinity, minHeight: 38)
                 .background(paper.opacity(0.06), in: RoundedRectangle(cornerRadius: ink ? 4 : 10))
         }
+    }
+}
+
+/// Game-owned confirmation, with the same independent artwork as the menu.
+struct RunConfirmationView: View {
+    let action: RunAction
+    let ink: Bool
+    let isFinished: Bool
+    let resolve: (Bool) -> Void
+    @AccessibilityFocusState private var titleFocused: Bool
+    private var accent: Color { ink ? Color(InkArt.gold) : Color(red: 0.82, green: 0.96, blue: 0.38) }
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                Color.black.opacity(0.7).ignoresSafeArea()
+                VStack(spacing: 18) {
+                    Text(action.question)
+                        .font(ink ? .custom("Knewave-Regular", size: 25) : .system(size: 25, weight: .bold))
+                        .multilineTextAlignment(.center).accessibilityAddTraits(.isHeader)
+                        .accessibilityFocused($titleFocused)
+                    Text(isFinished ? GameText.savedResultMessage : GameText.leaveRunMessage)
+                        .font(.system(size: 14)).multilineTextAlignment(.center)
+                    HStack(spacing: 14) {
+                        choice(GameText.cancel, accept: false)
+                        choice(action.title, accept: true)
+                    }
+                }.padding(38).frame(width: min(480, geometry.size.width - 32))
+                    .background {
+                        if ink { Image(uiImage: InkMenuArt.panel).resizable() }
+                        else { RoundedRectangle(cornerRadius: 20).fill(Color(red: 0.075, green: 0.12, blue: 0.055))
+                            .overlay(RoundedRectangle(cornerRadius: 20).stroke(accent.opacity(0.6))) }
+                    }
+                    .foregroundColor(ink ? Color(InkArt.paper) : .white)
+                    .accessibilityElement(children: .contain).accessibilityIdentifier("run-confirm")
+            }.frame(width: geometry.size.width, height: geometry.size.height)
+        }.onAppear { titleFocused = true }
+    }
+    private func choice(_ title: String, accept: Bool) -> some View {
+        Button { resolve(accept) } label: {
+            Text(title).font(.system(size: 14, weight: .semibold))
+                .multilineTextAlignment(.center).padding(.horizontal, 8)
+                .frame(maxWidth: .infinity, minHeight: 48)
+                .foregroundColor(accept ? .black : (ink ? Color(InkArt.paper) : .white))
+                .background {
+                    if ink { InkMenuArt.image(accept ? .gold : .charcoal).resizable() }
+                    else { RoundedRectangle(cornerRadius: 10).fill(accept ? accent : Color.white.opacity(0.12)) }
+                }
+        }.buttonStyle(.plain).accessibilityIdentifier(accept ? "confirm-accept" : "confirm-cancel")
     }
 }

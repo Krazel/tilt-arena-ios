@@ -61,8 +61,9 @@ test('difficulty remains time-driven and capped; existing enemies retain birth s
   early.spawnAt=late.spawnAt=0;early.patternAt=late.patternAt=Infinity;
   early.pickupAt=late.pickupAt=Infinity;late.time=180;
   early.spawnDirector();late.spawnDirector();
-  assert.equal(early.enemies.length,2);assert.equal(late.enemies.length,14);
-  assert.ok(Math.abs(late.spawnAt-late.time-0.52)<1e-8);
+  assert.equal(early.enemies.length,1);assert.equal(late.enemies.length,1);
+  assert.ok(Math.abs(late.spawnAt-late.time-0.52/14*0.65)<1e-8);
+  assert(late.spawnAt-late.time<early.spawnAt);
   assert.equal(early.enemies[0].speed,49);assert.equal(late.enemies[0].speed,90.4);
   early.time=300;assert.equal(early.enemies[0].speed,49);
   const newborn=early.addEnemy(100,100);assert.equal(newborn.speed,109);

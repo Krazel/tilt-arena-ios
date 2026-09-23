@@ -86,7 +86,7 @@ struct InkMenuView: View {
                 .accessibilityLabel(GameText.menuTitle).accessibilityAddTraits(.isHeader)
         } else {
             Text(ended ? GameText.resultTitle : paused ? GameText.pause : game.mode.title.uppercased())
-                .font(.custom("Knewave-Regular", size: ended ? 26 : 46)).lineLimit(1).minimumScaleFactor(0.7)
+                .font(.custom("Knewave-Regular", size: ended ? 26 : paused ? 46 : 64)).lineLimit(1).minimumScaleFactor(0.7)
                 .accessibilityAddTraits(.isHeader)
         }
     }
@@ -95,7 +95,7 @@ struct InkMenuView: View {
         Button {
             game.uiClick()
             if paused { game.scene.play(restart: false) }
-            else if ended { requestAction(.restart) }
+            else if ended { game.performConfirmed(.restart) }
             else { game.scene.play(restart: true) }
         } label: {
             ZStack {

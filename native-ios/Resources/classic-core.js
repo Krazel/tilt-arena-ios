@@ -76,12 +76,15 @@
       this.enemies = []; this.pickups = []; this.projectiles = []; this.fields = [];
       this.events = []; this.spawnAt = 1; this.patternAt = 12; this.pickupAt = 3;
       this.waveAt = []; this.boomerangAt = []; this.trailAt = 0;
+      this.openingRemaining = 0;
       if (this.options.spawning !== false) {
-        this.addPickup('nuke', 260, 310);
-        this.addPickup('missiles', 700, 330);
-        if(this.mode==='hard'){
-          this.spawnOpening(); this.spawnAt=1.25; this.patternAt=10;
-        }
+        this.spawnPickup(true); this.spawnPickup(true);
+        const hard=this.mode==='hard';
+        this.openingRemaining=hard?Math.floor(this.rng.range(30,37)):0;
+        this.spawnAt=this.rng.range(hard?0.15:0.6,hard?0.45:1.4);
+        this.patternAt=this.rng.range(hard?12:14,hard?16:20);
+        this.pickupAt=this.rng.range(2.2,3.4);
+        this.events=[]; // Initial orbs are already visible; no transient spawn replay.
       }
     }
     resize(left, right, bottom, top) {
@@ -286,20 +289,26 @@
     spawnOpening() {
       // Independent scattered dots, never an opening line or perimeter formation.
       const b=this.bounds;
-      for(let attempt=0;attempt<480 && this.enemies.length<48;attempt++) {
+      for(let attempt=0;attempt<80;attempt++) {
         const x=this.rng.range(b.left+16,b.right-16),y=this.rng.range(b.bottom+16,b.top-16);
         const point={x,y};
         // A normalized safe center remains clear after resizing to any supported arena.
         const fromCenter=Math.hypot((x-this.player.x)/(b.right-b.left),(y-this.player.y)/(b.top-b.bottom));
-        if(fromCenter>0.4 && this.enemies.every(e=>distance(point,e)>22))this.addEnemy(x,y,{activeAt:1.2});
+        if(fromCenter>0.4 && distance(point,this.player)>TUNING.spawnClearance && this.enemies.every(e=>distance(point,e)>22)){
+          this.addEnemy(x,y); break;
+        }
       }
     }
     spawnDirector() {
-      // Ease only the first 12 seconds, then use the established hard curve.
-      const hard=this.mode==='hard',pressure=hard?85+this.time*1.4-20*Math.max(0,1-this.time/12):this.time;
+      // A gentler opening blends into the existing hard curve over 18 seconds.
+      const hard=this.mode==='hard',pressure=hard?85+this.time*1.4-30*Math.max(0,1-this.time/18):this.time;
       if(this.time>=this.spawnAt) {
+        if(this.openingRemaining>0){
+          this.spawnOpening(); this.openingRemaining--;
+          this.spawnAt=this.time+this.rng.range(0.09,0.19);
+        }else{
         const n=2+Math.floor(Math.min(12,pressure/12));
-        for(let i=0;i<n && this.enemies.length<TUNING.maxEnemies;i++) {
+        if(this.enemies.length<TUNING.maxEnemies) {
           const edge=Math.floor(this.rng.next()*4);
           const b=this.bounds;
           let x=this.rng.range(b.left+16,b.right-16),y=this.rng.range(b.bottom+16,b.top-16);
@@ -308,11 +317,13 @@
           }
           if(distance({x,y},this.player)>TUNING.spawnClearance) this.addEnemy(x,y);
         }
-        this.spawnAt=this.time+Math.max(hard?0.42:0.48,(1.6-pressure*0.006)*(hard?0.75:1));
+        // Preserve the average pressure, but stagger individual entries with jitter.
+        this.spawnAt=this.time+Math.max(hard?0.42:0.48,(1.6-pressure*0.006)*(hard?0.75:1))/n*this.rng.range(0.65,1.35);
+        }
       }
       if(this.time>=this.patternAt) {
         this.spawnPattern(this.rng.pick(['line','arrow','ring']));
-        this.patternAt=this.time+Math.max(hard?3.8:5,(12-pressure*0.025)*(hard?0.6:1));
+        this.patternAt=this.time+Math.max(hard?3.8:5,(12-pressure*0.025)*(hard?0.6:1))*this.rng.range(0.8,1.2);
       }
       if(this.time>=this.pickupAt) {
         this.spawnPickup();

@@ -38,6 +38,7 @@ enum GameText {
     static var recalibrate: String { text("Recalibrate", "Recalibrar") }
     static var finishRun: String { text("End run", "Terminar partida") }
     static var restartRun: String { text("Restart run", "Reiniciar partida") }
+    static var savedResultMessage: String { text("Your best score has been saved.", "Tu récord se ha guardado.") }
     static var mainMenu: String { text("Main menu", "Menú principal") }
     static var restartQuestion: String { text("Restart this run?", "¿Reiniciar la partida?") }
     static var menuQuestion: String { text("Return to the main menu?", "¿Volver al menú principal?") }

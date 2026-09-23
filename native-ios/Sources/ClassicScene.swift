@@ -29,6 +29,9 @@ final class ClassicScene: SKScene {
     private var calibratedOrientation: UIInterfaceOrientation = .unknown
     private var calibrationStart = 0.0
     private var restartAfterCalibration = true
+    #if DEBUG
+    private var showedGameOverQA = false
+    #endif
     private var touchVector = (x: 0.0, y: 0.0), touchOrigin: CGPoint?
     private var calibrationReturnPhase: GameSession.Phase = .menu
     private var sensorGraceUntil = 0.0
@@ -168,6 +171,9 @@ final class ClassicScene: SKScene {
                 #endif
                 gameFrame = try resizeEngine()
                 #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") {
+                    for _ in 0..<120 { gameFrame = try bridge?.tick(dt: 1.0 / 60, x: 0, y: 0) }
+                }
                 if lingeringAreasPreview { gameFrame = try bridge?.lingeringAreasFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
@@ -181,6 +187,9 @@ final class ClassicScene: SKScene {
             session.message = ""; session.phase = .running
             if let frame = gameFrame { render(frame) }; sound.playMusic()
             #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--gameover-qa") && !showedGameOverQA {
+                showedGameOverQA = true; halt(); finishPausedRun()
+            }
             if explosionPreview {
                 let blast: SKNode
                 if theme == .inkTide {

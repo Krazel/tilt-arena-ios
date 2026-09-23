@@ -27,19 +27,35 @@ final class ClassicFlowTests: XCTestCase {
             app.buttons["play"].tap(); XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             pauseByTouch(app); capture("32-\(theme)-\(language)-pause", app: app)
             for id in ["restart", "main-menu"] {
-                app.buttons[id].tap(); XCTAssertTrue(app.alerts.firstMatch.waitForExistence(timeout: 3))
+                app.buttons[id].tap(); XCTAssertTrue(app.buttons["confirm-cancel"].waitForExistence(timeout: 3)); XCTAssertFalse(app.alerts.firstMatch.exists)
                 capture("33-\(theme)-\(language)-\(id)-confirm", app: app)
-                app.alerts.buttons[language == "es" ? "Cancelar" : "Cancel"].tap()
+                app.buttons["confirm-cancel"].tap()
                 XCTAssertTrue(app.buttons["resume"].exists); XCTAssertFalse(app.otherElements["arena-running"].exists)
             }
             app.buttons["restart"].tap()
-            app.alerts.buttons[language == "es" ? "Reiniciar partida" : "Restart run"].tap()
+            app.buttons["confirm-accept"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             pauseByTouch(app); XCTAssertTrue(app.buttons["posture-normal"].isSelected)
             app.buttons["main-menu"].tap()
             app.alerts.buttons[language == "es" ? "Menú principal" : "Main menu"].tap()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 5))
             XCTAssertTrue(app.buttons["mode-classic"].exists)
+            app.terminate()
+        }
+    }
+
+    func testRestartAfterDeathIsImmediateInBothThemes() {
+        let app = XCUIApplication()
+        for theme in ["ink", "classic"] {
+            app.launchArguments = ["--ui-testing", "--theme-\(theme)-qa", "--gameover-qa"]
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 5))
+            app.buttons["replay"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["confirm-cancel"].exists)
+            XCTAssertFalse(app.alerts.firstMatch.exists)
             app.terminate()
         }
     }
