@@ -1,6 +1,18 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testHUDRibbonsWithLargeNumbersInBothLanguages() {
+        let app = XCUIApplication()
+        for language in ["en", "es"] {
+            app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--visual-qa", "--hud-large-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            capture("31-hud-large-\(language)", app: app)
+            app.terminate()
+        }
+    }
     func testApprovedAudioCreditsAreAccessibleInBothLanguages() {
         let app = XCUIApplication()
         for language in ["en", "es"] {

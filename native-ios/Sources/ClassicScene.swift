@@ -24,6 +24,7 @@ final class ClassicScene: SKScene {
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     private let bestLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
+    private let scoreRibbon = HUDRibbon(), bestRibbon = HUDRibbon(), comboRibbon = HUDRibbon()
     private let comboBar = SKSpriteNode(color: UIColor(hex: "d5f56b"), size: CGSize(width: 240, height: 3))
     private var gameFrame: ClassicFrame?, lastTime: Double?
     private var calibratedOrientation: UIInterfaceOrientation = .unknown
@@ -337,6 +338,7 @@ final class ClassicScene: SKScene {
         bubble.isHidden=true;spikes.isHidden=true
     }
     private func drawHUD() {
+        for ribbon in [scoreRibbon, bestRibbon, comboRibbon] { hud.addChild(ribbon); ribbon.isHidden = theme != .inkTide }
         for label in [scoreLabel,comboLabel,bestLabel] {
             label.fontColor=theme == .inkTide ? InkArt.paper : UIColor(hex:"f0f5d9");label.fontSize=22
             label.fontName = theme == .inkTide ? "AvenirNextCondensed-Heavy" : (label === scoreLabel ? "AvenirNext-Heavy" : (label === bestLabel ? "AvenirNext-DemiBold" : "AvenirNext-Bold"))
@@ -352,11 +354,16 @@ final class ClassicScene: SKScene {
         layoutHUD()
     }
     private func layoutHUD() {
-        // HUD text stays directly on the arena, with no rectangular backing.
         scoreLabel.position = CGPoint(x: arenaBounds.minX + 6, y: 615)
         bestLabel.position = CGPoint(x: arenaBounds.maxX - 72, y: 615)
         comboLabel.position = CGPoint(x: arenaBounds.minX + 6, y: arenaBounds.minY - 23)
         comboBar.position = CGPoint(x: arenaBounds.minX + 6, y: arenaBounds.minY - 39)
+        layoutRibbons()
+    }
+    private func layoutRibbons() {
+        scoreRibbon.fit(textFrame: scoreLabel.frame)
+        bestRibbon.fit(textFrame: bestLabel.frame)
+        comboRibbon.fit(textFrame: comboLabel.frame, minimumContentWidth: 240, height: 40)
     }
     private func sprite(key: String, style: String) -> SKNode {
         if let node = objects[key] { return node }
@@ -443,6 +450,14 @@ final class ClassicScene: SKScene {
         scoreLabel.text="\(frame.score.formatted())"
         comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : GameText.chainPowers
         comboBar.xScale=frame.comboRemaining;bestLabel.text="\(GameText.best)  \(max(session?.best ?? 0,frame.score).formatted())"
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--hud-large-qa") {
+            scoreLabel.text = 9_007_199_254_740_991.formatted()
+            bestLabel.text = "\(GameText.best)  \(9_007_199_254_740_991.formatted())"
+            comboLabel.text = "COMBO  999999999 × 999999"
+        }
+        #endif
+        layoutRibbons()
         guard replayEvents else { return }
         var particles=0
         for event in frame.events {

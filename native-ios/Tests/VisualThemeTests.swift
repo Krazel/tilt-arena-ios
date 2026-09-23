@@ -3,6 +3,30 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    @MainActor func testHUDRibbonGrowsWithLocalizedNumbersAndKeepsBrushTipsFixed() {
+        for locale in ["en_US", "es_ES"] {
+            for alignment in [SKLabelHorizontalAlignmentMode.left, .right] {
+                let label = SKLabelNode(fontNamed: "AvenirNextCondensed-Heavy")
+                label.fontSize = 22; label.verticalAlignmentMode = .center
+                label.horizontalAlignmentMode = alignment
+                label.position = CGPoint(x: alignment == .left ? 120 : 800, y: 615)
+                let ribbon = HUDRibbon()
+                var previousWidth: CGFloat = 0
+                for value in [0, 999, 1_000_000, 9_007_199_254_740_991] {
+                    label.text = value.formatted(.number.locale(Locale(identifier: locale)))
+                    ribbon.fit(textFrame: label.frame)
+                    XCTAssertTrue(ribbon.backingFrame.contains(label.frame))
+                    XCTAssertGreaterThan(ribbon.backingFrame.width, previousWidth)
+                    XCTAssertEqual(label.fontSize, 22)
+                    XCTAssertEqual((ribbon.children.first as? SKSpriteNode)?.size.width, HUDRibbon.padding)
+                    XCTAssertEqual((ribbon.children.last as? SKSpriteNode)?.size.width, HUDRibbon.padding)
+                    previousWidth = ribbon.backingFrame.width
+                }
+                label.text = "0"; ribbon.fit(textFrame: label.frame)
+                XCTAssertLessThan(ribbon.backingFrame.width, previousWidth)
+            }
+        }
+    }
     func testApprovedMenuArtworkAndBrushFontAreBundled() throws {
         XCTAssertEqual(try XCTUnwrap(InkMenuArt.panel.cgImage).width, 1848)
         XCTAssertEqual(InkMenuArt.pieces.count, 6)
