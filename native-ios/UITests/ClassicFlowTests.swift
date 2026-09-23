@@ -37,7 +37,7 @@ final class ClassicFlowTests: XCTestCase {
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             pauseByTouch(app); XCTAssertTrue(app.buttons["posture-normal"].isSelected)
             app.buttons["main-menu"].tap()
-            app.alerts.buttons[language == "es" ? "Menú principal" : "Main menu"].tap()
+            app.buttons["confirm-accept"].tap()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 5))
             XCTAssertTrue(app.buttons["mode-classic"].exists)
             app.terminate()
