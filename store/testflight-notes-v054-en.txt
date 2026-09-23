@@ -1,0 +1,1 @@
+Score, best score and combo now each have a dark rectangular background with a subtle border in both visual styles. Text positions, text sizes and the combo timer are unchanged. No gameplay changes.
