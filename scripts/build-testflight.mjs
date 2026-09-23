@@ -70,6 +70,8 @@ try {
   const artifact = `artifacts/testflight/TiltArena-${cfg.marketingVersion}-build${cfg.buildNumber}-TestFlight.ipa`;
   fs.copyFileSync(ipa, artifact);
   const manifest = {app:'Tilt Arena',purpose:'TestFlight',version:cfg.marketingVersion,build:cfg.buildNumber,bundleId:cfg.bundleId,appId:cfg.appId,commit:process.env.GITHUB_SHA,run:process.env.GITHUB_RUN_ID,sha256:crypto.createHash('sha256').update(fs.readFileSync(artifact)).digest('hex'),bytes:fs.statSync(artifact).size,sdk:info.DTSDKName,signatureVerified:true};
+  manifest.appIconSourceSHA256 = crypto.createHash('sha256').update(fs.readFileSync('native-ios/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png')).digest('hex');
+  manifest.compiledAssetsSHA256 = crypto.createHash('sha256').update(fs.readFileSync(path.join(app, 'Assets.car'))).digest('hex');
   const save = () => fs.writeFileSync('artifacts/testflight/build.json', JSON.stringify(manifest,null,2)+'\n');
   save();
   run('xcrun', ['altool', '--validate-app', '--type', 'ios', '--file', artifact, '--apiKey', process.env.ASC_KEY_ID, '--apiIssuer', process.env.ASC_ISSUER_ID]);
