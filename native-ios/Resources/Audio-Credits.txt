@@ -31,3 +31,5 @@ CC0: https://creativecommons.org/publicdomain/zero/1.0/
 Changes: trimming, volume adjustment and short fades; derived boomerang charge.
 
 No endorsement by the original authors is implied.
+
+Original synthesized effects — Krazel Games: orb pickup, enemy hit, explosion, ice, wave, missiles, shield, spikes, laser.

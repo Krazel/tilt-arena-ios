@@ -44,7 +44,7 @@ enum InkArt {
         }
     }
     static let orbColors = ["nuke":"806326", "wave":"69556f", "missiles":"858252", "frost":"367582",
-        "bubble":"526444", "spikes":"466277", "vortex":"76546a", "lightning":"657986", "burn":"975937", "boomerang":"796746"]
+        "bubble":"526444", "spikes":"466277", "vortex":"76546a", "lightning":"657986", "burn":"975937", "boomerang":"796746", "laser":"85535c"]
     /// Recolor teal ink only; the authored cream rim and alpha remain untouched.
     /// Match the source luminance so every paper grain/highlight keeps its contrast.
     static func pigment(_ rgb: [Double], target: [Double]) -> [Double] {
@@ -103,17 +103,7 @@ enum InkArt {
             for child in Array(original.children.dropFirst(2)) {
                 child.removeFromParent(); paperGlyph(child); root.addChild(child)
             }
-            if style == "wave" {
-                for child in Array(root.children.dropFirst()) { child.removeFromParent() }
-                let p = CGMutablePath()
-                for i in 0...60 {
-                    let a = CGFloat(i) * 0.13, r = 2 + CGFloat(i) * 0.15
-                    let point = CGPoint(x: cos(a) * r, y: sin(a) * r)
-                    if i == 0 { p.move(to: point) } else { p.addLine(to: point) }
-                }
-                let swirl = SKShapeNode(path: p); swirl.strokeColor = paper; swirl.lineWidth = 2.5
-                root.addChild(swirl)
-            } else if style == "vortex" {
+            if style == "vortex" {
                 for child in Array(root.children.dropFirst()) { child.removeFromParent() }
                 for i in 0..<3 {
                     let p = CGMutablePath(); p.move(to: CGPoint(x: 0, y: 2))

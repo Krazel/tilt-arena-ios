@@ -84,6 +84,7 @@ enum GameText {
         case "lightning": return text("Lightning", "Rayos")
         case "burn": return text("Fire", "Fuego")
         case "boomerang": return text("Boomerang", "Bumerán")
+        case "laser": return text("Laser", "Láser")
         default: return id.capitalized
         }
     }

@@ -10,7 +10,7 @@ final class ApprovedAudioTests: XCTestCase {
     }
     func testAllApprovedResourcesDecodeOnIOSAndChargesMatchSimulation() throws {
         let catalog = try ApprovedAudio.load()
-        XCTAssertEqual(catalog.assets.count, 16)
+        XCTAssertEqual(catalog.assets.count, 23)
         XCTAssertEqual(catalog.playlist, ["music-a", "music-b", "music-c"])
         XCTAssertEqual(catalog.menu, "music-menu")
         for (name, asset) in catalog.assets {
@@ -25,11 +25,15 @@ final class ApprovedAudioTests: XCTestCase {
         for name in ["classic-loop", "death", "hit", "pickup"] { XCTAssertNil(Bundle.main.url(forResource: name, withExtension: "wav")) }
     }
     func testRejectedAndUnreviewedEventsStaySilent() {
-        let silent = ["death", "combo", "warning", "freeze", "wave", "blast", "lightning"]
+        let silent = ["death", "combo", "warning", "blast", "lightning"]
         XCTAssertEqual(AudioCuePolicy.cues(events: silent.map { event($0) }, boomerangCharging: false), [])
-        for power in ["nuke", "wave", "missiles", "frost", "bubble", "spikes"] {
+        for power in ["nuke", "wave", "frost", "laser"] {
             XCTAssertEqual(AudioCuePolicy.cues(events: [event("pickup", power: power)], boomerangCharging: false), ["pickup"])
         }
+        for power in ["missiles", "bubble", "spikes"] {
+            XCTAssertEqual(AudioCuePolicy.cues(events: [event("pickup", power: power)], boomerangCharging: false), ["pickup", power])
+        }
+        XCTAssertEqual(AudioCuePolicy.cues(events: [event("blast", power: "nuke"), event("freeze"), event("wave")], boomerangCharging: false), ["nuke", "frost", "wave"])
     }
     func testChargeLaunchCatchAndFrozenKillRouting() {
         XCTAssertEqual(AudioCuePolicy.cues(events: [event("pickup", power: "burn"), event("kill")], boomerangCharging: false), ["pickup", "burn-charge", "hit"])

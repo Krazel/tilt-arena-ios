@@ -64,13 +64,13 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertFalse(reduced.children.contains { $0.name == "fragment" })
         XCTAssertEqual(reduced.childNode(withName: "shock-front")?.xScale, 1)
         let frame = try ClassicBridge().explosionFrame(left: 100, right: 1300)
-        XCTAssertEqual(frame.pickups.count, 10); XCTAssertEqual(frame.enemies.count, 12)
+        XCTAssertEqual(frame.pickups.count, 11); XCTAssertEqual(frame.enemies.count, 12)
     }
     func testNewPowersAndLongRangeElectricityDecodeAndHaveDistinctNativeArt() throws {
         let bridge = try ClassicBridge()
         let out = try bridge.newPowersFrame(left: 100, right: 1300)
         let back = try bridge.newPowersFrame(left: 100, right: 1300, bouncing: true)
-        XCTAssertEqual(out.pickups.count, 10)
+        XCTAssertEqual(out.pickups.count, 11)
         XCTAssertTrue(out.pickups.contains { $0.power == "boomerang" })
         XCTAssertFalse(out.pickups.contains { $0.power == "decoy" })
         XCTAssertTrue(out.fields.isEmpty)

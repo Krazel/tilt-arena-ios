@@ -1,7 +1,7 @@
 import SpriteKit
 import UIKit
 
-/// Literal regions of the approved preview. No tint, replacement glyph, or redraw.
+/// Literal drawings; only Wave uses the replacement symbol requested in 0.5.8.
 enum ApprovedOrbArt {
     struct Region: Decodable {
         let crop: [Int]
@@ -23,6 +23,13 @@ enum ApprovedOrbArt {
             return SKTexture(cgImage: cell)
         }
     }()
+    private static let waveTexture: SKTexture? = {
+        guard let image = UIImage(named: "ink-wave-orb-v058")?.cgImage,
+              let region = regions["wave"] else { return nil }
+        let c = region.crop
+        guard let cell = image.cropping(to: CGRect(x: c[0], y: c[1], width: c[2], height: c[3])) else { return nil }
+        return SKTexture(cgImage: cell)
+    }()
     static func node(for power: String) -> SKNode? {
         guard let region = regions[power], let texture = textures[power] else { return nil }
         let size = CGFloat(region.displaySize) * 42 / 56
@@ -35,7 +42,7 @@ enum ApprovedOrbArt {
         let silhouette = SKShapeNode(path: path)
         silhouette.fillColor = .white; silhouette.strokeColor = .clear
         let root = SKCropNode(); root.name = "approved-orb-\(power)"; root.maskNode = silhouette
-        let art = SKSpriteNode(texture: texture); art.size = CGSize(width: size, height: size)
+        let art = SKSpriteNode(texture: power == "wave" ? waveTexture ?? texture : texture); art.size = CGSize(width: size, height: size)
         root.addChild(art)
         return root
     }

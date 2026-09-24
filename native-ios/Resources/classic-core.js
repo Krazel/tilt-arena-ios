@@ -15,14 +15,15 @@
     lightningStartRadius: 220, lightningChainRadius: 90,
     blastDuration: 1.2, frostDuration: 2, frozenDuration: 4, pickupSpeed: 18, pickupSpin: 0.6,
     boomerangCharge: 0.5, boomerangSpeed: 640, boomerangLife: 4.5, boomerangBounces: 6, maxBoomerangs: 3,
-    fireCharge: 0.5, fireDash: 0.45, fireRecovery: 0.5, fireSpeed: 1050, waveCharge: 0.5});
-  const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang'];
+    fireCharge: 0.5, fireDash: 0.45, fireRecovery: 0.5, fireSpeed: 1050, waveCharge: 0.5,
+    laserDuration: 1.2, laserRange: 480, laserWidth: 12});
+  const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang', 'laser'];
   const SCORING = Object.freeze({pickup:10,kill:10,comboFactor:6});
   // Relative weights: renormalized when diagnostics limit the available arsenal.
   const POWER_WEIGHTS = Object.freeze({nuke:19,wave:19,frost:19,missiles:12,
-    burn:5,vortex:5,lightning:7,bubble:5,spikes:4,boomerang:5});
+    burn:5,vortex:5,lightning:7,bubble:5,spikes:4,boomerang:5,laser:6});
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
-    bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c',boomerang:'#ffc06a'};
+    bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c',boomerang:'#ffc06a',laser:'#ed8f91'};
   function swept(a, b, c, radius) {
     const dx = b.x - a.x, dy = b.y - a.y;
     const d = dx * dx + dy * dy;
@@ -72,7 +73,7 @@
       this.id = 0; this.time = 0; this.accumulator = 0;
       this.state = 'running'; this.score = 0; this.combo = 0; this.bestCombo = 0;
       this.comboUntil = 0; this.kills = 0;
-      this.player = {x:480,y:320,vx:0,vy:0,angle:Math.PI/2,bubble:false,spikesUntil:0,burnUntil:0,fireChargeUntil:0,fireGraceUntil:0};
+      this.player = {x:480,y:320,vx:0,vy:0,angle:Math.PI/2,bubble:false,spikesUntil:0,burnUntil:0,fireChargeUntil:0,fireGraceUntil:0,laserUntil:0};
       this.enemies = []; this.pickups = []; this.projectiles = []; this.fields = [];
       this.events = []; this.spawnAt = 1; this.patternAt = 12; this.pickupAt = 3;
       this.waveAt = []; this.boomerangAt = []; this.trailAt = 0;
@@ -180,6 +181,7 @@
       this.boomerangAt=this.boomerangAt.filter(c=>this.time+1e-9<c.at);
       this.updateFields(dt);
       this.updateProjectiles(dt,before);
+      const beam=this.laserBeam();
       for(const e of this.enemies) {
         if(e.dead || this.time<e.activeAt) continue;
         const old = {x:e.x,y:e.y}; let frozen = e.frozenUntil>this.time;
@@ -198,6 +200,7 @@
           e.y=clamp(e.y,this.bounds.bottom+TUNING.dotRadius,this.bounds.top-TUNING.dotRadius);
         }
         this.applyAreaEffects(e,old);
+        if(beam && swept(beam,{x:beam.toX,y:beam.toY},e,TUNING.dotRadius+beam.width/2))this.kill(e,'dot');
         if(e.dead)continue;
         frozen=e.frozenUntil>this.time;
         // Relative swept collision includes the dot's movement as well as the arrow's.
@@ -374,6 +377,7 @@
       this.score+=POWERS.includes(power)?SCORING.pickup:0;
       this.event('pickup',{power,x:at.x,y:at.y,color:COLORS[power]});
       switch(power) {
+      case 'laser': p.laserUntil=this.time+TUNING.laserDuration;break;
       case 'nuke':
         this.fields.push({id:++this.id,kind:'blast',x:at.x,y:at.y,radius:155,duration:TUNING.blastDuration,until:this.time+TUNING.blastDuration});
         this.blast(at,155,power);break;
@@ -416,6 +420,16 @@
       case 'burn':
         p.burnUntil=0;p.fireChargeUntil=this.time+TUNING.fireCharge;p.vx=0;p.vy=0;break;
       }
+    }
+    laserBeam() {
+      const p=this.player,b=this.bounds;
+      if(this.time+1e-9>=p.laserUntil)return null;
+      const dx=Math.cos(p.angle),dy=Math.sin(p.angle);
+      const wall=Math.min(TUNING.laserRange,
+        dx>1e-9?(b.right-p.x)/dx:dx< -1e-9?(b.left-p.x)/dx:Infinity,
+        dy>1e-9?(b.top-p.y)/dy:dy< -1e-9?(b.bottom-p.y)/dy:Infinity);
+      const start=Math.min(24,wall);
+      return {x:p.x+dx*start,y:p.y+dy*start,toX:p.x+dx*wall,toY:p.y+dy*wall,width:TUNING.laserWidth};
     }
     playerVortexPull() {
       const p=this.player;
@@ -561,10 +575,11 @@
     snapshot() {
       const chargingWave=this.waveAt.find(w=>!w.dead);
       const chargingBoomerang=this.boomerangAt[0];
-      return {state:this.state,mode:this.mode,time:this.time,score:this.score,combo:this.combo,
+      return {state:this.state,mode:this.mode,time:this.time,score:this.score,combo:this.combo,beam:this.laserBeam(),
         comboBase:SCORING.comboFactor*this.combo,pendingBonus:SCORING.comboFactor*this.combo*this.combo,
         comboRemaining:Math.max(0,this.comboUntil-this.time)/TUNING.comboWindow,
         bestCombo:this.bestCombo,kills:this.kills,player:Object.assign({},this.player,{
+          laserRemaining:Math.max(0,this.player.laserUntil-this.time),
           fireRecoveryRemaining:this.player.fireChargeUntil>0||this.player.burnUntil>this.time?0:Math.max(0,this.player.fireGraceUntil-this.time),
           fireChargeProgress:this.player.fireChargeUntil>0?clamp(1-(this.player.fireChargeUntil-this.time)/TUNING.fireCharge,0,1):0,
           waveCharging:!!chargingWave,

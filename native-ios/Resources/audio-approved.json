@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -19,23 +19,23 @@
     },
     "pickup": {
       "file": "audio-pickup.wav",
-      "volume": 0.65,
-      "proposal": "pickup-A",
-      "author": "Kenney",
-      "source": "https://kenney.nl/assets/interface-sounds",
-      "license": "CC0",
-      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
-      "sha256": "fb3d331dbb50070c58c36412b8df19565ba4c142b3f5ff80dd8b0d8ca5c01e46"
+      "volume": 0.72,
+      "proposal": "original-v058-pickup",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "b901540f7b82fb6a56ccee72b2f3a7c292f1feab56b1ecf8af70d13771f268ad"
     },
     "hit": {
       "file": "audio-hit.wav",
-      "volume": 0.4,
-      "proposal": "kill-A",
-      "author": "Kenney",
-      "source": "https://kenney.nl/assets/impact-sounds",
-      "license": "CC0",
-      "changes": "Recorte de silencio, nivel ajustado y fundidos breves.",
-      "sha256": "b25e5a8833da4690b217168cb32f0b481916ad6e71714c8016e2c58358e28f0e"
+      "volume": 0.7,
+      "proposal": "original-v058-hit",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "b911afd0d87095b58ef33de62de2f5ed4ecf174640818423ebcd4ada88b9dc58"
     },
     "vortex": {
       "file": "audio-vortex.wav",
@@ -166,17 +166,81 @@
       "license": "CC-BY 4.0",
       "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
       "sha256": "f8db8260cc58c10eb531c6ecc359f2fdca84d5b8ca27f8abcb2adefe2698b958"
+    },
+    "nuke": {
+      "file": "audio-nuke.wav",
+      "volume": 0.7,
+      "proposal": "original-v058-nuke",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "1ca4a3f2f794c06679cc123f2a020fd3145b44b8d5edced0b626f5fc3f38b909"
+    },
+    "frost": {
+      "file": "audio-frost.wav",
+      "volume": 0.65,
+      "proposal": "original-v058-frost",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "9a8ef975f0d99603ae05d74493d732f546e0a7d9ba2e4ca054c135ac52fd529d"
+    },
+    "wave": {
+      "file": "audio-wave.wav",
+      "volume": 0.6,
+      "proposal": "original-v058-wave",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "0c197ffc39018e0f445739198d7d0ba2b072a2f6d753de72a2f1f9286a8c1417"
+    },
+    "missiles": {
+      "file": "audio-missiles.wav",
+      "volume": 0.55,
+      "proposal": "original-v058-missiles",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "ccd05010b018fb0fcbd9017362789639a5566e939a45458fbb27d2e76338abed"
+    },
+    "bubble": {
+      "file": "audio-bubble.wav",
+      "volume": 0.5,
+      "proposal": "original-v058-bubble",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "a63f6bf276102f5c09c9cafa78ad6396bbfc211ad7078de7b3d391d1a1f5c815"
+    },
+    "spikes": {
+      "file": "audio-spikes.wav",
+      "volume": 0.5,
+      "proposal": "original-v058-spikes",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "df7e9ac44ed5e83f7b88398e1121b81594053dc5584c597ecb1046d286c9ec3b"
+    },
+    "laser": {
+      "file": "audio-laser.wav",
+      "volume": 0.48,
+      "proposal": "original-v058-laser",
+      "author": "Krazel Games",
+      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
+      "license": "Original project audio",
+      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
+      "sha256": "d56c7bc19284108381335dc01cc4cfd692d5f26702d7cd36aa0cb862d2cd9c77"
     }
   },
   "silent": [
     "death",
     "warning",
-    "combo",
-    "nuke",
-    "wave",
-    "missiles",
-    "frost",
-    "bubble",
-    "spikes"
+    "combo"
   ]
 }

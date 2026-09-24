@@ -21,6 +21,7 @@ final class ClassicScene: SKScene {
     private let arrow = SKNode()
     private var bubble = SKShapeNode()
     private let fireRecoveryRing = SKShapeNode(circleOfRadius: 26)
+    private let laser = ClassicLaser()
     private var spikes = ClassicSpikes(theme: VisualTheme.read())
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
@@ -70,7 +71,7 @@ final class ClassicScene: SKScene {
         view.preferredFramesPerSecond = 60; isUserInteractionEnabled = true
         addChild(world); addChild(hud); addChild(effects)
         world.zPosition = 0; effects.zPosition = 5; hud.zPosition = 10
-        world.addChild(arenaDecoration)
+        world.addChild(arenaDecoration); world.addChild(laser)
         vfx.theme = theme
         drawArena(); drawPlayer(); drawHUD(); startMotion()
         configureViewport(viewSize: view.bounds.size, insets: view.window?.safeAreaInsets ?? .zero)
@@ -179,6 +180,7 @@ final class ClassicScene: SKScene {
                 if lingeringAreasPreview { gameFrame = try bridge?.lingeringAreasFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") { gameFrame = try bridge?.fireRecoveryFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, bouncing: bouncingPreview, electricity: electricityPreview, charging: boomerangChargePreview, recaught: recaughtPreview) }
                 if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
@@ -231,7 +233,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
-        if explosionPreview || lingeringAreasPreview || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") || ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") { return }
+        if explosionPreview || lingeringAreasPreview || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") || ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") || ProcessInfo.processInfo.arguments.contains("--laser-qa") { return }
         if newPowersPreview {
             // Rendered once by play(); don't replay transient events each frame.
             if previewStarted == nil { previewStarted = currentTime }
@@ -448,6 +450,8 @@ final class ClassicScene: SKScene {
         }
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
+        if laser.parent == nil { world.addChild(laser) }
+        laser.update(beam: frame.beam, remaining: frame.player.laserRemaining, time: frame.time, theme: theme, reduced: reduceEffects)
         bubble.isHidden = !frame.player.bubble
         fireRecoveryRing.isHidden = frame.player.fireRecoveryRemaining <= 0
         fireRecoveryRing.alpha = min(1, frame.player.fireRecoveryRemaining / 0.5) * (reduceEffects ? 1 : 0.65 + 0.35 * cos(frame.time * 24))

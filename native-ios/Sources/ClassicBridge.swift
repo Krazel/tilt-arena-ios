@@ -7,11 +7,13 @@ struct ClassicFrame: Decodable {
         let bubble: Bool
         let spikesUntil, burnUntil, fireChargeUntil, fireChargeProgress: Double
         let fireRecoveryRemaining: Double
+        let laserRemaining: Double
         let waveCharging: Bool
         let waveChargeProgress: Double
         let boomerangCharging: Bool
         let boomerangChargeProgress: Double
     }
+    struct Beam: Decodable { let x, y, toX, toY, width: Double }
     struct Dot: Decodable {
         let id: Int
         let x, y: Double
@@ -48,6 +50,7 @@ struct ClassicFrame: Decodable {
     let score, combo, comboBase, pendingBonus, bestCombo, kills: Int
     let comboRemaining: Double
     let player: Player
+    let beam: Beam?
     let enemies: [Dot]
     let pickups: [Orb]
     let projectiles: [Projectile]
@@ -91,6 +94,18 @@ final class ClassicBridge {
         try decode(call("resize", [left, right, bottom, top]))
     }
     #if DEBUG
+    func laserFrame(left: Double, right: Double) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(58,{spawning:false});
+          g.resize(\(left),\(right),52,592);g.player.x=\(left)+180;g.player.y=280;g.player.angle=0;
+          g.activate('laser');for(let i=0;i<30;i++)g.advance(1/120);
+          ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+60+i*(\(right)-\(left)-120)/(ClassicDiagnostics.POWERS.length-1),490));
+          for(let i=0;i<8;i++)g.addEnemy(\(left)+220+i*70,390,{activeAt:0,speed:0,frozenUntil:i>4?5:0});
+          g.events=[];return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
     func explosionFrame(left: Double, right: Double) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});

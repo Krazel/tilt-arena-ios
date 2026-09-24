@@ -233,6 +233,20 @@ final class ClassicFlowTests: XCTestCase {
             app.terminate()
         }
     }
+    func testLaserAndRevisedWaveOrbInBothThemes() {
+        for theme in ["ink", "original"] {
+            let app = XCUIApplication()
+            app.launchArguments = ["--ui-testing", "--laser-qa"] + (theme == "original" ? ["--theme-classic-qa"] : [])
+            app.launch()
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            capture("35-laser-\(theme)", app: app)
+            pauseByTouch(app); app.buttons["resume"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            app.terminate()
+        }
+    }
     private func pauseByTouch(_ app: XCUIApplication) {
         app.otherElements["arena-running"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.buttons["resume"].waitForExistence(timeout: 5))

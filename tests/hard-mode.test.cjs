@@ -23,7 +23,7 @@ test('openings have two random safe pickups and enemies arrive separately in bot
     if(mode==='hard')assert(h.enemies.length<80);
    }
   }
-  assert.equal(openings.size,100);assert.equal(clocks.size,100);assert.equal(powers.size,10);
+  assert.equal(openings.size,100);assert.equal(clocks.size,100);assert.equal(powers.size,11);
  }
 });
 test('hard pressure rises sooner, remains bounded, and preserves player controls and power availability',()=>{

@@ -26,7 +26,7 @@ enum ClassicArt {
     static let spark = imageTexture("energy-spark-v03", maximum: 128)
     static let colors = ["nuke":"ffb52a","wave":"ba71ee","missiles":"f7e36b","frost":"70dce9",
         "bubble":"7bde83","spikes":"6c9ce8","vortex":"ee77bc","lightning":"eeefff","burn":"ff784c",
-        "boomerang":"ffc06a"]
+        "boomerang":"ffc06a","laser":"ed8f91"]
     static func star(radius: CGFloat, inner: CGFloat, points: Int) -> CGPath {
         let path=CGMutablePath()
         for index in 0..<(points*2) {
@@ -134,7 +134,16 @@ enum ClassicArt {
             for i in 0..<8 {let a=CGFloat(i)*CGFloat.pi/4
                 root.addChild(line([CGPoint(x:9*cos(a),y:9*sin(a)),CGPoint(x:12*cos(a),y:12*sin(a))],width:2))}
         case "wave":
-            for x in [CGFloat(-6),CGFloat(2)] { root.addChild(line([CGPoint(x:x-2,y:-9),CGPoint(x:x+5,y:0),CGPoint(x:x-2,y:9)])) }
+            let path = CGMutablePath(); path.move(to: CGPoint(x: -2, y: -11))
+            path.addQuadCurve(to: CGPoint(x: -2, y: 11), control: CGPoint(x: 17, y: 0))
+            let wave = SKShapeNode(path: path); wave.strokeColor = .white; wave.lineWidth = 4; root.addChild(wave)
+            root.addChild(line([CGPoint(x: -13, y: 0), CGPoint(x: -4, y: 0)], width: 2))
+        case "laser":
+            root.addChild(line([CGPoint(x: -11, y: 0), CGPoint(x: 12, y: 0)], width: 4))
+            root.addChild(line([CGPoint(x: -10, y: -7), CGPoint(x: -10, y: 7)], width: 3))
+            for a in [CGFloat(-0.7), CGFloat(0), CGFloat(0.7)] {
+                root.addChild(line([CGPoint(x: 6, y: 0), CGPoint(x: 6+8*cos(a), y: 8*sin(a))], width: 2))
+            }
         case "missiles":
             for x in [CGFloat(-8),CGFloat(0),CGFloat(8)] {root.addChild(line([CGPoint(x:x-3,y:-7),CGPoint(x:x+2,y:7),CGPoint(x:x+4,y:2)],width:2))}
         case "frost":

@@ -3,6 +3,23 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    @MainActor func testLaserUsesDecodedSegmentAndStopsRenderingAtExpiry() throws {
+        let frame = try ClassicBridge().laserFrame(left: 100, right: 1300)
+        let beam = try XCTUnwrap(frame.beam)
+        XCTAssertEqual(beam.x, 304, accuracy: 0.001); XCTAssertEqual(beam.toX, 760, accuracy: 0.001)
+        XCTAssertEqual(frame.player.laserRemaining, 0.95, accuracy: 0.001)
+        XCTAssertEqual(frame.pickups.count, 11)
+        let image = try XCTUnwrap(UIImage(named: "ink-wave-orb-v058")?.cgImage)
+        XCTAssertEqual(image.width, 1536); XCTAssertEqual(image.height, 1024)
+        for theme in VisualTheme.allCases {
+            let node = ClassicLaser()
+            node.update(beam: beam, remaining: 0.95, time: frame.time, theme: theme, reduced: true)
+            XCTAssertFalse(node.isHidden)
+            XCTAssertEqual((node.children[0] as? SKShapeNode)?.lineWidth, 12)
+            node.update(beam: nil, remaining: 0, time: 2, theme: theme, reduced: true)
+            XCTAssertTrue(node.isHidden)
+        }
+    }
     func testFrozenInkUsesBlueAlphaMaskInsteadOfMultiplyingRedPigment() throws {
         let image = try XCTUnwrap(InkArt.frozenAtlasImage.cgImage)
         let cell = try XCTUnwrap(image.cropping(to: CGRect(x: image.width / 4, y: 0, width: image.width / 4, height: image.height / 2)))
@@ -132,7 +149,7 @@ final class VisualThemeTests: XCTestCase {
     @MainActor func testLingeringFieldsDecodeAndArtFollowsRemainingGameTime() throws {
         let frame = try ClassicBridge().lingeringAreasFrame(left: 100, right: 1300)
         XCTAssertEqual(frame.time, 0.9, accuracy: 0.0001)
-        XCTAssertEqual(frame.fields.count, 2); XCTAssertEqual(frame.pickups.count, 10)
+        XCTAssertEqual(frame.fields.count, 2); XCTAssertEqual(frame.pickups.count, 11)
         XCTAssertTrue(frame.pickups.allSatisfy { $0.angle.isFinite })
         for field in frame.fields {
             XCTAssertGreaterThan(field.remaining, 0.29)
@@ -145,7 +162,7 @@ final class VisualThemeTests: XCTestCase {
                 XCTAssertEqual(effect.alpha, 0)
             }
         }
-        XCTAssertEqual(Set(InkArt.orbColors.values).count, 10)
+        XCTAssertEqual(Set(InkArt.orbColors.values).count, 11)
     }
     func testProductionInkAtlasHasAlphaAndAllEightCellsContainVisibleArt() throws {
         let image = try XCTUnwrap(UIImage(named: "ink-tide-sprites")?.cgImage)
