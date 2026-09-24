@@ -1,6 +1,14 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testFireRecoveryIndicatorAfterDash() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--fire-recovery-qa"]
+        app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+        app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+        capture("32-fire-recovery", app: app)
+    }
     func testHUDRibbonsWithLargeNumbersInBothLanguages() {
         let app = XCUIApplication()
         for language in ["en", "es"] {

@@ -15,7 +15,7 @@
     lightningStartRadius: 220, lightningChainRadius: 90,
     blastDuration: 1.2, frostDuration: 2, frozenDuration: 4, pickupSpeed: 18, pickupSpin: 0.6,
     boomerangCharge: 0.5, boomerangSpeed: 640, boomerangLife: 4.5, boomerangBounces: 6, maxBoomerangs: 3,
-    fireCharge: 0.5, fireDash: 0.45, fireSpeed: 1050, waveCharge: 0.5});
+    fireCharge: 0.5, fireDash: 0.45, fireRecovery: 0.5, fireSpeed: 1050, waveCharge: 0.5});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang'];
   const SCORING = Object.freeze({pickup:10,kill:10,comboFactor:6});
   // Relative weights: renormalized when diagnostics limit the available arsenal.
@@ -72,7 +72,7 @@
       this.id = 0; this.time = 0; this.accumulator = 0;
       this.state = 'running'; this.score = 0; this.combo = 0; this.bestCombo = 0;
       this.comboUntil = 0; this.kills = 0;
-      this.player = {x:480,y:320,vx:0,vy:0,angle:Math.PI/2,bubble:false,spikesUntil:0,burnUntil:0,fireChargeUntil:0};
+      this.player = {x:480,y:320,vx:0,vy:0,angle:Math.PI/2,bubble:false,spikesUntil:0,burnUntil:0,fireChargeUntil:0,fireGraceUntil:0};
       this.enemies = []; this.pickups = []; this.projectiles = []; this.fields = [];
       this.events = []; this.spawnAt = 1; this.patternAt = 12; this.pickupAt = 3;
       this.waveAt = []; this.boomerangAt = []; this.trailAt = 0;
@@ -81,9 +81,9 @@
         this.spawnPickup(true); this.spawnPickup(true);
         const hard=this.mode==='hard';
         if(hard){
-          const initial=Math.floor(this.rng.range(3,6));
+          const initial=Math.floor(this.rng.range(4,7));
           for(let i=0;i<initial;i++)this.spawnOpening();
-          this.openingRemaining=Math.floor(this.rng.range(14,19))-this.enemies.length;
+          this.openingRemaining=Math.floor(this.rng.range(18,23))-this.enemies.length;
         }
         this.spawnAt=this.rng.range(hard?0.5:0.6,hard?0.9:1.4);
         this.patternAt=this.rng.range(hard?20:14,hard?26:20);
@@ -129,6 +129,7 @@
         if(length(ix,iy)>0.001)p.angle=Math.atan2(iy,ix);
         if(this.time+1e-9>=p.fireChargeUntil) {
           p.burnUntil=p.fireChargeUntil+TUNING.fireDash;p.fireChargeUntil=0;
+          p.fireGraceUntil=p.burnUntil+TUNING.fireRecovery;
           this.trailAt=this.time+dt;
           this.event('burnLaunch',{x:p.x,y:p.y,angle:p.angle,color:COLORS.burn});
         }
@@ -207,6 +208,7 @@
         const contactReach=armored?35:frozen?18:(p.bubble?TUNING.shieldRadius:TUNING.playerRadius)+TUNING.dotRadius;
         if(swept(before,relativeEnd,old,contactReach)) {
           if(frozen || armored) this.kill(e, frozen?'ice':'dot');
+          else if(this.time+1e-9<p.fireGraceUntil) continue;
           else if(p.bubble) {
             p.bubble=false;
             this.blast(p,130,'bubble');
@@ -563,6 +565,7 @@
         comboBase:SCORING.comboFactor*this.combo,pendingBonus:SCORING.comboFactor*this.combo*this.combo,
         comboRemaining:Math.max(0,this.comboUntil-this.time)/TUNING.comboWindow,
         bestCombo:this.bestCombo,kills:this.kills,player:Object.assign({},this.player,{
+          fireRecoveryRemaining:this.player.fireChargeUntil>0||this.player.burnUntil>this.time?0:Math.max(0,this.player.fireGraceUntil-this.time),
           fireChargeProgress:this.player.fireChargeUntil>0?clamp(1-(this.player.fireChargeUntil-this.time)/TUNING.fireCharge,0,1):0,
           waveCharging:!!chargingWave,
           waveChargeProgress:chargingWave?clamp(1-(chargingWave.at-this.time)/TUNING.waveCharge,0,1):0,

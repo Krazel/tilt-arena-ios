@@ -6,6 +6,7 @@ struct ClassicFrame: Decodable {
         let x, y, vx, vy, angle: Double
         let bubble: Bool
         let spikesUntil, burnUntil, fireChargeUntil, fireChargeProgress: Double
+        let fireRecoveryRemaining: Double
         let waveCharging: Bool
         let waveChargeProgress: Double
         let boomerangCharging: Bool
@@ -174,6 +175,16 @@ final class ClassicBridge {
           g.activate('frost',{x:\(left)+245,y:290});g.activate('nuke',{x:\(right)-215,y:290});
           ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+60+i*(\(right)-\(left)-120)/9,520));
           for(let i=0;i<108;i++)g.advance(1/120,{x:0,y:0});
+          g.events=[];return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
+    func fireRecoveryFrame(left: Double, right: Double) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.resize(\(left),\(right),52,592);g.player.x=\(left)+100;g.player.y=300;g.player.angle=0;
+          g.activate('burn');for(let i=0;i<120;i++)g.advance(1/120,{x:0,y:0});
           g.events=[];return JSON.stringify(g.snapshot());})()
         """
         guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }

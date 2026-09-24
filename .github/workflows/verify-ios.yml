@@ -10,6 +10,10 @@ on:
         description: Focused native HUD, theme switching and difficulty selection checks
         type: boolean
         default: false
+      gameplay_only:
+        description: Check frozen enemies, fire recovery and Hard opening
+        type: boolean
+        default: false
 permissions:
   contents: read
 jobs:
@@ -29,6 +33,7 @@ jobs:
         env:
           QA_VISUAL_ONLY: ${{ inputs.visual_only }}
           QA_HUD_ONLY: ${{ inputs.hud_only }}
+          QA_GAMEPLAY_ONLY: ${{ inputs.gameplay_only }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:

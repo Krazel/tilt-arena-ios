@@ -3,6 +3,31 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    func testFrozenInkUsesBlueAlphaMaskInsteadOfMultiplyingRedPigment() throws {
+        let image = try XCTUnwrap(InkArt.frozenAtlasImage.cgImage)
+        let cell = try XCTUnwrap(image.cropping(to: CGRect(x: image.width / 4, y: 0, width: image.width / 4, height: image.height / 2)))
+        var bytes = [UInt8](repeating: 0, count: cell.width * cell.height * 4)
+        bytes.withUnsafeMutableBytes { buffer in
+            let context = CGContext(data: buffer.baseAddress, width: cell.width, height: cell.height, bitsPerComponent: 8, bytesPerRow: cell.width * 4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue)!
+            context.draw(cell, in: CGRect(x: 0, y: 0, width: cell.width, height: cell.height))
+        }
+        var visible = 0, blue = 0, transparent = 0
+        for i in stride(from: 0, to: bytes.count, by: 4) {
+            if bytes[i+3] == 0 { transparent += 1 }
+            if bytes[i+3] > 250 {
+                visible += 1
+                if Int(bytes[i+2]) > Int(bytes[i]) + 70 && Int(bytes[i+1]) > Int(bytes[i]) + 35 { blue += 1 }
+            }
+        }
+        XCTAssertGreaterThan(visible, 1000); XCTAssertGreaterThan(transparent, 1000)
+        XCTAssertEqual(blue, visible)
+    }
+    func testFireRecoveryIsDecodedAfterSpeedBoostEnds() throws {
+        let frame = try ClassicBridge().fireRecoveryFrame(left: 100, right: 1300)
+        XCTAssertEqual(frame.player.fireRecoveryRemaining, 0.45, accuracy: 0.000001)
+        XCTAssertEqual(frame.player.burnUntil, 0)
+        XCTAssertEqual(frame.player.vx, 0); XCTAssertEqual(frame.player.vy, 0)
+    }
     @MainActor func testHUDRibbonGrowsWithLocalizedNumbersAndKeepsBrushTipsFixed() {
         for locale in ["en_US", "es_ES"] {
             for alignment in [SKLabelHorizontalAlignmentMode.left, .right] {

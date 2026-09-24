@@ -30,6 +30,12 @@ if [ "${QA_HUD_ONLY:-false}" = "true" ]; then
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHUDRibbonsWithLargeNumbersInBothLanguages
     -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist)
 fi
+if [ "${QA_GAMEPLAY_ONLY:-false}" = "true" ]; then
+  test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testFireRecoveryIndicatorAfterDash)
+fi
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \
   -derivedDataPath DerivedData -resultBundlePath ../artifacts/ios-verification/TiltArena-tests.xcresult \

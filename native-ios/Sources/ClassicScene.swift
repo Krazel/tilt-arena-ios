@@ -20,6 +20,7 @@ final class ClassicScene: SKScene {
     private var boomerangCharge = ThemedCharge(.boomerang, theme: VisualTheme.read())
     private let arrow = SKNode()
     private var bubble = SKShapeNode()
+    private let fireRecoveryRing = SKShapeNode(circleOfRadius: 26)
     private var spikes = ClassicSpikes(theme: VisualTheme.read())
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
@@ -177,6 +178,7 @@ final class ClassicScene: SKScene {
                 }
                 if lingeringAreasPreview { gameFrame = try bridge?.lingeringAreasFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                if ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") { gameFrame = try bridge?.fireRecoveryFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, bouncing: bouncingPreview, electricity: electricityPreview, charging: boomerangChargePreview, recaught: recaughtPreview) }
                 if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
@@ -229,7 +231,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
-        if explosionPreview || lingeringAreasPreview || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") { return }
+        if explosionPreview || lingeringAreasPreview || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") || ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") { return }
         if newPowersPreview {
             // Rendered once by play(); don't replay transient events each frame.
             if previewStarted == nil { previewStarted = currentTime }
@@ -335,6 +337,10 @@ final class ClassicScene: SKScene {
             bubble.lineWidth = 4; bubble.glowWidth = 0
         }
         arrow.addChild(spikes)
+        fireRecoveryRing.removeFromParent()
+        fireRecoveryRing.strokeColor = theme == .inkTide ? InkArt.gold : UIColor(hex: "ffc06a")
+        fireRecoveryRing.fillColor = .clear; fireRecoveryRing.lineWidth = 2
+        fireRecoveryRing.zPosition = 2; fireRecoveryRing.isHidden = true; arrow.addChild(fireRecoveryRing)
         bubble.isHidden=true;spikes.isHidden=true
     }
     private func drawHUD() {
@@ -393,7 +399,8 @@ final class ClassicScene: SKScene {
             let node=sprite(key:key,style:"dot"), previous = objects[key]?.position ?? .zero
             (node as? SKShapeNode)?.fillColor = UIColor(hex: dot.frozen ? "70dce9" : "ff5658")
             if theme == .inkTide, let ink = node as? SKSpriteNode {
-                ink.color = InkArt.blue; ink.colorBlendFactor = dot.frozen ? 1 : 0
+                ink.texture = dot.frozen ? InkArt.frozenDot : InkArt.cells[1]
+                ink.colorBlendFactor = 0
                 let dx = dot.x - Double(previous.x), dy = dot.y - Double(previous.y)
                 if ink.userData == nil { ink.zRotation = atan2(frame.player.y - dot.y, frame.player.x - dot.x) }
                 else if !dot.frozen && hypot(dx, dy) > 0.05 { ink.zRotation = atan2(dy, dx) }
@@ -442,6 +449,8 @@ final class ClassicScene: SKScene {
         for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
         bubble.isHidden = !frame.player.bubble
+        fireRecoveryRing.isHidden = frame.player.fireRecoveryRemaining <= 0
+        fireRecoveryRing.alpha = min(1, frame.player.fireRecoveryRemaining / 0.5) * (reduceEffects ? 1 : 0.65 + 0.35 * cos(frame.time * 24))
         spikes.update(time: frame.time, until: frame.player.spikesUntil, heading: frame.player.angle, reduced: reduceEffects)
         bubble.glowWidth = reduceEffects || theme == .inkTide ? 0 : 2
         fireCharge.update(progress: frame.player.fireChargeProgress, active: frame.player.fireChargeUntil > frame.time, reduced: reduceEffects)

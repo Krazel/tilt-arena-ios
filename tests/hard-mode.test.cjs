@@ -6,7 +6,7 @@ test('openings have two random safe pickups and enemies arrive separately in bot
   const openings=new Set(), powers=new Set(), clocks=new Set();
   for(let seed=1;seed<=100;seed++){
    const g=new ClassicGame(seed,{mode});
-   assert(mode==='hard' ? g.enemies.length>=3&&g.enemies.length<=5 : g.enemies.length===0);assert.equal(g.pickups.length,2);
+   assert(mode==='hard' ? g.enemies.length>=4&&g.enemies.length<=6 : g.enemies.length===0);assert.equal(g.pickups.length,2);
    openings.add(JSON.stringify(g.pickups.map(p=>[p.power,p.x,p.y])));
    clocks.add(g.spawnAt);g.pickups.forEach(p=>powers.add(p.power));
    assert(g.pickups.every(p=>Math.hypot(p.x-g.player.x,p.y-g.player.y)>85));
@@ -37,7 +37,7 @@ test('hard pressure rises sooner, remains bounded, and preserves player controls
   }
   assert(g.enemies.every(e=>e.speed<=(mode==='hard'?116:109)));
  }
- assert(counts.hard[0]>=3&&counts.hard[0]<=5);
+ assert(counts.hard[0]>=4&&counts.hard[0]<=6);
  assert(counts.hard[1]>counts.classic[1]);assert(counts.hard[1]<200);
  assert.equal(counts.hard.at(-1),550);
  const a=new ClassicGame(9,{mode:'hard',spawning:false}),b=new ClassicGame(9,{spawning:false});
@@ -57,7 +57,7 @@ test('hard opening is gentler across seeds and formations start at varied times 
  for(let seed=1;seed<=100;seed++){
   const g=new ClassicGame(seed,{mode:'hard'});starts.add(g.patternAt);
   assert(g.patternAt>=20&&g.patternAt<=26);
-  const opening=g.openingRemaining+g.enemies.length;assert(opening>=14&&opening<=18);
+  const opening=g.openingRemaining+g.enemies.length;assert(opening>=18&&opening<=22);
   for(let i=0;i<1200;i++){g.time=i/120;g.spawnDirector();}
   assert(!g.events.some(e=>e.kind==='pattern'));
   assert(g.enemies.length<60);

@@ -11,6 +11,21 @@ enum InkArt {
     static let red = UIColor(hex: "ed4128")
     static let atlas = SKTexture(imageNamed: "ink-tide-sprites")
     static let arena = SKTexture(imageNamed: "ink-tide-arena")
+    /// Match the browser's source-in fill. SpriteKit colorBlendFactor multiplies
+    /// the red source by blue and makes frozen dots nearly black instead.
+    static let frozenAtlasImage: UIImage = {
+        let source = UIImage(named: "ink-tide-sprites")!
+        let format = UIGraphicsImageRendererFormat(); format.scale = 1; format.opaque = false
+        return UIGraphicsImageRenderer(size: source.size, format: format).image { context in
+            let rect = CGRect(origin: .zero, size: source.size)
+            source.draw(in: rect)
+            context.cgContext.setBlendMode(.sourceIn)
+            context.cgContext.setFillColor(blue.cgColor)
+            context.cgContext.fill(rect)
+        }
+    }()
+    static let frozenDot = SKTexture(rect: CGRect(x: 0.25, y: 0.5, width: 0.25, height: 0.5),
+                                    in: SKTexture(image: frozenAtlasImage))
     static let cells: [SKTexture] = (0..<8).map { index in
         SKTexture(rect: CGRect(x: CGFloat(index % 4) / 4, y: index < 4 ? 0.5 : 0,
                                width: 0.25, height: 0.5), in: atlas)
