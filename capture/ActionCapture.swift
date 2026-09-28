@@ -14,6 +14,28 @@ final class ActionCapture {
     static let directory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
     static var configuration: Configuration!
     private var index = 0
+    private var previousTime: TimeInterval?
+    private var actionElapsed = 0.0
+    private var previousActionElapsed = 0.0
+    private var maxActionStepError = 0.0
+    private var maxClockError = 0.0
+    private var measuredFrames = 0
+
+    func beginFrame(_ time: TimeInterval, scene: ClassicScene) -> Double {
+        let dt = 1.0 / 60
+        if let previous = previousTime {
+            scene.speed = CGFloat(dt / max(0.000001, time - previous))
+        } else {
+            scene.speed = 1
+            // Invisible clock probe inherits exactly the same scene clock as VFX.
+            let probe = SKNode(); scene.addChild(probe)
+            probe.run(.customAction(withDuration: 1000) { [weak self] _, elapsed in
+                self?.actionElapsed = Double(elapsed)
+            })
+        }
+        previousTime = time
+        return dt
+    }
 
     static func waitForStart(scene: ClassicScene) {
         guard enabled else { return }
@@ -39,13 +61,23 @@ final class ActionCapture {
         return (input[0], input[1])
     }
     func record(_ frame: ClassicFrame, raw: String, scene: ClassicScene) {
-        guard Self.enabled else { return }
+        guard Self.enabled, index > 0 else { return }
+        if index > 2 {
+            maxActionStepError = max(maxActionStepError, abs(actionElapsed - previousActionElapsed - 1.0 / 60))
+            maxClockError = max(maxClockError, abs(actionElapsed - Double(index - 1) / 60))
+            measuredFrames += 1
+        }
+        previousActionElapsed = actionElapsed
         if frame.state != "running" {
             scene.view?.isPaused = true
             Self.save(["error":"Run ended before target", "step":index-1,"time":frame.time], "capture-error.json")
             return
         }
         guard let shot = Self.configuration.shots.first(where: { $0.step == index-1 }) else { return }
+        Self.save(["actionElapsed": actionElapsed, "engineElapsed": frame.time,
+                   "expectedActionElapsed": Double(index - 1) / 60,
+                   "maxActionStepError": maxActionStepError, "maxClockError": maxClockError,
+                   "measuredFrames": measuredFrames], "capture-\(shot.name)-timing.json")
         // Freeze the already rendered state; do not pause, mutate or advance the engine.
         scene.view?.isPaused = true
         try? Data(raw.utf8).write(to: Self.directory.appendingPathComponent("capture-\(shot.name).json"), options: .atomic)

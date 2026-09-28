@@ -9,7 +9,7 @@ assert not run('git','diff',BASE,'--','native-ios/Sources','native-ios/Resources
 runtime=next(r['identifier'] for r in json.loads(run('xcrun','simctl','list','runtimes','--json'))['runtimes'] if r['isAvailable'] and r['name']=='iOS 26.2')
 device=run('xcrun','simctl','create','Tilt Arena Action Screenshots','com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro-Max',runtime)
 target=ROOT/'artifacts/action-target/native-ios';app=target/'DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app'
-meta=dict(baseCommit=BASE,captureCommit=os.environ.get('GITHUB_SHA'),run=os.environ.get('GITHUB_RUN_ID'),version='0.5.8',build='1',device='iPhone 16 Pro Max simulator',runtime=runtime,fixtures=False,spawning=True,controls='Verified normal-input replay',ipaGenerated=False,appleUpload=False,captures=[])
+meta=dict(baseCommit=BASE,captureCommit=os.environ.get('GITHUB_SHA'),run=os.environ.get('GITHUB_RUN_ID'),version='0.5.8',build='1',device='iPhone 16 Pro Max simulator',runtime=runtime,fixtures=False,spawning=True,controls='Verified normal-input replay',mask='ignored',independentSceneRuns=True,ipaGenerated=False,appleUpload=False,captures=[])
 def start(language):
     subprocess.run(['xcrun','simctl','uninstall',device,'com.dmkr.tiltarena'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     run('xcrun','simctl','install',device,str(app))
@@ -35,10 +35,10 @@ try:
     subprocess.run(['node','capture/action-preflight.cjs',str(OUT/'native-viewport.json'),str(OUT/'replays')],check=True)
     run('xcrun','simctl','terminate',device,'com.dmkr.tiltarena')
     scenes={k:json.loads((OUT/'replays'/f'{k}.json').read_text()) for k in ['fire','ice','pressure','wave']}
-    groups={}
-    for name,scene in scenes.items():groups.setdefault(scene['seed'],[]).append((name,scene))
+    groups={name:[(name,scene)] for name,scene in scenes.items()}
     for language in ['en','es']:
-        for seed,shots in groups.items():
+        for _,shots in groups.items():
+            seed=shots[0][1]['seed']
             docs=start(language)
             current=json.loads((docs/'capture-ready.json').read_text())['bounds']
             assert current==next(iter(scenes.values()))['bounds'],current
@@ -54,8 +54,9 @@ try:
                     shot=json.loads(request.read_text());name=shot['name'];assert name not in received
                     time.sleep(.15)
                     image=OUT/f'{language}-{name}.png'
-                    run('xcrun','simctl','io',device,'screenshot',str(image))
+                    run('xcrun','simctl','io',device,'screenshot','--mask','ignored',str(image))
                     frame=OUT/f'{language}-{name}-native.json';shutil.copyfile(docs/f'capture-{name}.json',frame)
+                    shutil.copyfile(docs/f'capture-{name}-timing.json',OUT/f'{language}-{name}-timing.json')
                     meta['captures'].append(dict(language=language,name=name,seed=seed,step=shot['step'],file=image.name,sha256=hashlib.sha256(image.read_bytes()).hexdigest(),nativeFrame=frame.name))
                     received.add(name);request.unlink()
                     if len(received)<len(shots):(docs/'capture-resume').touch()

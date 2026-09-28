@@ -5,7 +5,7 @@ const out=process.argv[3]||'artifacts/action-preflight';fs.mkdirSync(out,{recurs
 const b=process.argv[2]?JSON.parse(fs.readFileSync(process.argv[2])).bounds:{left:62*640/440+20,right:956*640/440-(62*640/440+20),bottom:20*640/440+26,top:592};
 const driver=fs.readFileSync('capture/driver.js','utf8'),best={},runs=[];
 const clean=f=>JSON.parse(JSON.stringify(f));
-for(let seed=1;seed<=20;seed++){
+for(let seed=1;seed<=100;seed++){
  const ctx=vm.createContext({});vm.runInContext(driver,ctx);
  const g=new ClassicGame(seed,{mode:'classic'});g.resize(b.left,b.right,b.bottom,b.top);
  let f=g.snapshot(),inputs=[];const candidates={};
@@ -14,14 +14,16 @@ for(let seed=1;seed<=20;seed++){
   f=g.advance(1/60,{x,y});if(f.state!=='running')break;
   const enemies=f.enemies.filter(e=>!e.telegraph),frozen=enemies.filter(e=>e.frozen).length;
   const fire=f.fields.filter(e=>e.kind==='fire').length;
-  const frost=f.fields.filter(e=>e.kind==='frost'&&e.remaining<e.duration-.15).length;
+  const centered=(e,r)=>e.x-r>b.left+15&&e.x+r<b.right-15&&e.y-r>75&&e.y+r<555;
+  const frost=f.fields.filter(e=>e.kind==='frost'&&e.remaining<e.duration-.22&&e.remaining>.5&&centered(e,e.radius)).length;
   const blast=f.fields.filter(e=>e.kind==='blast'&&e.remaining<e.duration-.08).length;
-  const wave=f.projectiles.filter(e=>e.kind==='wave').length;
+  const wave=f.projectiles.filter(e=>e.kind==='wave'&&centered(e,90)).length;
+  const clearWave=!f.fields.some(e=>e.kind==='frost'||e.kind==='blast');
   const scores={
    fire:fire>=6&&f.player.burnUntil>f.time+.4&&enemies.length>=8?Math.min(fire,30)+Math.min(enemies.length,55)+f.combo:0,
    ice:frost&&frozen>=3?frozen*4+blast*15+Math.min(enemies.length,40):0,
    pressure:enemies.length-frozen>=55&&!fire?Math.min(enemies.length-frozen,100):0,
-   wave:wave&&enemies.length>=8?wave*15+Math.min(enemies.length,45)+f.combo:0
+   wave:wave&&clearWave&&enemies.length>=8?wave*15+Math.min(enemies.length,45)+f.combo:0
   };
   for(const [kind,score]of Object.entries(scores))if(score>0&&(!candidates[kind]||score>candidates[kind].quality))candidates[kind]={kind,quality:score,seed,mode:'classic',step:i,time:f.time,snapshot:clean(f)};
  }
@@ -30,7 +32,7 @@ for(let seed=1;seed<=20;seed++){
  console.log(JSON.stringify(runs.at(-1)));
  if(seed>=4&&['fire','ice','pressure','wave'].every(k=>best[k]))break;
 }
-assert(['fire','ice','pressure'].every(k=>best[k]),'Missing required natural action scenes');
+assert(['fire','ice','pressure','wave'].every(k=>best[k]),'Missing required natural action scenes');
 for(const [kind,c]of Object.entries(best)){
  const g=new ClassicGame(c.seed,{mode:c.mode});g.resize(b.left,b.right,b.bottom,b.top);let f;
  for(const [x,y]of c.inputs)f=g.advance(1/60,{x,y});assert.deepEqual(clean(f),c.snapshot);

@@ -15,9 +15,9 @@ patch('ClassicScene.swift','configureViewport(viewSize: view.bounds.size, insets
 patch('ClassicScene.swift','gameFrame = try bridge?.create(spawning: !uiTesting || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa"), mode: session.mode)',
       'gameFrame = ActionCapture.enabled ? try bridge?.create(seed: ActionCapture.configuration.seed, spawning: true, mode: .classic) : try bridge?.create(spawning: !uiTesting || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa"), mode: session.mode)')
 patch('ClassicScene.swift','let dt = lastTime.map { currentTime - $0 } ?? 0; lastTime = currentTime',
-      'let dt = ActionCapture.enabled ? 1.0 / 60 : (lastTime.map { currentTime - $0 } ?? 0); lastTime = currentTime')
+      'let dt = ActionCapture.enabled ? actionCapture.beginFrame(currentTime, scene: self) : (lastTime.map { currentTime - $0 } ?? 0); lastTime = currentTime')
 patch('ClassicScene.swift','input = touchVector','input = ActionCapture.enabled ? actionCapture.nextInput() : touchVector')
-patch('ClassicScene.swift','gameFrame = next; render(next)','gameFrame = next; render(next)\n                if ActionCapture.enabled { actionCapture.record(next, raw: bridge?.captureLastJSON ?? "{}", scene: self) }')
+patch('ClassicScene.swift','    private func render(', '    override func didFinishUpdate() {\n        if ActionCapture.enabled, session?.phase == .running, let frame = gameFrame {\n            actionCapture.record(frame, raw: bridge?.captureLastJSON ?? "{}", scene: self)\n        }\n    }\n    private func render(')
 patch('ClassicBridge.swift','private let decoder = JSONDecoder()', 'private let decoder = JSONDecoder()\n    private(set) var captureLastJSON = "{}"')
 patch('ClassicBridge.swift','return result\n    }\n    private func decode',
       'if ["create", "resize", "tick"].contains(name) { captureLastJSON = result.toString() }\n        return result\n    }\n    private func decode')
