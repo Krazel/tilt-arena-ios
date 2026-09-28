@@ -94,13 +94,16 @@ final class VisualThemeTests: XCTestCase {
     }
 
     func testApprovedDrawingsLoadAsCompleteMaskedImagesWithoutReplacementGlyphs() throws {
-        XCTAssertEqual(Set(ApprovedOrbArt.regions.keys), Set(["nuke", "wave", "frost", "bubble", "lightning"]))
+        XCTAssertEqual(Set(ApprovedOrbArt.regions.keys), Set(["nuke", "wave", "frost", "bubble", "lightning", "laser", "burn", "vortex", "boomerang", "spikes"]))
         for power in ApprovedOrbArt.regions.keys {
             let node = try XCTUnwrap(InkArt.node(style: power) as? SKCropNode)
             XCTAssertNotNil(node.maskNode)
             XCTAssertEqual(node.children.count, 1)
             let art = try XCTUnwrap(node.children.first as? SKSpriteNode)
-            XCTAssertEqual(try XCTUnwrap(art.texture).size(), CGSize(width: 256, height: 256))
+            let crop = try XCTUnwrap(ApprovedOrbArt.regions[power]).crop
+            XCTAssertEqual(try XCTUnwrap(art.texture).size(), CGSize(width: crop[2], height: crop[3]))
+            XCTAssertEqual(art.position, .zero)
+            XCTAssertEqual(art.anchorPoint, CGPoint(x: 0.5, y: 0.5))
             XCTAssertEqual(art.colorBlendFactor, 0)
             XCTAssertTrue(art.children.isEmpty)
             XCTAssertGreaterThan(art.size.width * 56 / 42, 50)
