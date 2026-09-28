@@ -23,10 +23,12 @@ final class StoreCaptureTests: XCTestCase {
                 // Existing simulator drag input; spawning and collisions stay active.
                 for step in 0..<4 {
                     guard arena.exists else { break }
-                    let a = arena.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
+                    // Anchor gestures to the app, which still exists if death happens
+                    // between the running-state check and event synthesis.
+                    let a = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5))
                     let offsets = [CGVector(dx: 0.62, dy: 0.45), CGVector(dx: 0.48, dy: 0.36),
                                    CGVector(dx: 0.38, dy: 0.52), CGVector(dx: 0.52, dy: 0.62)]
-                    a.press(forDuration: 0.05, thenDragTo: arena.coordinate(withNormalizedOffset: offsets[step]),
+                    a.press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: offsets[step]),
                             withVelocity: .slow, thenHoldForDuration: 0.2)
                     Thread.sleep(forTimeInterval: 0.4)
                     if arena.exists { capture("store-\(language)-\(mode)-play-0\(step + 2)") }
