@@ -94,7 +94,7 @@ final class VisualThemeTests: XCTestCase {
     }
 
     func testApprovedDrawingsLoadAsCompleteMaskedImagesWithoutReplacementGlyphs() throws {
-        XCTAssertEqual(Set(ApprovedOrbArt.regions.keys), Set(["nuke", "wave", "frost", "bubble", "lightning", "laser", "burn", "vortex", "boomerang", "spikes"]))
+        XCTAssertEqual(Set(ApprovedOrbArt.regions.keys), Set(["nuke", "wave", "frost", "bubble", "lightning", "laser", "burn", "vortex", "boomerang", "spikes", "missiles"]))
         for power in ApprovedOrbArt.regions.keys {
             let node = try XCTUnwrap(InkArt.node(style: power) as? SKCropNode)
             XCTAssertNotNil(node.maskNode)
@@ -109,7 +109,7 @@ final class VisualThemeTests: XCTestCase {
             XCTAssertGreaterThan(art.size.width * 56 / 42, 50)
             XCTAssertLessThan(art.size.width * 56 / 42, 60)
         }
-        XCTAssertNil(ApprovedOrbArt.node(for: "missiles"))
+        XCTAssertNil(ApprovedOrbArt.node(for: "unknown-power"))
     }
     func testSubtlePigmentPreservesCreamRimAndInkTextureLuminance() {
         let target = [0.5, 0.388, 0.149], rim = [0.93, 0.89, 0.78]
