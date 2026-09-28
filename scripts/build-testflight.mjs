@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import assert from 'node:assert/strict';
+import {requireAltoolSuccess} from './altool-result.mjs';
 
 const cfg = JSON.parse(fs.readFileSync('store/testflight.json'));
 assert(process.platform === 'darwin' && process.env.TILT_DISTRIBUTION === 'testflight', 'Explicit macOS TestFlight environment required');
@@ -74,8 +75,14 @@ try {
   manifest.compiledAssetsSHA256 = crypto.createHash('sha256').update(fs.readFileSync(path.join(app, 'Assets.car'))).digest('hex');
   const save = () => fs.writeFileSync('artifacts/testflight/build.json', JSON.stringify(manifest,null,2)+'\n');
   save();
-  run('xcrun', ['altool', '--validate-app', '--type', 'ios', '--file', artifact, '--apiKey', process.env.ASC_KEY_ID, '--apiIssuer', process.env.ASC_ISSUER_ID]);
-  run('xcrun', ['altool', '--upload-app', '--type', 'ios', '--file', artifact, '--apiKey', process.env.ASC_KEY_ID, '--apiIssuer', process.env.ASC_ISSUER_ID]);
+  const deliver = operation => {
+    const result = spawnSync('xcrun', ['altool', `--${operation}-app`, '--type', 'ios', '--file', artifact, '--apiKey', process.env.ASC_KEY_ID, '--apiIssuer', process.env.ASC_ISSUER_ID], {encoding:'utf8', maxBuffer:16*1024*1024});
+    process.stdout.write(result.stdout || '');
+    process.stderr.write(result.stderr || '');
+    return requireAltoolSuccess(result, operation);
+  };
+  deliver('validate');
+  manifest.deliveryId = deliver('upload');
   manifest.uploadAccepted = true;
   save();
 } finally {
