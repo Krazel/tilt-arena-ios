@@ -64,7 +64,9 @@ try:
                     meta['captures'].append(dict(language=language,name=name,seed=seed,step=shot['step'],file=image.name,sha256=hashlib.sha256(image.read_bytes()).hexdigest(),nativeFrame=frame.name))
                     received.add(name);request.unlink()
                     if len(received)<len(shots):(docs/'capture-resume').touch()
-                if time.monotonic()>deadline:raise TimeoutError(f'Replay {language}/{seed}')
+                if time.monotonic()>deadline:
+                    for diagnostic in docs.glob('capture-*.json'):shutil.copyfile(diagnostic,OUT/f'timeout-{language}-{diagnostic.name}')
+                    raise TimeoutError(f'Replay {language}/{seed}')
                 time.sleep(.1)
             run('xcrun','simctl','terminate',device,'com.dmkr.tiltarena')
     # Compare all captured native simulation snapshots with independently replayed Node snapshots.

@@ -19,6 +19,17 @@ patch('ClassicScene.swift','let dt = lastTime.map { currentTime - $0 } ?? 0; las
 patch('ClassicScene.swift','input = touchVector','input = ActionCapture.enabled ? actionCapture.nextInput() : touchVector')
 patch('ClassicScene.swift','    override func update(_ currentTime: TimeInterval) {','    override func update(_ currentTime: TimeInterval) {\n        if ActionCapture.enabled && ActionCapture.finished { return }')
 patch('ClassicScene.swift','    private func render(', '    override func didFinishUpdate() {\n        if ActionCapture.enabled, session?.phase == .running, let frame = gameFrame {\n            actionCapture.record(frame, raw: bridge?.captureLastJSON ?? "{}", scene: self)\n        }\n    }\n    private func render(')
+patch('ClassicScene.swift','    override func didFinishUpdate()', '''    func captureWarmTextures(in view: SKView) {
+        for style in Array(ClassicArt.colors.keys) + ["waveShot", "boomerangShot", "missileShot", "vortexField", "fire"] where textures[style] == nil {
+            let shape = ClassicArt.node(style: style, theme: theme)
+            let bounds = shape.calculateAccumulatedFrame()
+            if let rendered = view.texture(from: shape) {
+                textures[style] = rendered
+                textureAnchors[style] = CGPoint(x: -bounds.minX / bounds.width, y: -bounds.minY / bounds.height)
+            }
+        }
+    }
+    override func didFinishUpdate()''')
 patch('ClassicBridge.swift','private let decoder = JSONDecoder()', 'private let decoder = JSONDecoder()\n    private(set) var captureLastJSON = "{}"')
 patch('ClassicBridge.swift','return result\n    }\n    private func decode',
       'if ["create", "resize", "tick"].contains(name) { captureLastJSON = result.toString() }\n        return result\n    }\n    private func decode')

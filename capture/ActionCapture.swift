@@ -16,6 +16,7 @@ final class ActionCapture {
     static var configuration: Configuration!
     static var finished = false
     static var pendingShot: Shot?
+    static var deliveredFrames = 0
     private var index = 0
     private var previousTime: TimeInterval?
     private var actionElapsed = 0.0
@@ -25,6 +26,7 @@ final class ActionCapture {
     private var measuredFrames = 0
 
     func beginFrame(_ time: TimeInterval, scene: ClassicScene) -> Double {
+        Self.deliveredFrames += 1
         let dt = 1.0 / 60
         if previousTime == nil {
             scene.speed = 1
@@ -89,13 +91,17 @@ final class ActionCapture {
         } else { Self.pendingShot = shot }
     }
     static func drive(scene: ClassicScene, view: SKView) {
-        // SKView retains layout and its texture cache, but performs no automatic updates.
-        // SKRenderer processes the unchanged scene at controlled simulation timestamps.
+        // Warm the same production textures before transferring ownership to SKRenderer.
+        scene.captureWarmTextures(in: view)
         view.isPaused = true
+        view.presentScene(nil)
+        scene.isPaused = false
         guard let device = MTLCreateSystemDefaultDevice(), let queue = device.makeCommandQueue() else {
             save(["error":"No Metal device/queue"], "capture-error.json"); return
         }
         let renderer = SKRenderer(device: device); renderer.scene = scene
+        renderer.ignoresSiblingOrder = view.ignoresSiblingOrder
+        renderer.shouldCullNonVisibleNodes = view.shouldCullNonVisibleNodes
         let width = Int(view.bounds.width * UIScreen.main.scale)
         let height = Int(view.bounds.height * UIScreen.main.scale)
         let descriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm, width: width, height: height, mipmapped: false)
@@ -111,6 +117,12 @@ final class ActionCapture {
         Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true) { timer in
             autoreleasepool {
                 renderer.update(atTime: Double(step) / 60)
+                if step % 120 == 0 {
+                    save(["rendererSteps":step,"sceneFrames":deliveredFrames,"scenePaused":scene.isPaused], "capture-progress.json")
+                    if step > 0 && deliveredFrames == 0 {
+                        save(["error":"Renderer did not update scene"], "capture-error.json"); timer.invalidate(); return
+                    }
+                }
                 guard let buffer = queue.makeCommandBuffer() else {
                     save(["error":"No command buffer"], "capture-error.json"); timer.invalidate(); return
                 }
