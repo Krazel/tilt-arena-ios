@@ -42,6 +42,7 @@ final class ActionCapture {
 
     static func waitForStart(scene: ClassicScene) {
         guard enabled else { return }
+        UIApplication.shared.isIdleTimerDisabled = true
         Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak scene] timer in
             guard let scene = scene, let view = scene.view else { timer.invalidate(); return }
             let b = scene.arenaBounds
@@ -116,6 +117,10 @@ final class ActionCapture {
         var step = 0
         Timer.scheduledTimer(withTimeInterval: 0.001, repeats: true) { timer in
             autoreleasepool {
+                guard scene.session?.phase == .running else {
+                    save(["error":"Capture session left running phase", "phase":String(describing:scene.session?.phase), "message":scene.session?.message ?? "", "rendererSteps":step,"sceneFrames":deliveredFrames], "capture-error.json")
+                    timer.invalidate(); return
+                }
                 renderer.update(atTime: Double(step) / 60)
                 if step % 120 == 0 {
                     save(["rendererSteps":step,"sceneFrames":deliveredFrames,"scenePaused":scene.isPaused], "capture-progress.json")
@@ -123,15 +128,18 @@ final class ActionCapture {
                         save(["error":"Renderer did not update scene"], "capture-error.json"); timer.invalidate(); return
                     }
                 }
+                step += 1
+                // Every simulation/action/particle update is retained. Only the final
+                // image needs a GPU draw; intermediate images were never exported.
+                guard finished else { return }
                 guard let buffer = queue.makeCommandBuffer() else {
                     save(["error":"No command buffer"], "capture-error.json"); timer.invalidate(); return
                 }
                 renderer.render(withViewport: CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)), commandBuffer: buffer, renderPassDescriptor: pass)
-                buffer.commit(); buffer.waitUntilCompleted(); step += 1
+                buffer.commit(); buffer.waitUntilCompleted()
                 if buffer.status == .error {
                     save(["error":"Metal render failed"], "capture-error.json"); timer.invalidate(); return
                 }
-                guard finished else { return }
                 timer.invalidate()
                 guard let shot = pendingShot else { return }
                 var bytes = [UInt8](repeating: 0, count: width * height * 4)
