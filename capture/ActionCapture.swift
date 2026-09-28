@@ -24,6 +24,8 @@ final class ActionCapture {
     private var maxActionStepError = 0.0
     private var maxClockError = 0.0
     private var measuredFrames = 0
+    private var actionOrigin = 0.0
+    private var engineOrigin = 0.0
 
     func beginFrame(_ time: TimeInterval, scene: ClassicScene) -> Double {
         Self.deliveredFrames += 1
@@ -67,9 +69,12 @@ final class ActionCapture {
     }
     func record(_ frame: ClassicFrame, raw: String, scene: ClassicScene) {
         guard Self.enabled, !Self.finished, index > 0 else { return }
-        if index > 2 {
+        // A newly scheduled SKAction starts after the engine's first frames.
+        // Compare elapsed intervals from a shared observation, not absolute epochs.
+        if index == 4 { actionOrigin = actionElapsed; engineOrigin = frame.time }
+        if index > 4 {
             maxActionStepError = max(maxActionStepError, abs(actionElapsed - previousActionElapsed - 1.0 / 60))
-            maxClockError = max(maxClockError, abs(actionElapsed - Double(index - 1) / 60))
+            maxClockError = max(maxClockError, abs((actionElapsed - actionOrigin) - (frame.time - engineOrigin)))
             measuredFrames += 1
         }
         previousActionElapsed = actionElapsed
@@ -81,7 +86,8 @@ final class ActionCapture {
         }
         guard let shot = Self.configuration.shots.first(where: { $0.step == index-1 }) else { return }
         Self.save(["actionElapsed": actionElapsed, "engineElapsed": frame.time,
-                   "expectedActionElapsed": Double(index - 1) / 60,
+                   "expectedActionElapsed": actionOrigin + frame.time - engineOrigin,
+                   "actionOrigin":actionOrigin,"engineOrigin":engineOrigin,"originFrame":4,
                    "maxActionStepError": maxActionStepError, "maxClockError": maxClockError,
                    "measuredFrames": measuredFrames], "capture-\(shot.name)-timing.json")
         Self.finished = true

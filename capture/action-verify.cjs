@@ -14,7 +14,8 @@ for(const language of (process.argv[3]?[process.argv[3]]:['en','es']))for(const 
  assert(timing.measuredFrames>100,'Insufficient native action clock samples');
  assert(timing.maxActionStepError<.035,'SKAction step drift: '+JSON.stringify(timing));
  assert(timing.maxClockError<.035,'SKAction cumulative drift: '+JSON.stringify(timing));
- assert(Math.abs(timing.engineElapsed-timing.actionElapsed)<.035,'Engine/action clock drift');
+ assert(timing.originFrame===4,'Missing shared clock observation');
+ assert(Math.abs((timing.engineElapsed-timing.engineOrigin)-(timing.actionElapsed-timing.actionOrigin))<.035,'Engine/action interval drift');
  compare(frame,replay.snapshot);results.push({language,kind,seed:replay.seed,time:frame.time,score:frame.score,state:frame.state,enemies:frame.enemies.length,timing});
 }
 fs.writeFileSync(path.join(dir,'native-replay-verification.json'),JSON.stringify({verified:true,maxDifference,results},null,2));
