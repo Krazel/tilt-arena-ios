@@ -7,7 +7,7 @@ function compare(a,b,p='frame'){
  }
  assert.equal(a,b,p);
 }
-for(const language of ['en','es'])for(const kind of ['fire','ice','pressure','wave']){
+for(const language of (process.argv[3]?[process.argv[3]]:['en','es']))for(const kind of (process.argv[4]?[process.argv[4]]:['fire','ice','pressure','wave'])){
  const replay=JSON.parse(fs.readFileSync(path.join(dir,'replays',kind+'.json')));
  const frame=JSON.parse(fs.readFileSync(path.join(dir,language+'-'+kind+'-native.json')));
  const timing=JSON.parse(fs.readFileSync(path.join(dir,language+'-'+kind+'-timing.json')));

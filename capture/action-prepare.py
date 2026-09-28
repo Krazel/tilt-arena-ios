@@ -17,6 +17,7 @@ patch('ClassicScene.swift','gameFrame = try bridge?.create(spawning: !uiTesting 
 patch('ClassicScene.swift','let dt = lastTime.map { currentTime - $0 } ?? 0; lastTime = currentTime',
       'let dt = ActionCapture.enabled ? actionCapture.beginFrame(currentTime, scene: self) : (lastTime.map { currentTime - $0 } ?? 0); lastTime = currentTime')
 patch('ClassicScene.swift','input = touchVector','input = ActionCapture.enabled ? actionCapture.nextInput() : touchVector')
+patch('ClassicScene.swift','    override func update(_ currentTime: TimeInterval) {','    override func update(_ currentTime: TimeInterval) {\n        if ActionCapture.enabled && ActionCapture.finished { return }')
 patch('ClassicScene.swift','    private func render(', '    override func didFinishUpdate() {\n        if ActionCapture.enabled, session?.phase == .running, let frame = gameFrame {\n            actionCapture.record(frame, raw: bridge?.captureLastJSON ?? "{}", scene: self)\n        }\n    }\n    private func render(')
 patch('ClassicBridge.swift','private let decoder = JSONDecoder()', 'private let decoder = JSONDecoder()\n    private(set) var captureLastJSON = "{}"')
 patch('ClassicBridge.swift','return result\n    }\n    private func decode',

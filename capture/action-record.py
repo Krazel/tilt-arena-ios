@@ -9,7 +9,7 @@ assert not run('git','diff',BASE,'--','native-ios/Sources','native-ios/Resources
 runtime=next(r['identifier'] for r in json.loads(run('xcrun','simctl','list','runtimes','--json'))['runtimes'] if r['isAvailable'] and r['name']=='iOS 26.2')
 device=run('xcrun','simctl','create','Tilt Arena Action Screenshots','com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro-Max',runtime)
 target=ROOT/'artifacts/action-target/native-ios';app=target/'DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app'
-meta=dict(baseCommit=BASE,captureCommit=os.environ.get('GITHUB_SHA'),run=os.environ.get('GITHUB_RUN_ID'),version='0.5.8',build='1',device='iPhone 16 Pro Max simulator',runtime=runtime,fixtures=False,spawning=True,controls='Verified normal-input replay',mask='ignored',independentSceneRuns=True,ipaGenerated=False,appleUpload=False,captures=[])
+meta=dict(baseCommit=BASE,captureCommit=os.environ.get('GITHUB_SHA'),run=os.environ.get('GITHUB_RUN_ID'),version='0.5.8',build='1',device='iPhone 16 Pro Max simulator',runtime=runtime,fixtures=False,spawning=True,controls='Verified normal-input replay',mask='none-native-Metal-target',renderer='SKRenderer unchanged production scene',clock='SKRenderer.update at exact 1/60 timestamps',independentSceneRuns=True,ipaGenerated=False,appleUpload=False,captures=[])
 def start(language):
     subprocess.run(['xcrun','simctl','uninstall',device,'com.dmkr.tiltarena'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
     run('xcrun','simctl','install',device,str(app))
@@ -48,15 +48,19 @@ try:
             deadline=time.monotonic()+len(longest['inputs'])/60*4+60;received=set()
             print(f'Replaying {language}, seed {seed}: {[n for n,_ in shots]}',flush=True)
             while len(received)<len(shots):
-                if (docs/'capture-error.json').exists():raise RuntimeError((docs/'capture-error.json').read_text())
+                if (docs/'capture-error.json').exists():
+                    for diagnostic in docs.glob('capture-*.json'):shutil.copyfile(diagnostic,OUT/f'failed-{language}-{diagnostic.name}')
+                    raise RuntimeError((docs/'capture-error.json').read_text())
                 request=docs/'capture-request.json'
                 if request.exists():
                     shot=json.loads(request.read_text());name=shot['name'];assert name not in received
                     time.sleep(.15)
                     image=OUT/f'{language}-{name}.png'
-                    run('xcrun','simctl','io',device,'screenshot','--mask','ignored',str(image))
+                    shutil.copyfile(docs/f'capture-{name}.png',image)
                     frame=OUT/f'{language}-{name}-native.json';shutil.copyfile(docs/f'capture-{name}.json',frame)
                     shutil.copyfile(docs/f'capture-{name}-timing.json',OUT/f'{language}-{name}-timing.json')
+                    print(f'Captured {language}/{name}: '+(OUT/f'{language}-{name}-timing.json').read_text(),flush=True)
+                    run('node','capture/action-verify.cjs',str(OUT),language,name)
                     meta['captures'].append(dict(language=language,name=name,seed=seed,step=shot['step'],file=image.name,sha256=hashlib.sha256(image.read_bytes()).hexdigest(),nativeFrame=frame.name))
                     received.add(name);request.unlink()
                     if len(received)<len(shots):(docs/'capture-resume').touch()
