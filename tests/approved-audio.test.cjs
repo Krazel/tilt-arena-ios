@@ -3,20 +3,21 @@ const {ClassicGame}=require('../native-ios/Resources/classic-core.js');
 const resources=path.join(__dirname,'../native-ios/Resources');
 const catalog=JSON.parse(fs.readFileSync(path.join(resources,'audio-approved.json')));
 const modulePromise=import('../play/sound.js');
-function harness(GameSound){let time=0;const players={};const sound=new GameSound(catalog,file=>{const p={currentTime:0,paused:true,plays:0,pause(){this.paused=true},play(){this.paused=false;this.plays++;return Promise.resolve()},addEventListener(name,fn){this[name]=fn}};players[file]=p;return p},()=>time);return{sound,players,advance:()=>{time+=1},p:name=>players[catalog.assets[name].file]};}
+function harness(GameSound,random=()=>0){let time=0;const players={};const sound=new GameSound(catalog,file=>{const p={currentTime:0,paused:true,plays:0,pause(){this.paused=true},play(){this.paused=false;this.plays++;return Promise.resolve()},addEventListener(name,fn){this[name]=fn}};players[file]=p;return p},()=>time,random);return{sound,players,advance:()=>{time+=1},p:name=>players[catalog.assets[name].file]};}
 test('only selected files ship, with verified hashes, credits and half-second charges',()=>{
  const proposals=new Set(Object.values(catalog.assets).map(a=>a.proposal));
- assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','click-A','vortex-A','lightning-A','burn-A','boomerang-A','shatter-A','shatter-B','bounce-B',...['pickup','hit','nuke','frost','wave','missiles','bubble','spikes','laser'].map(n=>'original-v058-'+n)].sort());
+ assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','click-A','lightning-A','boomerang-A','bounce-B',...['pickup','hit','nuke','laser'].map(n=>'original-v058-'+n),...['frost-C','wave-B','missiles-A','vortex-B','burn-A','bubble-B','spikes-B','shatter-C'].map(n=>'2026-09-28/'+n)].sort());
  for(const [name,a] of Object.entries(catalog.assets)){
   const b=fs.readFileSync(path.join(resources,a.file));assert.equal(crypto.createHash('sha256').update(b).digest('hex'),a.sha256);
   if(name.endsWith('-charge')){assert.equal(b.readUInt32LE(40)/(b.readUInt32LE(24)*2),.5);}
+  for(const variant of a.pitchVariants||[]){assert.equal(name,'bubble');assert(Math.abs(variant.cents)<=40);assert.equal(crypto.createHash('sha256').update(fs.readFileSync(path.join(resources,variant.file))).digest('hex'),variant.sha256);}
  }
  const credits=fs.readFileSync(path.join(resources,'Audio-Credits.txt'),'utf8');assert.match(credits,/PeriTune/);assert.match(credits,/spookymodem/);assert.match(credits,/creativecommons.org\/licenses\/by\/3.0/);
 });
 test('real power events include the newly requested effects at their actual activation',async()=>{
  const {soundCues}=await modulePromise;
  for(const power of ['nuke','missiles','frost','bubble','spikes']){const game=new ClassicGame(7,{spawning:false});game.activate(power);assert.deepEqual(soundCues(game.snapshot().events),['pickup',power]);}
- const wave=new ClassicGame(7,{spawning:false});wave.activate('wave');assert.deepEqual(soundCues(wave.events),['pickup']);for(let i=0;i<60;i++)wave.advance(1/120);assert.deepEqual(soundCues(wave.events),['wave']);
+ const wave=new ClassicGame(7,{spawning:false});wave.activate('wave');assert.deepEqual(soundCues(wave.events),['pickup','wave-charge']);for(let i=0;i<60;i++)wave.advance(1/120);assert.deepEqual(soundCues(wave.events),['wave']);
  for(const power of ['burn','boomerang']){
   const game=new ClassicGame(7,{spawning:false});game.activate(power);assert.deepEqual(soundCues(game.snapshot().events),['pickup',power+'-charge']);
   const cues=[];for(let i=0;i<61;i++)cues.push(...soundCues(game.advance(1/120).events));assert.equal(cues.filter(c=>c===power+'-launch').length,1);

@@ -11,25 +11,45 @@ https://peritune.com/blog/2021/08/17/kengeki/
 https://peritune.com/blog/2022/12/23/conjurer/
 https://peritune.com/blog/2019/04/10/oboro2/
 
-Torch Fire Spell / Waving Torch by spookymodem
-https://opengameart.org/content/torch-fire-spell
-CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
-Changes: trimmed, leveled, faded; derived 0.5-second reversed charge; split charge and release.
+SOUND EFFECTS — selected September 2026
 
-Other sound effects (CC0):
-Kenney — Interface Sounds, Impact Sounds, RPG Audio
-https://kenney.nl/assets/interface-sounds
+Kenney
 https://kenney.nl/assets/impact-sounds
-https://kenney.nl/assets/rpg-audio
-rubberduck — 50 CC0 Sci-Fi SFX
-https://opengameart.org/content/50-cc0-sci-fi-sfx
-IgnasD — Ice breaking/shattering
-https://opengameart.org/content/ice-breakingshattering
-Augmentality (Brandon Morris), submitted by HaelDB — Spell sounds
+CC0
+
+Krazel Games
+Original synthesis: scripts/refresh-audio-v058.cjs
+Original project audio
+
+Kenney
+https://kenney.nl/assets/sci-fi-sounds
+CC0
+
+Augmentality (Brandon Morris)
 https://opengameart.org/content/spell-sounds
+CC0
+
+Iwan qubodup Gabovitch
+https://opengameart.org/content/ice-electricity-magic
+CC-BY 3.0
+
+artisticdude
+https://opengameart.org/content/fire-evil-spell
+CC-BY 3.0
+
+Kenney
+https://kenney.nl/assets/rpg-audio
+CC0
+
+spookymodem
+https://opengameart.org/content/magic-missiles
+CC-BY 3.0
+
+rubberduck
+https://opengameart.org/content/80-cc0-rpg-sfx
+CC0
+
+CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
 CC0: https://creativecommons.org/publicdomain/zero/1.0/
-Changes: trimming, volume adjustment and short fades; derived boomerang charge.
-
-No endorsement by the original authors is implied.
-
-Original synthesized effects — Krazel Games: orb pickup, enemy hit, explosion, ice, wave, missiles, shield, spikes, laser.
+Changes: trimmed, leveled, faded; 0.5-second derived charge and split release where applicable.
+Shield: small resampled pitch variants. No endorsement by the original authors is implied.

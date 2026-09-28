@@ -1,7 +1,15 @@
 import AVFoundation
 
 struct ApprovedAudio: Decodable {
-    struct Asset: Decodable { let file: String; let volume: Float }
+    struct PitchVariant: Decodable { let file: String; let cents: Int }
+    struct Asset: Decodable {
+        let file: String
+        let volume: Float
+        let pitchVariants: [PitchVariant]?
+        init(file: String, volume: Float, pitchVariants: [PitchVariant]? = nil) {
+            self.file = file; self.volume = volume; self.pitchVariants = pitchVariants
+        }
+    }
     let menu: String
     let playlist: [String]
     let assets: [String: Asset]
@@ -21,6 +29,7 @@ enum AudioCuePolicy {
                 result.append("pickup")
                 if event.power == "burn" { result.append("burn-charge") }
                 if event.power == "boomerang" { result.append("boomerang-charge") }
+                if event.power == "wave" { result.append("wave-charge") }
                 if let power = event.power, ["missiles", "bubble", "spikes"].contains(power) { result.append(power) }
             case "blast": if event.power == "nuke" { result.append("nuke") }
             case "freeze": result.append("frost")
@@ -57,6 +66,10 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     enum Mode { case menu, game, paused, off }
     private let catalog: ApprovedAudio?
     private var players: [String: AudioPlayback] = [:]
+    private var pitchKeys: [String: [String]] = [:]
+    private var lastPitch: [String: Int] = [:]
+    private let random: () -> Double
+    private let now: () -> Double
     private let makePlayer: (ApprovedAudio.Asset) -> AudioPlayback?
     private let activateSession: () throws -> Void
     private let deactivateSession: () -> Void
@@ -91,10 +104,13 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
              try session.setActive(true)
          }, deactivateSession: @escaping () -> Void = {
              try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
-         }, notifications: NotificationCenter = .default) {
+         }, notifications: NotificationCenter = .default,
+         random: @escaping () -> Double = { Double.random(in: 0..<1) },
+         now: @escaping () -> Double = { ProcessInfo.processInfo.systemUptime }) {
         self.catalog = catalog; self.makePlayer = makePlayer
         self.activateSession = activateSession; self.deactivateSession = deactivateSession
         self.notifications = notifications
+        self.random = random; self.now = now
         super.init()
         rebuildPlayers()
         observe(AVAudioSession.interruptionNotification) { [weak self] note in
@@ -127,12 +143,22 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     }
     private func rebuildPlayers() {
         let position = players[currentMusic ?? ""]?.currentTime ?? 0
-        players.values.forEach { $0.stop() }; players.removeAll()
+        players.values.forEach { $0.stop() }; players.removeAll(); pitchKeys.removeAll()
         for (name, asset) in catalog?.assets ?? [:] {
             guard let player = makePlayer(asset) else { continue }
             player.volume = asset.volume; (player as? AVAudioPlayer)?.delegate = self
             player.numberOfLoops = ["music-menu", "vortex", "laser"].contains(name) ? -1 : 0
             _ = player.prepareToPlay(); players[name] = player
+            if let variants = asset.pitchVariants, !variants.isEmpty, !name.hasPrefix("music") {
+                var keys = [name]
+                for (index, variant) in variants.enumerated() {
+                    guard let pitched = makePlayer(.init(file: variant.file, volume: asset.volume)) else { continue }
+                    let key = "\(name)#pitch\(index)"
+                    pitched.volume = asset.volume; pitched.numberOfLoops = 0
+                    _ = pitched.prepareToPlay(); players[key] = pitched; keys.append(key)
+                }
+                pitchKeys[name] = keys
+            }
         }
         players[currentMusic ?? ""]?.currentTime = position
     }
@@ -215,19 +241,30 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         lastFrameTime = frame.time
         laserRemaining = frame.state == "running" ? frame.player.laserRemaining : 0
         vortexWanted = frame.fields.contains { $0.kind == "vortex" && $0.remaining > 0 }
-        let now = ProcessInfo.processInfo.systemUptime
+        let now = self.now()
         if now - lastHealthCheck >= 1 { lastHealthCheck = now; refreshMusic() }
         refreshVortex()
         for cue in AudioCuePolicy.cues(events: frame.events, boomerangCharging: frame.player.boomerangCharging) { play(cue) }
     }
     private func play(_ cue: String) {
         guard audible, cue == "ui" || mode == .game else { return }
-        let now = ProcessInfo.processInfo.systemUptime
+        let now = self.now()
         let interval = cue == "hit" || cue == "shatter" ? 0.07 : cue == "bounce" ? 0.05 : 0.015
         guard now - (lastCue[cue] ?? -100) >= interval else { return }; lastCue[cue] = now
         var name = cue
         if cue == "shatter" { name = shatterIndex % 2 == 0 ? "shatter-a" : "shatter-b"; shatterIndex += 1 }
         if cue.hasSuffix("-launch") { players[cue.replacingOccurrences(of: "-launch", with: "-charge")]?.stop() }
+        if cue == "wave" { players["wave-charge"]?.stop() }
+        if let keys = pitchKeys[name], keys.count > 1 {
+            let previous = lastPitch[name]
+            let count = keys.count - (previous == nil ? 0 : 1)
+            var index = min(count - 1, max(0, Int(random() * Double(count))))
+            if let previous, index >= previous { index += 1 }
+            lastPitch[name] = index
+            // Preserve the single-voice policy when retriggering the shield.
+            for key in keys { players[key]?.stop() }
+            name = keys[index]
+        }
         players[name]?.currentTime = 0; playPlayer(name)
     }
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {

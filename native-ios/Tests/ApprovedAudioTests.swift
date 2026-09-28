@@ -10,7 +10,7 @@ final class ApprovedAudioTests: XCTestCase {
     }
     func testAllApprovedResourcesDecodeOnIOSAndChargesMatchSimulation() throws {
         let catalog = try ApprovedAudio.load()
-        XCTAssertEqual(catalog.assets.count, 23)
+        XCTAssertEqual(catalog.assets.count, 24)
         XCTAssertEqual(catalog.playlist, ["music-a", "music-b", "music-c"])
         XCTAssertEqual(catalog.menu, "music-menu")
         for (name, asset) in catalog.assets {
@@ -20,6 +20,13 @@ final class ApprovedAudioTests: XCTestCase {
             XCTAssertGreaterThan(player.duration, 0)
             if name.hasSuffix("-charge") { XCTAssertEqual(player.duration, 0.5, accuracy: 0.001) }
             if name.hasPrefix("music") { XCTAssertGreaterThan(player.duration, 60) }
+            for variant in asset.pitchVariants ?? [] {
+                XCTAssertEqual(name, "bubble"); XCTAssertLessThanOrEqual(abs(variant.cents), 40)
+                let file = variant.file as NSString
+                let url = try XCTUnwrap(Bundle.main.url(forResource: file.deletingPathExtension, withExtension: file.pathExtension))
+                let pitched = try AVAudioPlayer(contentsOf: url)
+                XCTAssertEqual(pitched.duration, player.duration, accuracy: player.duration * 0.024)
+            }
         }
         XCTAssertNotNil(Bundle.main.url(forResource: "Audio-Credits", withExtension: "txt"))
         for name in ["classic-loop", "death", "hit", "pickup"] { XCTAssertNil(Bundle.main.url(forResource: name, withExtension: "wav")) }
@@ -27,7 +34,7 @@ final class ApprovedAudioTests: XCTestCase {
     func testRejectedAndUnreviewedEventsStaySilent() {
         let silent = ["death", "combo", "warning", "blast", "lightning"]
         XCTAssertEqual(AudioCuePolicy.cues(events: silent.map { event($0) }, boomerangCharging: false), [])
-        for power in ["nuke", "wave", "frost", "laser"] {
+        for power in ["nuke", "frost", "laser"] {
             XCTAssertEqual(AudioCuePolicy.cues(events: [event("pickup", power: power)], boomerangCharging: false), ["pickup"])
         }
         for power in ["missiles", "bubble", "spikes"] {
@@ -36,6 +43,7 @@ final class ApprovedAudioTests: XCTestCase {
         XCTAssertEqual(AudioCuePolicy.cues(events: [event("blast", power: "nuke"), event("freeze"), event("wave")], boomerangCharging: false), ["nuke", "frost", "wave"])
     }
     func testChargeLaunchCatchAndFrozenKillRouting() {
+        XCTAssertEqual(AudioCuePolicy.cues(events: [event("pickup", power: "wave")], boomerangCharging: false), ["pickup", "wave-charge"])
         XCTAssertEqual(AudioCuePolicy.cues(events: [event("pickup", power: "burn"), event("kill")], boomerangCharging: false), ["pickup", "burn-charge", "hit"])
         XCTAssertEqual(AudioCuePolicy.cues(events: [event("burnLaunch"), event("boomerangLaunch")], boomerangCharging: false), ["burn-launch", "boomerang-launch"])
         XCTAssertEqual(AudioCuePolicy.cues(events: [event("kill", frozen: true)], boomerangCharging: false), ["shatter"])

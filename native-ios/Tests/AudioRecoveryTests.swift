@@ -14,6 +14,31 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testShieldPitchDoesNotRepeatAndResumesTheSameVoiceWithoutTouchingMusic() throws {
+        let catalog = try ApprovedAudio.load(), base = try ClassicBridge().create(seed: 11, spawning: false)
+        var players: [String: FakePlayback] = [:], clock: Double = 0, random: Double = 0
+        let sound = ClassicSound(catalog: catalog, makePlayer: { a in let p=FakePlayback();players[a.file]=p;return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter(), random: { random }, now: { clock })
+        let bubble = try XCTUnwrap(catalog.assets["bubble"])
+        let files = [bubble.file] + (bubble.pitchVariants ?? []).map(\.file)
+        let event = ClassicFrame.Event(kind: "pickup", x: nil, y: nil, radius: nil, angle: nil, toX: nil, toY: nil, color: nil, power: "bubble", value: nil, bonus: nil)
+        sound.startRun(); players["audio-music-a.mp3"]?.currentTime = 42
+        var selected: [String] = []
+        for value in [0.0, 0.0, 0.999, 0.999, 0.5, 0.5] {
+            clock += 1; random = value
+            let frame = ClassicFrame(state: base.state, mode: base.mode, time: clock, score: base.score, combo: base.combo, comboBase: base.comboBase, pendingBonus: base.pendingBonus, bestCombo: base.bestCombo, kills: base.kills, comboRemaining: base.comboRemaining, player: base.player, beam: base.beam, enemies: base.enemies, pickups: base.pickups, projectiles: base.projectiles, fields: base.fields, events: [event])
+            sound.consume(frame)
+            let active = files.filter { players[$0]?.isPlaying == true }
+            XCTAssertEqual(active.count, 1)
+            let file = try XCTUnwrap(active.first); selected.append(file)
+            XCTAssertEqual(players[file]?.volume, bubble.volume)
+        }
+        for index in 1..<selected.count { XCTAssertNotEqual(selected[index], selected[index-1]) }
+        let voice = try XCTUnwrap(players[selected.last!]); voice.currentTime = 0.2
+        sound.pause(); XCTAssertFalse(voice.isPlaying); sound.playMusic()
+        XCTAssertTrue(voice.isPlaying); XCTAssertEqual(voice.currentTime, 0.2)
+        XCTAssertEqual(players["audio-music-a.mp3"]?.currentTime, 42)
+        sound.setMuted(true); XCTAssertTrue(files.allSatisfy { players[$0]?.isPlaying == false })
+    }
     func testInterruptionAndMissingEndRecoverWithoutRestartingRun() throws {
         let nc = NotificationCenter(), catalog = try ApprovedAudio.load()
         var players: [String: FakePlayback] = [:], activations = 0
