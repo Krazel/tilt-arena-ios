@@ -47,8 +47,7 @@ final class GameSession: ObservableObject {
     @Published var theme = VisualTheme.read()
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
     @Published var hasCustom = UserDefaults.standard.object(forKey: "classic.neutralY") != nil
-    private var custom = TiltProfile(screenX: UserDefaults.standard.double(forKey: "classic.neutralX"),
-                                     screenY: UserDefaults.standard.double(forKey: "classic.neutralY"))
+    private var custom = TiltProfile.saved(defaults: .standard)
     var activeProfile: TiltProfile { posture == .custom ? custom : .preset(posture) }
     let scene = ClassicScene()
     init() {
@@ -56,7 +55,7 @@ final class GameSession: ObservableObject {
         if ProcessInfo.processInfo.arguments.contains("--theme-classic-qa") { theme = .classic }
         if ProcessInfo.processInfo.arguments.contains("--theme-ink-qa") { theme = .inkTide }
         if ProcessInfo.processInfo.arguments.contains("--fresh-controls-qa") {
-            for key in ["classic.posture", "classic.postureRevision", "classic.neutralX", "classic.neutralY"] {
+            for key in ["classic.posture", "classic.postureRevision", "classic.neutralX", "classic.neutralY", "classic.neutralZ"] {
                 UserDefaults.standard.removeObject(forKey: key)
             }
             posture = .custom; hasCustom = false
@@ -93,8 +92,7 @@ final class GameSession: ObservableObject {
     }
     func saveCustom(_ profile: TiltProfile) {
         custom = profile; hasCustom = true; posture = .custom
-        UserDefaults.standard.set(profile.screenX, forKey: "classic.neutralX")
-        UserDefaults.standard.set(profile.screenY, forKey: "classic.neutralY")
+        profile.save(defaults: .standard)
         UserDefaults.standard.set(posture.rawValue, forKey: "classic.posture")
     }
     func fail(_ error: Error) {

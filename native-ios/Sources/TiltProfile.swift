@@ -24,8 +24,25 @@ enum TiltPosture: String, CaseIterable, Identifiable {
 
 /// Neutral is stored in screen axes, so a 180° turn does not require a new sample.
 struct TiltProfile {
-    var screenX = 0.0
-    var screenY = -sin(Double.pi / 4)
+    var screenX: Double
+    var screenY: Double
+    // Screen-normal gravity, positive face up and negative face down.
+    var screenZ: Double
+    init(screenX: Double = 0, screenY: Double = -sin(Double.pi / 4), screenZ: Double? = nil) {
+        self.screenX = screenX; self.screenY = screenY
+        // Older saved profiles only contain X/Y and assumed face up.
+        self.screenZ = screenZ ?? sqrt(max(0, 1 - screenX * screenX - screenY * screenY))
+    }
+    static func saved(defaults: UserDefaults) -> TiltProfile {
+        TiltProfile(screenX: defaults.double(forKey: "classic.neutralX"),
+                    screenY: defaults.double(forKey: "classic.neutralY"),
+                    screenZ: defaults.object(forKey: "classic.neutralZ") as? Double)
+    }
+    func save(defaults: UserDefaults) {
+        defaults.set(screenX, forKey: "classic.neutralX")
+        defaults.set(screenY, forKey: "classic.neutralY")
+        defaults.set(screenZ, forKey: "classic.neutralZ")
+    }
     static func preset(_ posture: TiltPosture) -> TiltProfile {
         TiltProfile(screenX: 0, screenY: -sin((posture == .inclined ? 0.0 : 45.0) * .pi / 180))
     }
@@ -45,16 +62,21 @@ struct TiltProfile {
         guard [x, y, z, timestamp, now].allSatisfy({ $0.isFinite }),
               now >= timestamp, now - timestamp <= 0.25,
               (0.8...1.2).contains(sqrt(x*x + y*y + z*z)) else { return nil }
-        return sampled(x: x, y: y, landscapeRight: landscapeRight)
+        let length = sqrt(x*x + y*y + z*z)
+        var profile = sampled(x: x / length, y: y / length, landscapeRight: landscapeRight)
+        profile.screenZ = -z / length
+        return profile
     }
     func deviceNeutral(landscapeRight: Bool) -> (x: Double, y: Double) {
         landscapeRight ? (screenY, -screenX) : (-screenY, screenX)
     }
     func motionDelta(x: Double, y: Double, z: Double, landscapeRight: Bool) -> (x: Double, y: Double) {
         let sx = landscapeRight ? -y : y, sy = landscapeRight ? x : -x
-        let neutralZ = sqrt(max(0, 1 - screenX * screenX - screenY * screenY))
-        let pitch = atan2(sy, -z) - atan2(screenY, neutralZ)
-        let roll = atan2(sx, hypot(sy, z)) - atan2(screenX, hypot(screenY, neutralZ))
+        // Mirror the normal for a face-down neutral so lowering the same screen
+        // edge keeps the same direction. Keep this sign fixed until recalibration.
+        let facing = screenZ < 0 ? -1.0 : 1.0
+        let pitch = atan2(sy, -z * facing) - atan2(screenY, screenZ * facing)
+        let roll = atan2(sx, hypot(sy, z)) - atan2(screenX, hypot(screenY, screenZ))
         let dx = sin(roll), dy = sin(pitch)
         return landscapeRight ? (dy, -dx) : (-dy, dx)
     }

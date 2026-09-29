@@ -16,6 +16,11 @@ device_id=$(xcrun simctl list devices available -j | python3 -c 'import sys,json
 trap 'xcrun xcresulttool export attachments --path ../artifacts/ios-verification/TiltArena-tests.xcresult --output-path ../artifacts/ios-verification/screenshots || true' EXIT
 
 test_selection=(-only-testing:TiltArenaTests -only-testing:TiltArenaUITests)
+if [ "${QA_CONTROLS_ONLY:-false}" = "true" ]; then
+  test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testDefaultCalibrationAndSavedResume
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration)
+fi
 if [ "${QA_AUDIO_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
     -only-testing:TiltArenaUITests/ClassicFlowTests/testApprovedAudioCreditsAreAccessibleInBothLanguages

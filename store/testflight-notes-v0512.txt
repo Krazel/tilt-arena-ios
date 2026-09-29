@@ -1,0 +1,3 @@
+La calibración permite sostener el iPhone encima de ti con la pantalla mirando hacia abajo. Colócalo en horizontal en tu postura cómoda y pulsa Calibrar una vez. La postura completa se recuerda al volver a abrir el juego.
+
+Comprueba que la flecha permanece quieta en el ángulo calibrado y se mueve hacia el borde de la pantalla que bajas. Prueba ambas orientaciones horizontales, pausa/reanudación y volver a abrir la app. Se conservan los modos boca arriba, la jugabilidad y el audio.

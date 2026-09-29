@@ -1,0 +1,3 @@
+Calibration now supports holding the iPhone above you with its screen facing down. Hold it in your preferred landscape posture and tap Calibrate once. The full posture is remembered when you reopen the game.
+
+Please check that the arrow stays still at the calibrated angle and moves toward the screen edge you lower. Test both landscape orientations, pause/resume and reopening the app. Existing face-up presets, gameplay and audio are unchanged.
