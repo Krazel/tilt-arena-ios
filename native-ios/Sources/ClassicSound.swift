@@ -100,7 +100,9 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
              return try? AVAudioPlayer(contentsOf: url)
          }, activateSession: @escaping () throws -> Void = {
              let session = AVAudioSession.sharedInstance()
-             try session.setCategory(.ambient, mode: .default)
+             // Game audio ignores the Ring/Silent switch; the in-game mute still applies.
+             // Preserve ambient's ability to coexist with audio from other apps.
+             try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
              try session.setActive(true)
          }, deactivateSession: @escaping () -> Void = {
              try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)

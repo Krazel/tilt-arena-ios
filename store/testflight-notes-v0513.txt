@@ -1,0 +1,3 @@
+La música y los efectos suenan aunque el iPhone tenga activado el modo silencio. Siguen respetando el botón Sonido del juego y el volumen multimedia del iPhone. El audio se pausa al dejar la app en segundo plano.
+
+Prueba la música, los poderes y los botones con el modo silencio activado y desactivado; después, el botón Sonido y volver a la app. Las canciones, efectos y sus volúmenes se conservan.

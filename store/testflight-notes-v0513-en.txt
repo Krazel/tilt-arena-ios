@@ -1,0 +1,3 @@
+Music and sound effects now play even when the iPhone's Silent Mode is enabled. The game's Sound toggle and the iPhone's media volume still control what you hear. Audio pauses when the app goes into the background.
+
+Please try music, power sounds and menu buttons with Silent Mode on and off, then test the in-game Sound toggle and returning to the app. Music tracks, effects and their volumes are unchanged.

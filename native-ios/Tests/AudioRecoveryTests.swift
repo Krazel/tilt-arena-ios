@@ -14,6 +14,40 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testRealSessionUsesPlaybackAndKeepsInGameMuteAndSuspension() throws {
+        let session = AVAudioSession.sharedInstance()
+        let previousCategory = session.category, previousMode = session.mode, previousOptions = session.categoryOptions
+        let nc = NotificationCenter()
+        var players: [String: FakePlayback] = [:]
+        let sound = ClassicSound(makePlayer: { asset in
+            let p = FakePlayback(); players[asset.file] = p; return p
+        }, notifications: nc)
+        defer {
+            sound.setSuspended(true)
+            try? session.setCategory(previousCategory, mode: previousMode, options: previousOptions)
+        }
+        try session.setCategory(.ambient, mode: .default)
+        sound.setMode(.menu)
+        XCTAssertEqual(session.category, .playback)
+        XCTAssertEqual(session.mode, .default)
+        XCTAssertTrue(session.categoryOptions.contains(.mixWithOthers))
+        XCTAssertTrue(try XCTUnwrap(players["audio-music-menu.mp3"]).isPlaying)
+        sound.uiClick()
+        XCTAssertTrue(try XCTUnwrap(players["audio-ui.wav"]).isPlaying)
+        sound.setMuted(true)
+        XCTAssertTrue(players.values.allSatisfy { !$0.isPlaying })
+        sound.setSuspended(true); sound.setSuspended(false)
+        XCTAssertTrue(players.values.allSatisfy { !$0.isPlaying })
+        sound.setMuted(false)
+        XCTAssertTrue(try XCTUnwrap(players["audio-music-menu.mp3"]).isPlaying)
+        // Re-activation after a route change must restore the same silent-switch policy.
+        try session.setCategory(.ambient, mode: .default)
+        nc.post(name: AVAudioSession.routeChangeNotification, object: nil)
+        XCTAssertEqual(session.category, .playback)
+        XCTAssertTrue(session.categoryOptions.contains(.mixWithOthers))
+        sound.setSuspended(true)
+        XCTAssertTrue(players.values.allSatisfy { !$0.isPlaying })
+    }
     func testShieldPitchDoesNotRepeatAndResumesTheSameVoiceWithoutTouchingMusic() throws {
         let catalog = try ApprovedAudio.load(), base = try ClassicBridge().create(seed: 11, spawning: false)
         var players: [String: FakePlayback] = [:], clock: Double = 0, random: Double = 0
