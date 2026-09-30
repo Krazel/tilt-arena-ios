@@ -82,12 +82,12 @@
         this.spawnPickup(true); this.spawnPickup(true);
         const hard=this.mode==='hard';
         if(hard){
-          const initial=Math.floor(this.rng.range(4,7));
+          const initial=Math.floor(this.rng.range(6,9));
           for(let i=0;i<initial;i++)this.spawnOpening();
-          this.openingRemaining=Math.floor(this.rng.range(18,23))-this.enemies.length;
+          this.openingRemaining=Math.floor(this.rng.range(24,29))-this.enemies.length;
         }
         this.spawnAt=this.rng.range(hard?0.5:0.6,hard?0.9:1.4);
-        this.patternAt=this.rng.range(hard?20:14,hard?26:20);
+        this.patternAt=this.rng.range(hard?17:14,hard?23:20);
         this.pickupAt=this.rng.range(2.2,3.4);
         this.events=[]; // Initial orbs are already visible; no transient spawn replay.
       }
@@ -247,7 +247,7 @@
     }
     addEnemy(x,y,options) {
       const o=options||{};
-      const e=Object.assign({id:++this.id,x,y,speed:this.mode==='hard'?62+Math.min(54,this.time*0.28):49+Math.min(60,this.time*0.23),
+      const e=Object.assign({id:++this.id,x,y,speed:this.mode==='hard'?68+Math.min(54,this.time*0.30):49+Math.min(60,this.time*0.23),
         activeAt:this.time+TUNING.telegraph,frozenUntil:0,vx:0,vy:0,formationUntil:0,dead:false},o);
       this.enemies.push(e);return e;
     }
@@ -329,12 +329,12 @@
           if(distance({x,y},this.player)>TUNING.spawnClearance) this.addEnemy(x,y);
         }
         // Preserve the average pressure, but stagger individual entries with jitter.
-        this.spawnAt=this.time+Math.max(0.48,(1.6-pressure*0.006)*(hard?0.95:1))/n*this.rng.range(0.65,1.35);
+        this.spawnAt=this.time+Math.max(0.48,(1.6-pressure*0.006)*(hard?0.78:1))/n*this.rng.range(0.65,1.35);
         }
       }
       if(this.time>=this.patternAt) {
         this.spawnPattern(this.rng.pick(['line','arrow','ring']));
-        this.patternAt=this.time+Math.max(5,(12-pressure*0.025)*(hard?0.85:1))*this.rng.range(0.8,1.2);
+        this.patternAt=this.time+Math.max(5,(12-pressure*0.025)*(hard?0.75:1))*this.rng.range(0.8,1.2);
       }
       if(this.time>=this.pickupAt) {
         this.spawnPickup();

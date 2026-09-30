@@ -1,0 +1,3 @@
+Hard mode has more pressure: 6–8 scattered enemies at the start, more staggered arrivals, shorter gaps between formations and slightly faster pursuers. The opening remains random, with a clear area around the arrow and no immediate formation.
+
+Classic mode, player speed, hitbox and power availability are unchanged. Please try a few Hard runs and check that it feels noticeably more challenging without an unfair opening.

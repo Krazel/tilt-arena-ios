@@ -1,0 +1,3 @@
+El modo difícil tiene más presión: 6–8 enemigos dispersos al empezar, más incorporaciones escalonadas, menos descanso entre formaciones y perseguidores un poco más rápidos. El inicio sigue siendo aleatorio, con espacio alrededor de la flecha y sin una formación inmediata.
+
+El modo clásico, la velocidad del protagonista, su hitbox y la disponibilidad de poderes se conservan. Prueba varias partidas difíciles para comprobar que se nota más exigente sin un comienzo injusto.
