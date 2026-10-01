@@ -1,0 +1,3 @@
+Six sound effects updated to your choices: explosion A, ice C, blue wave B, homing missiles B, black hole A and boomerang C.
+Music, shield (including its slight pitch variation), charge sounds and all unselected effects are unchanged. No changes to gameplay, difficulty, controls or visuals.
+Please check the new sounds on iPhone, including Silent mode, pause/resume and returning from the background.

@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -40,12 +40,12 @@
     "vortex": {
       "file": "audio-vortex.wav",
       "volume": 0.2,
-      "proposal": "2026-09-28/vortex-B",
-      "author": "Kenney",
-      "source": "https://kenney.nl/assets/sci-fi-sounds",
-      "license": "CC0",
-      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Fragmento de hasta 4 s.",
-      "sha256": "dca4bf86481cb86f94b6f7c6ea5499889b571c5e4a9f3872f6cfa38b95258e4c"
+      "proposal": "2026-10-01/vortex-A",
+      "author": "Little Robot Sound Factory",
+      "source": "https://opengameart.org/content/sci-fi-sound-effects-library",
+      "license": "CC-BY 3.0",
+      "changes": "Fragmento original desde 0 s, hasta 4.00 s; ajuste de volumen y fundido de 5 ms en el corte. Sin cambiar timbre ni velocidad.",
+      "sha256": "93ecbbe453849a15c670ebda94bf1b6ddde7b8110df06560a5db4d55a25019a0"
     },
     "lightning": {
       "file": "audio-lightning.wav",
@@ -120,12 +120,12 @@
     "boomerang-launch": {
       "file": "audio-boomerang-launch.wav",
       "volume": 0.6,
-      "proposal": "boomerang-A",
-      "author": "Kenney",
-      "source": "https://kenney.nl/assets/rpg-audio",
+      "proposal": "2026-10-01/boomerang-C",
+      "author": "artisticdude",
+      "source": "https://opengameart.org/content/swishes-sound-pack",
       "license": "CC0",
-      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Montaje: carga invertida de 0,5 s y lanzamiento. Split at 0.5 s to synchronize with simulation charge/release events.",
-      "sha256": "a499db5505d4aae76dd801854fefc03d9ff78a432e4a8de0435039ad6f9d6e1d"
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "sha256": "121b72369d381519d71f3abaea443d3e046134211d497369806ad13551211936"
     },
     "music-menu": {
       "file": "audio-music-menu.mp3",
@@ -170,42 +170,42 @@
     "nuke": {
       "file": "audio-nuke.wav",
       "volume": 0.7,
-      "proposal": "original-v058-nuke",
-      "author": "Krazel Games",
-      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
-      "license": "Original project audio",
-      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
-      "sha256": "1ca4a3f2f794c06679cc123f2a020fd3145b44b8d5edced0b626f5fc3f38b909"
+      "proposal": "2026-10-01/nuke-A",
+      "author": "Michel Baradari",
+      "source": "https://opengameart.org/content/2-high-quality-explosions",
+      "license": "CC-BY 3.0",
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "sha256": "a18f5858be2c404234697d1fc1a56d57ff1a515076626007074e0b1b16530aca"
     },
     "frost": {
       "file": "audio-frost.wav",
       "volume": 0.65,
-      "proposal": "2026-09-28/frost-C",
-      "author": "Iwan qubodup Gabovitch",
-      "source": "https://opengameart.org/content/ice-electricity-magic",
-      "license": "CC-BY 3.0",
-      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos.",
-      "sha256": "c3b028aa2cded5e21e74726884e6e1fb2898931c4d0b388c01c3ddec14c64d02"
+      "proposal": "2026-10-01/frost-C",
+      "author": "lentikula",
+      "source": "https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx",
+      "license": "CC0",
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "sha256": "b29490c01444f74cad3d9b6444c504b07a8bc0c473c795327f3b32f83360a77e"
     },
     "wave": {
       "file": "audio-wave.wav",
       "volume": 0.6,
-      "proposal": "2026-09-28/wave-B",
-      "author": "Kenney",
-      "source": "https://kenney.nl/assets/sci-fi-sounds",
-      "license": "CC0",
-      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
-      "sha256": "30f7eae7dfd64a37106ed67296e1f934727bf6573c220e966a605f714611a59d"
+      "proposal": "2026-10-01/wave-B",
+      "author": "Little Robot Sound Factory",
+      "source": "https://opengameart.org/content/sci-fi-sound-effects-library",
+      "license": "CC-BY 3.0",
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "sha256": "167065c5d8d1aa8b1731d9026201a11f635f0843d7175278b116de84bf3f42f5"
     },
     "missiles": {
       "file": "audio-missiles.wav",
       "volume": 0.55,
-      "proposal": "2026-09-28/missiles-A",
-      "author": "spookymodem",
-      "source": "https://opengameart.org/content/magic-missiles",
+      "proposal": "2026-10-01/missiles-B",
+      "author": "Michel Baradari",
+      "source": "https://opengameart.org/content/4-projectile-launches",
       "license": "CC-BY 3.0",
-      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Fragmento de hasta 2.0 s.",
-      "sha256": "d8fce7e86d519365e0db01d7b27a7f40eeb8b53a48094851d63683d1f2bcf75b"
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "sha256": "83d43a0a7c8c8b9dc528028eef33cf552b2f62c0ff9a3a30c363888abf49d2b7"
     },
     "bubble": {
       "file": "audio-bubble.wav",

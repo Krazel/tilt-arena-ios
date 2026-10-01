@@ -11,7 +11,7 @@ https://peritune.com/blog/2021/08/17/kengeki/
 https://peritune.com/blog/2022/12/23/conjurer/
 https://peritune.com/blog/2019/04/10/oboro2/
 
-SOUND EFFECTS — selected September 2026
+SOUND EFFECTS — selections September/October 2026
 
 Kenney
 https://kenney.nl/assets/impact-sounds
@@ -21,9 +21,9 @@ Krazel Games
 Original synthesis: scripts/refresh-audio-v058.cjs
 Original project audio
 
-Kenney
-https://kenney.nl/assets/sci-fi-sounds
-CC0
+Little Robot Sound Factory
+https://opengameart.org/content/sci-fi-sound-effects-library
+CC-BY 3.0
 
 Augmentality (Brandon Morris)
 https://opengameart.org/content/spell-sounds
@@ -41,9 +41,25 @@ Kenney
 https://kenney.nl/assets/rpg-audio
 CC0
 
-spookymodem
-https://opengameart.org/content/magic-missiles
+artisticdude
+https://opengameart.org/content/swishes-sound-pack
+CC0
+
+Michel Baradari
+https://opengameart.org/content/2-high-quality-explosions
 CC-BY 3.0
+
+lentikula
+https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx
+CC0
+
+Michel Baradari
+https://opengameart.org/content/4-projectile-launches
+CC-BY 3.0
+
+Kenney
+https://kenney.nl/assets/sci-fi-sounds
+CC0
 
 rubberduck
 https://opengameart.org/content/80-cc0-rpg-sfx
@@ -51,5 +67,6 @@ CC0
 
 CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
 CC0: https://creativecommons.org/publicdomain/zero/1.0/
-Changes: trimmed, leveled, faded; 0.5-second derived charge and split release where applicable.
-Shield: small resampled pitch variants. No endorsement by the original authors is implied.
+October selections: WAV conversion and uniform volume adjustment; black hole uses a 4-second excerpt with a 5 ms fade at the cut. Original timbre and speed retained.
+Earlier selections: trimmed, leveled, faded; half-second derived charges and split releases where indicated in audio-approved.json.
+Shield: retained small resampled pitch variants. No endorsement by the original authors is implied.
