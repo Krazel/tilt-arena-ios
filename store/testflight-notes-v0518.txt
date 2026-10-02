@@ -1,0 +1,1 @@
+Opción para recalibrar automáticamente al jugar o reanudar, guardada entre sesiones. Desactivada por defecto. Reanudar conserva la partida. Sonido del rayo eléctrico acortado; música y demás sonidos sin cambios.

@@ -126,7 +126,7 @@ struct InkMenuView: View {
     }
 
     private var settings: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: paused ? 6 : 8) {
             posture
             HStack {
                 Text(GameText.sound).foregroundColor(muted)
@@ -135,6 +135,7 @@ struct InkMenuView: View {
                     Label(game.muted ? GameText.disabled : GameText.enabled, systemImage: game.muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                 }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
             }.font(.system(size: 11.5)).frame(height: 27)
+            AutoCalibrationButton(game: game, accent: Color(InkArt.gold), foreground: paper)
             modes
             if paused {
                 paintedButton(GameText.recalibrate, id: "recalibrate", size: 14) { game.scene.calibrate(restart: false) }.frame(height: 38)
@@ -198,6 +199,27 @@ struct InkMenuView: View {
                 Text(title).font(.system(size: size, weight: .semibold)).lineLimit(1).minimumScaleFactor(0.8)
             }.contentShape(Rectangle())
         }.accessibilityIdentifier(id)
+    }
+}
+
+/// A separate setting, shared by the two menus and available during pause.
+struct AutoCalibrationButton: View {
+    @ObservedObject var game: GameSession
+    let accent: Color
+    let foreground: Color
+    var body: some View {
+        Button { game.toggleAutoCalibration() } label: {
+            HStack(spacing: 8) {
+                Text(GameText.autoCalibrate).font(.system(size: 11.5))
+                    .multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Image(systemName: game.autoCalibrate ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 23)).foregroundColor(game.autoCalibrate ? accent : foreground.opacity(0.6))
+            }.foregroundColor(foreground).frame(minHeight: 36).contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityIdentifier("auto-calibrate")
+            .accessibilityLabel(GameText.autoCalibrate)
+            .accessibilityValue(game.autoCalibrate ? GameText.enabled : GameText.disabled)
+            .accessibilityAddTraits(game.autoCalibrate ? .isSelected : [])
     }
 }
 

@@ -74,3 +74,5 @@ CC0: https://creativecommons.org/publicdomain/zero/1.0/
 October selections: WAV conversion and uniform volume adjustment; black hole uses a 4-second excerpt with a 5 ms fade at the cut. Original timbre and speed retained.
 Earlier selections: trimmed, leveled, faded; half-second derived charges and split releases where indicated in audio-approved.json.
 Shield: retained small resampled pitch variants. No endorsement by the original authors is implied.
+
+Lightning duration update (0.5.18): same approved Augmentality recording, shortened to 0.65 s with a 10 ms fade. All music and other effects unchanged.

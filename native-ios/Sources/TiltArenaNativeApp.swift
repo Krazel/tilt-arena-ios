@@ -46,19 +46,25 @@ final class GameSession: ObservableObject {
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
     @Published var theme = VisualTheme.read()
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
+    @Published var autoCalibrate = false {
+        didSet { preferences.set(autoCalibrate, forKey: "classic.autoCalibrate") }
+    }
+    private let preferences: UserDefaults
     @Published var hasCustom = UserDefaults.standard.object(forKey: "classic.neutralY") != nil
     private var custom = TiltProfile.saved(defaults: .standard)
     var activeProfile: TiltProfile { posture == .custom ? custom : .preset(posture) }
     let scene = ClassicScene()
-    init() {
+    init(defaults: UserDefaults = .standard) {
+        preferences = defaults
+        autoCalibrate = defaults.bool(forKey: "classic.autoCalibrate")
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--theme-classic-qa") { theme = .classic }
         if ProcessInfo.processInfo.arguments.contains("--theme-ink-qa") { theme = .inkTide }
         if ProcessInfo.processInfo.arguments.contains("--fresh-controls-qa") {
-            for key in ["classic.posture", "classic.postureRevision", "classic.neutralX", "classic.neutralY", "classic.neutralZ"] {
+            for key in ["classic.posture", "classic.postureRevision", "classic.neutralX", "classic.neutralY", "classic.neutralZ", "classic.autoCalibrate"] {
                 UserDefaults.standard.removeObject(forKey: key)
             }
-            posture = .custom; hasCustom = false
+            posture = .custom; hasCustom = false; autoCalibrate = false
         }
         #endif
         scene.session = self
@@ -67,6 +73,7 @@ final class GameSession: ObservableObject {
         UserDefaults.standard.set(2, forKey: "classic.postureRevision")
     }
     func uiClick() { scene.sound.uiClick() }
+    func toggleAutoCalibration() { uiClick(); autoCalibrate.toggle() }
     func toggleSound() {
         muted.toggle(); scene.sound.setMuted(muted)
         if !muted { uiClick() }
@@ -278,6 +285,7 @@ struct GameView: View {
                         .font(.system(size: 12)).frame(minHeight: 36)
                 }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
             }
+            AutoCalibrationButton(game: game, accent: accent, foreground: paper)
             VStack(alignment: .leading, spacing: 4) {
                 Text(GameText.gameMode).font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
                 if game.phase == .menu {

@@ -192,6 +192,41 @@ final class ClassicFlowTests: XCTestCase {
             app.terminate()
         }
     }
+    func testAutomaticCalibrationSettingInBothLanguagesAndThemes() {
+        for (language, theme) in [("en", "ink"), ("es", "ink"), ("en", "classic"), ("es", "classic")] {
+            let app = XCUIApplication()
+            app.launchArguments = ["--ui-testing", "--fresh-controls-qa", "--theme-\(theme)-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
+            app.launch()
+            let option = app.buttons["auto-calibrate"]
+            XCTAssertTrue(option.waitForExistence(timeout: 10))
+            XCTAssertFalse(option.isSelected)
+            XCTAssertEqual(option.label, language == "es" ? "Recalibrar al jugar o reanudar" : "Recalibrate on play or resume")
+            app.buttons["posture-inclined"].tap()
+            option.tap(); XCTAssertTrue(option.isSelected)
+            capture("auto-calibration-menu-\(theme)-\(language)", app: app)
+            app.buttons["play"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            pauseByTouch(app)
+            XCTAssertTrue(app.buttons["posture-custom"].isSelected)
+            // Force a different preset: Resume must capture a fresh custom posture.
+            app.buttons["posture-inclined"].tap(); app.buttons["resume"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            pauseByTouch(app)
+            XCTAssertTrue(app.buttons["posture-custom"].isSelected)
+            capture("auto-calibration-pause-\(theme)-\(language)", app: app)
+            app.terminate()
+            app.launchArguments.removeAll { $0 == "--fresh-controls-qa" }; app.launch()
+            XCTAssertTrue(option.waitForExistence(timeout: 10)); XCTAssertTrue(option.isSelected)
+            option.tap(); XCTAssertFalse(option.isSelected)
+            app.buttons["posture-inclined"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            pauseByTouch(app); XCTAssertTrue(app.buttons["posture-inclined"].isSelected)
+            app.buttons["resume"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            pauseByTouch(app); XCTAssertTrue(app.buttons["posture-inclined"].isSelected)
+            app.terminate()
+        }
+    }
     func testDefaultCalibrationAndSavedResume() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--fresh-controls-qa", "--theme-classic-qa"]; app.launch()

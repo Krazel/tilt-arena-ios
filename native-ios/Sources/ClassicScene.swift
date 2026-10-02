@@ -148,7 +148,7 @@ final class ClassicScene: SKScene {
         #if targetEnvironment(simulator)
         session?.saveCustom(.preset(.normal))
         #endif
-        play(restart: restartAfterCalibration)
+        beginPlay(restart: restartAfterCalibration)
     }
     func cancelCalibration() {
         guard session?.phase == .calibrating else { return }
@@ -157,7 +157,13 @@ final class ClassicScene: SKScene {
     }
     func play(restart: Bool) {
         guard let session = session else { return }
-        if session.posture == .custom && !session.hasCustom { calibrate(restart: restart); return }
+        if session.autoCalibrate || (session.posture == .custom && !session.hasCustom) {
+            calibrate(restart: restart); return
+        }
+        beginPlay(restart: restart)
+    }
+    private func beginPlay(restart: Bool) {
+        guard let session = session else { return }
         startMotion()
         calibratedOrientation = view?.window?.windowScene?.interfaceOrientation ?? .landscapeLeft
         sensorGraceUntil = ProcessInfo.processInfo.systemUptime + 1

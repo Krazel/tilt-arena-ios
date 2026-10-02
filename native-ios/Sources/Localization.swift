@@ -36,6 +36,7 @@ enum GameText {
     static var arenaWaits: String { text("The arena is waiting.", "La arena te espera.") }
     static var resume: String { text("Resume", "Reanudar") }
     static var recalibrate: String { text("Recalibrate", "Recalibrar") }
+    static var autoCalibrate: String { text("Recalibrate on play or resume", "Recalibrar al jugar o reanudar") }
     static var finishRun: String { text("End run", "Terminar partida") }
     static var restartRun: String { text("Restart run", "Reiniciar partida") }
     static var savedResultMessage: String { text("Your best score has been saved.", "Tu récord se ha guardado.") }

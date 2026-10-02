@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -50,12 +50,12 @@
     "lightning": {
       "file": "audio-lightning.wav",
       "volume": 0.55,
-      "proposal": "lightning-A",
+      "proposal": "2026-10-02/lightning-short",
       "author": "Augmentality (Brandon Morris)",
       "source": "https://opengameart.org/content/spell-sounds",
       "license": "CC0",
-      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Fragmento inicial de hasta 1.6 s.",
-      "sha256": "2398abb1a1937d5d924252ac45d3b651876aaffd3671d569b8aec6fa7800e171"
+      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Fragmento inicial de hasta 1.6 s. Cola acortada a 0,65 s; fundido final de 10 ms. Ataque, timbre y volumen conservados.",
+      "sha256": "195caa7f136da76817e1caddd1ad0a8f0ccee6eb7230dc4c331d16f6ad27e1d8"
     },
     "shatter-a": {
       "file": "audio-shatter-a.wav",

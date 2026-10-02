@@ -175,6 +175,7 @@ final class ClassicBridgeTests: XCTestCase {
     }
     @MainActor func testSceneFillsWideDisplayAndResumeDoesNotCalibrate() {
         let session = GameSession()
+        session.autoCalibrate = false
         session.posture = .normal
         session.scene.configureViewport(viewSize: CGSize(width: 874, height: 402), insets: .zero)
         XCTAssertEqual(session.scene.size.width / session.scene.size.height, 874.0 / 402, accuracy: 0.0001)
@@ -192,6 +193,39 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertEqual(session.scene.frameForVerification?.score, pausedFrame?.score)
         session.scene.cancelCalibration()
         XCTAssertEqual(session.phase, .running, "A completed calibration cannot be cancelled later")
+        session.scene.halt()
+    }
+    @MainActor func testOptionalAutomaticCalibrationPersistsAndRecapturesWithoutRestarting() {
+        let suite = "TiltArenaAutoCalibrationTests.\(UUID().uuidString)"
+        let defaults = UserDefaults(suiteName: suite)!
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let session = GameSession(defaults: defaults)
+        XCTAssertFalse(session.autoCalibrate)
+        session.posture = .inclined
+        session.scene.play(restart: true)
+        XCTAssertEqual(session.posture, .inclined, "Disabled automatic calibration preserves the selected preset")
+        session.scene.pauseRun()
+        session.autoCalibrate = true
+        XCTAssertTrue(GameSession(defaults: defaults).autoCalibrate, "The option must survive relaunch")
+        let paused = session.scene.frameForVerification
+        session.scene.play(restart: false)
+        XCTAssertEqual(session.phase, .running)
+        XCTAssertEqual(session.posture, .custom)
+        XCTAssertTrue(session.hasCustom)
+        XCTAssertEqual(session.activeProfile.screenY, TiltProfile.preset(.normal).screenY)
+        XCTAssertEqual(session.scene.frameForVerification?.time, paused?.time)
+        XCTAssertEqual(session.scene.frameForVerification?.score, paused?.score)
+        session.scene.pauseRun()
+        session.posture = .inclined
+        session.scene.play(restart: true)
+        XCTAssertEqual(session.posture, .custom, "Play must capture again even after a saved calibration")
+        XCTAssertEqual(session.scene.frameForVerification?.time, 0)
+        session.scene.pauseRun()
+        session.autoCalibrate = false
+        session.posture = .inclined
+        session.scene.play(restart: false)
+        XCTAssertEqual(session.posture, .inclined)
+        XCTAssertFalse(GameSession(defaults: defaults).autoCalibrate)
         session.scene.halt()
     }
     func testImmediateCalibrationUsesFreshGravityInEitherLandscapeDirection() throws {

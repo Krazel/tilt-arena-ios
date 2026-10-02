@@ -1,0 +1,1 @@
+Optional automatic recalibration on Play or Resume, saved between sessions and off by default. Resume keeps the current run. Shorter chain-lightning sound; music and all other sounds unchanged.

@@ -18,11 +18,15 @@ trap 'xcrun xcresulttool export attachments --path ../artifacts/ios-verification
 test_selection=(-only-testing:TiltArenaTests -only-testing:TiltArenaUITests)
 if [ "${QA_CONTROLS_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testAutomaticCalibrationSettingInBothLanguagesAndThemes
     -only-testing:TiltArenaUITests/ClassicFlowTests/testDefaultCalibrationAndSavedResume
     -only-testing:TiltArenaUITests/ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration)
 fi
 if [ "${QA_AUDIO_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testAutomaticCalibrationSettingInBothLanguagesAndThemes
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testDefaultCalibrationAndSavedResume
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testPosturesPlayPauseAndResumeWithoutCalibration
     -only-testing:TiltArenaUITests/ClassicFlowTests/testApprovedAudioCreditsAreAccessibleInBothLanguages
     -only-testing:TiltArenaUITests/ClassicFlowTests/testRestartAfterDeathIsImmediateInBothThemes)
 fi
