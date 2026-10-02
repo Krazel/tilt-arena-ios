@@ -28,6 +28,8 @@ final class ClassicScene: SKScene {
     private let bestLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
     private let scoreRibbon = HUDRibbon(), bestRibbon = HUDRibbon(), comboRibbon = HUDRibbon()
     private let comboBar = SKSpriteNode(color: UIColor(hex: "d5f56b"), size: CGSize(width: 240, height: 3))
+    private let normalDotColor = UIColor(hex: "ff5658"), frozenDotColor = UIColor(hex: "70dce9")
+    private var lastHUDValues: [Int] = []
     private var gameFrame: ClassicFrame?, lastTime: Double?
     private var calibratedOrientation: UIInterfaceOrientation = .unknown
     private var calibrationStart = 0.0
@@ -41,6 +43,10 @@ final class ClassicScene: SKScene {
     private var trailTime = 0.0
     #if DEBUG
     var frameForVerification: ClassicFrame? { gameFrame }
+    func renderForVerification(_ frame: ClassicFrame) { render(frame) }
+    var liveObjectCountForVerification: Int { objects.count }
+    var transientRootCountForVerification: Int { effects.children.count }
+    func enemyNodeForVerification(_ id: Int) -> SKNode? { objects["d\(id)"] }
     private let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
     private let lingeringAreasPreview = ProcessInfo.processInfo.arguments.contains("--lingering-areas-qa")
     private let visualPreview = ProcessInfo.processInfo.arguments.contains("--visual-qa")
@@ -73,7 +79,7 @@ final class ClassicScene: SKScene {
         world.zPosition = 0; effects.zPosition = 5; hud.zPosition = 10
         world.addChild(arenaDecoration); world.addChild(laser)
         vfx.theme = theme
-        drawArena(); drawPlayer(); drawHUD(); startMotion()
+        drawArena(); drawPlayer(); drawHUD(); preparePowerTextures(); startMotion()
         configureViewport(viewSize: view.bounds.size, insets: view.window?.safeAreaInsets ?? .zero)
     }
     func configureViewport(viewSize: CGSize, insets: UIEdgeInsets) {
@@ -318,7 +324,7 @@ final class ClassicScene: SKScene {
         for node in objects.values { node.removeFromParent() }
         objects.removeAll(); textures.removeAll(); textureAnchors.removeAll()
         effects.removeAllChildren(); arrow.removeAllChildren(); arrow.removeFromParent()
-        hud.removeAllChildren(); drawArena(); drawPlayer(); drawHUD()
+        hud.removeAllChildren(); drawArena(); drawPlayer(); drawHUD(); preparePowerTextures()
         if let frame = gameFrame { render(frame, replayEvents: false) }
     }
     private func drawArena() {
@@ -352,6 +358,7 @@ final class ClassicScene: SKScene {
         bubble.isHidden=true;spikes.isHidden=true
     }
     private func drawHUD() {
+        lastHUDValues = []
         for ribbon in [scoreRibbon, bestRibbon, comboRibbon] { hud.addChild(ribbon); ribbon.isHidden = theme != .inkTide }
         for label in [scoreLabel,comboLabel,bestLabel] {
             label.fontColor=theme == .inkTide ? InkArt.paper : UIColor(hex:"f0f5d9");label.fontSize=22
@@ -383,16 +390,14 @@ final class ClassicScene: SKScene {
         if let node = objects[key] { return node }
         let node: SKNode
         if style == "dot" { node = ClassicArt.node(style: style, theme: theme) }
+        else if theme == .inkTide && ["waveShot", "fire", "vortexField", "boomerangShot"].contains(style) {
+            // These are already authored atlas sprites. Offscreen rendering
+            // on their first appearance adds work without changing the image.
+            node = InkArt.node(style: style)
+        }
         else if let cached = textures[style] { node=SKSpriteNode(texture:cached) }
         else {
-            let shape=ClassicArt.node(style:style, theme: theme)
-            let bounds = shape.calculateAccumulatedFrame()
-            if let rendered=view?.texture(from:shape) {
-                textures[style]=rendered;node=SKSpriteNode(texture:rendered)
-                // Preserve authored origin for asymmetric crescents and flame tongues.
-                textureAnchors[style]=CGPoint(x: -bounds.minX/bounds.width, y: -bounds.minY/bounds.height)
-            }
-            else { node=shape }
+            node = prepareTexture(style: style)
         }
         if let sprite = node as? SKSpriteNode, let anchor = textureAnchors[style] { sprite.anchorPoint = anchor }
         node.name=style;world.addChild(node);objects[key]=node
@@ -400,15 +405,37 @@ final class ClassicScene: SKScene {
         if style == "boomerangShot" { vfx.attachBoomerangTrail(to: node, reduced: reduceEffects) }
         return node
     }
+    private func prepareTexture(style: String) -> SKNode {
+        if let cached = textures[style] { return SKSpriteNode(texture: cached) }
+        let shape = ClassicArt.node(style: style, theme: theme)
+        let bounds = shape.calculateAccumulatedFrame()
+        guard let rendered = view?.texture(from: shape) else { return shape }
+        textures[style] = rendered
+        textureAnchors[style] = CGPoint(x: -bounds.minX / bounds.width, y: -bounds.minY / bounds.height)
+        return SKSpriteNode(texture: rendered)
+    }
+    private func preparePowerTextures() {
+        // Prepare cropped/masked orb art while the menu is displayed, rather
+        // than paying its first offscreen render during a running frame.
+        for power in ClassicArt.colors.keys { _ = prepareTexture(style: power) }
+        if theme == .classic {
+            for style in ["missileShot", "waveShot", "fire", "vortexField", "boomerangShot"] {
+                _ = prepareTexture(style: style)
+            }
+        }
+    }
     private func render(_ frame: ClassicFrame, replayEvents: Bool = true) {
         var alive=Set<String>()
         for dot in frame.enemies {
             let key="d\(dot.id)";alive.insert(key)
             let node=sprite(key:key,style:"dot"), previous = objects[key]?.position ?? .zero
-            (node as? SKShapeNode)?.fillColor = UIColor(hex: dot.frozen ? "70dce9" : "ff5658")
+            if let shape = node as? SKShapeNode {
+                let color = dot.frozen ? frozenDotColor : normalDotColor
+                if !shape.fillColor.isEqual(color) { shape.fillColor = color }
+            }
             if theme == .inkTide, let ink = node as? SKSpriteNode {
-                ink.texture = dot.frozen ? InkArt.frozenDot : InkArt.cells[1]
-                ink.colorBlendFactor = 0
+                let texture = dot.frozen ? InkArt.frozenDot : InkArt.cells[1]
+                if ink.texture !== texture { ink.texture = texture }
                 let dx = dot.x - Double(previous.x), dy = dot.y - Double(previous.y)
                 if ink.userData == nil { ink.zRotation = atan2(frame.player.y - dot.y, frame.player.x - dot.x) }
                 else if !dot.frozen && hypot(dx, dy) > 0.05 { ink.zRotation = atan2(dy, dx) }
@@ -466,9 +493,17 @@ final class ClassicScene: SKScene {
         fireCharge.update(progress: frame.player.fireChargeProgress, active: frame.player.fireChargeUntil > frame.time, reduced: reduceEffects)
         waveCharge.update(progress: frame.player.waveChargeProgress, active: frame.player.waveCharging, reduced: reduceEffects)
         boomerangCharge.update(progress: frame.player.boomerangChargeProgress, active: frame.player.boomerangCharging, reduced: reduceEffects)
-        scoreLabel.text="\(frame.score.formatted())"
-        comboLabel.text=frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : GameText.chainPowers
-        comboBar.xScale=frame.comboRemaining;bestLabel.text="\(GameText.best)  \(max(session?.best ?? 0,frame.score).formatted())"
+        let hudValues = [frame.score, frame.comboBase, frame.combo, max(session?.best ?? 0,frame.score)]
+        if hudValues != lastHUDValues {
+            let score = frame.score.formatted()
+            let combo = frame.combo>0 ? "COMBO  \(frame.comboBase) × \(frame.combo)" : GameText.chainPowers
+            let best = "\(GameText.best)  \(hudValues[3].formatted())"
+            if scoreLabel.text != score { scoreLabel.text = score }
+            if comboLabel.text != combo { comboLabel.text = combo }
+            if bestLabel.text != best { bestLabel.text = best }
+            lastHUDValues = hudValues
+        }
+        comboBar.xScale=frame.comboRemaining
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--hud-large-qa") {
             scoreLabel.text = 9_007_199_254_740_991.formatted()

@@ -21,5 +21,7 @@ test('laser expires at 1.2 seconds across frame rates; pause preserves it and re
 });
 test('laser is in weighted random pool without replacing rare powers',()=>{
  const g=fresh(),counts={};for(let i=0;i<50000;i++){const p=g.choosePower();counts[p]=(counts[p]||0)+1;}
- assert(counts.laser>2000&&counts.laser<3600);assert(counts.spikes<counts.laser);assert(counts.nuke>counts.laser*2);
+ assert(counts.laser>1100&&counts.laser<1700);
+ for(const [power,count] of Object.entries(counts))if(power!=='laser')assert(count>counts.laser,power);
+ assert(counts.nuke>counts.laser*5);
 });

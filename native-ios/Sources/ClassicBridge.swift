@@ -94,6 +94,19 @@ final class ClassicBridge {
         try decode(call("resize", [left, right, bottom, top]))
     }
     #if DEBUG
+    func stressFrame(frozen: Bool = false, empty: Bool = false, kills: Int = 0) throws -> ClassicFrame {
+        let script = """
+        (function(){const g=new ClassicDiagnostics.ClassicGame(19,{spawning:false});
+          if(!\(empty ? "true" : "false"))for(let i=0;i<550;i++){
+            const a=i*2.39996,r=150+(i%10)*11;
+            g.addEnemy(480+Math.cos(a)*r,320+Math.sin(a)*r,{activeAt:0,speed:0,frozenUntil:\(frozen ? "5" : "0")});
+          }
+          for(let i=0;i<\(kills);i++)g.event('kill',{x:400+i,y:300,color:'#ff5658'});
+          return JSON.stringify(g.snapshot());})()
+        """
+        guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
     func laserFrame(left: Double, right: Double) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(58,{spawning:false});

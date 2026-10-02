@@ -293,7 +293,7 @@ test('fleeing is deterministic at all frame rates and chasing resumes after expi
 test('actual pickup spawns follow rarity with spikes rarest and bubble second rarest',()=>{
   const g=fresh();const counts=Object.fromEntries(POWERS.map(p=>[p,0]));
   for(let i=0;i<20000;i++){g.pickups=[];g.spawnPickup(true);counts[g.pickups[0].power]++;}
-  const expected={nuke:19,wave:19,frost:19,missiles:12,burn:5,vortex:5,lightning:7,bubble:5,spikes:4,boomerang:5,laser:6};
+  const expected={nuke:19,wave:19,frost:19,missiles:12,burn:5,vortex:5,lightning:7,bubble:5,spikes:4,boomerang:5,laser:3};
   for(const p of POWERS)assert.ok(Math.abs(counts[p]/200-expected[p]/106*100)<1,`${p}: ${counts[p]/200}%`);
   assert.ok(counts.spikes<counts.bubble&&counts.bubble<counts.nuke&&counts.burn<counts.nuke);
   const subset=new ClassicGame(24,{spawning:false,powers:['spikes','bubble']});

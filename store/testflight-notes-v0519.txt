@@ -1,0 +1,4 @@
+El búmeran se puede recuperar y relanzar tres veces, con la misma carga de medio segundo y sus rebotes.
+El láser continuo hacia delante aparece menos. La dificultad de Difícil no cambia.
+El render nativo evita repetir textos del HUD y colores/texturas de enemigos; prepara las imágenes de poderes en el menú para reducir trabajo en su primera aparición.
+Comprueba la fluidez en tu iPhone con muchos enemigos y al activar poderes. Música y efectos aprobados intactos.

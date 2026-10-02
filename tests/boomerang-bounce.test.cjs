@@ -22,21 +22,25 @@ test('nearest enemy contact kills and reflects; enemies behind it and telegraphs
   assert.equal(g.kills,1);assert.equal(m.bounces,1);assert.equal(m.vx,-640);
 });
 
-test('intercepting earns exactly one charged relaunch with no pickup points, aimed at release',()=>{
+test('intercepting earns exactly three charged relaunches with no pickup points, aimed at each release',()=>{
   const [g,m]=launch();const score=g.score;
   Object.assign(m,{x:g.player.x+20,y:g.player.y,vx:-640,vy:0,travelled:200});
   run(g,1);assert.equal(g.projectiles.length,0);assert.equal(g.boomerangAt.length,1);
-  assert.equal(g.boomerangAt[0].relaunches,0);assert.equal(g.score,score);
-  g.player.angle=Math.PI/2;run(g,59);assert.equal(g.projectiles.length,0);
-  run(g,1);const second=g.projectiles[0];assert.ok(second);assert.equal(second.relaunches,0);
-  assert.ok(Math.abs(second.angle-Math.PI/2)<1e-8);
-  Object.assign(second,{x:g.player.x+20,y:g.player.y,vx:-640,vy:0,travelled:200});
-  run(g,1);assert.equal(g.projectiles.length,0);assert.equal(g.boomerangAt.length,0);
+  for(let remaining=2;remaining>=0;remaining--){
+    assert.equal(g.boomerangAt[0].relaunches,remaining);assert.equal(g.score,score);
+    const angle=(remaining+1)*Math.PI/3;g.player.angle=angle;
+    run(g,59);assert.equal(g.projectiles.length,0);
+    run(g,1);const next=g.projectiles[0];assert.ok(next);assert.equal(next.relaunches,remaining);
+    assert.ok(Math.abs(next.angle-angle)<1e-8);
+    Object.assign(next,{x:g.player.x+20,y:g.player.y,vx:-640,vy:0,travelled:200});
+    run(g,1);assert.equal(g.projectiles.length,0);
+  }
+  assert.equal(g.boomerangAt.length,0);
   run(g,120);assert.equal(g.projectiles.length,0);assert.equal(g.score,score);
 });
 
 test('launch cannot immediately catch itself, while a moving player can intercept later',()=>{
-  const [g,m]=launch();assert.equal(g.boomerangAt.length,0);assert.equal(m.relaunches,1);
+  const [g,m]=launch();assert.equal(g.boomerangAt.length,0);assert.equal(m.relaunches,3);
   Object.assign(m,{x:g.player.x+20,y:g.player.y,vx:-640,vy:0,travelled:0});run(g,1);
   assert.equal(m.dead,undefined);assert.equal(g.boomerangAt.length,0);
   Object.assign(m,{x:500,y:320,vx:0,vy:640,travelled:200});

@@ -14,14 +14,14 @@
     maxEnemies: 550, maxPickups: 5, pickupLife: 12, spawnClearance: 105, vortexPlayerPull: 300, vortexRadius: 140, vortexPlayerRadius: 300,
     lightningStartRadius: 220, lightningChainRadius: 90,
     blastDuration: 1.2, frostDuration: 2, frozenDuration: 4, pickupSpeed: 18, pickupSpin: 0.6,
-    boomerangCharge: 0.5, boomerangSpeed: 640, boomerangLife: 4.5, boomerangBounces: 6, maxBoomerangs: 3,
+    boomerangCharge: 0.5, boomerangSpeed: 640, boomerangLife: 4.5, boomerangBounces: 6, boomerangRecatches: 3, maxBoomerangs: 3,
     fireCharge: 0.5, fireDash: 0.45, fireRecovery: 0.5, fireSpeed: 1050, waveCharge: 0.5,
     laserDuration: 1.2, laserRange: 480, laserWidth: 12});
   const POWERS = ['nuke', 'wave', 'missiles', 'frost', 'bubble', 'spikes', 'vortex', 'lightning', 'burn', 'boomerang', 'laser'];
   const SCORING = Object.freeze({pickup:10,kill:10,comboFactor:6});
   // Relative weights: renormalized when diagnostics limit the available arsenal.
   const POWER_WEIGHTS = Object.freeze({nuke:19,wave:19,frost:19,missiles:12,
-    burn:5,vortex:5,lightning:7,bubble:5,spikes:4,boomerang:5,laser:6});
+    burn:5,vortex:5,lightning:7,bubble:5,spikes:4,boomerang:5,laser:3});
   const COLORS = {nuke:'#ffb52a',wave:'#ba71ee',missiles:'#f7e36b',frost:'#70dce9',
     bubble:'#7bde83',spikes:'#6c9ce8',vortex:'#ee77bc',lightning:'#eeefff',burn:'#ff784c',boomerang:'#ffc06a',laser:'#ed8f91'};
   function swept(a, b, c, radius) {
@@ -401,7 +401,7 @@
           occupied[0].dead=true;
           this.boomerangAt=this.boomerangAt.filter(c=>c.id!==occupied[0].id);
         }
-        this.boomerangAt.push({id:++this.id,at:this.time+TUNING.boomerangCharge,relaunches:1});
+        this.boomerangAt.push({id:++this.id,at:this.time+TUNING.boomerangCharge,relaunches:TUNING.boomerangRecatches});
         break;
       }
       case 'lightning': {
@@ -511,8 +511,8 @@
         if(!kind)break;
         if(kind==='catch') {
           m.dead=true;this.event('boomerangCatch',{x:m.x,y:m.y,color:COLORS.boomerang});
-          // One earned rethrow, not another pickup: no points or endless relay.
-          if(m.relaunches>0)this.boomerangAt.push({id:m.id,at:this.time+TUNING.boomerangCharge,relaunches:0});
+          // Three earned rethrows per original orb, without pickup points.
+          if(m.relaunches>0)this.boomerangAt.push({id:m.id,at:this.time+TUNING.boomerangCharge,relaunches:m.relaunches-1});
           break;
         }
         if(kind==='wall') {

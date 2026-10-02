@@ -1,0 +1,4 @@
+Boomerang can be caught and relaunched three times, with the same half-second charge and bouncing flight.
+The continuous forward laser appears less often. Hard difficulty is unchanged.
+Native rendering avoids repeated HUD text and enemy color/texture updates. Power textures are prepared in the menu to reduce first-use work.
+Please check smoothness on your iPhone during crowded fights and power activations. Music and approved sound effects are unchanged.

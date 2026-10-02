@@ -3,6 +3,41 @@ import SpriteKit
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    @MainActor func testLoadedNativeRenderingReusesDotsBoundsEffectsAndPreservesFrozenArt() throws {
+        let bridge = try ClassicBridge()
+        let view = SKView(frame: CGRect(x: 0, y: 0, width: 874, height: 402))
+        let scene = ClassicScene(); view.presentScene(scene)
+        for theme in VisualTheme.allCases {
+            scene.setTheme(theme)
+            let frame = try bridge.stressFrame()
+            scene.renderForVerification(frame)
+            XCTAssertEqual(scene.liveObjectCountForVerification, 550)
+            let first = scene.enemyNodeForVerification(frame.enemies[0].id)
+            var samples: [Double] = []
+            for _ in 0..<120 {
+                let start = ProcessInfo.processInfo.systemUptime
+                scene.renderForVerification(frame)
+                samples.append((ProcessInfo.processInfo.systemUptime - start) * 1000)
+                XCTAssertTrue(scene.enemyNodeForVerification(frame.enemies[0].id) === first)
+                XCTAssertEqual(scene.liveObjectCountForVerification, 550)
+            }
+            samples.sort()
+            print("NATIVE_RENDER_STRESS theme=\(theme.rawValue) dots=550 p95CPUms=\(samples[114]) maxCPUms=\(samples.last!) simulatorOnly=true GPUFPS=false")
+            let frozen = try bridge.stressFrame(frozen: true)
+            scene.renderForVerification(frozen)
+            if theme == .inkTide {
+                XCTAssertTrue((first as? SKSpriteNode)?.texture === InkArt.frozenDot)
+            } else {
+                XCTAssertEqual((first as? SKShapeNode)?.fillColor, UIColor(hex: "70dce9"))
+            }
+            scene.renderForVerification(frame)
+            if theme == .inkTide { XCTAssertTrue((first as? SKSpriteNode)?.texture === InkArt.cells[1]) }
+            let burst = try bridge.stressFrame(empty: true, kills: 550)
+            for _ in 0..<60 { scene.renderForVerification(burst) }
+            XCTAssertEqual(scene.liveObjectCountForVerification, 0)
+            XCTAssertLessThanOrEqual(scene.transientRootCountForVerification, 40)
+        }
+    }
     func testHardModeBridgeOpeningAndSeparateRecords() throws {
         let bridge = try ClassicBridge()
         let hard = try bridge.create(seed: 17, mode: .hard)
