@@ -4,6 +4,7 @@ export function soundCues(events, boomerangCharging=false) {
   for(const e of events){
     if(e.kind==='pickup'){cues.push('pickup');if(['burn','boomerang','wave'].includes(e.power))cues.push(e.power+'-charge');if(['missiles','bubble','spikes'].includes(e.power))cues.push(e.power);}
     if(e.kind==='blast'&&e.power==='nuke')cues.push('nuke');
+    if(e.kind==='blast'&&e.power==='bubble')cues.push('bubble-break');
     if(e.kind==='freeze')cues.push('frost');
     if(e.kind==='wave')cues.push('wave');
     if(e.kind==='kill')cues.push(e.frozen||e.color==='#70dce9'?'shatter':'hit');

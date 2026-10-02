@@ -10,7 +10,7 @@ final class ApprovedAudioTests: XCTestCase {
     }
     func testAllApprovedResourcesDecodeOnIOSAndChargesMatchSimulation() throws {
         let catalog = try ApprovedAudio.load()
-        XCTAssertEqual(catalog.assets.count, 24)
+        XCTAssertEqual(catalog.assets.count, 25)
         XCTAssertEqual(catalog.playlist, ["music-a", "music-b", "music-c"])
         XCTAssertEqual(catalog.menu, "music-menu")
         for (name, asset) in catalog.assets {

@@ -1,0 +1,1 @@
+El escudo reproduce el sonido de rotura mágica de cristal elegido cuando un enemigo lo rompe. Se conservan el sonido de activarlo, sus pequeñas variaciones de tono, la música y todos los demás efectos.

@@ -31,7 +31,9 @@ enum AudioCuePolicy {
                 if event.power == "boomerang" { result.append("boomerang-charge") }
                 if event.power == "wave" { result.append("wave-charge") }
                 if let power = event.power, ["missiles", "bubble", "spikes"].contains(power) { result.append(power) }
-            case "blast": if event.power == "nuke" { result.append("nuke") }
+            case "blast":
+                if event.power == "nuke" { result.append("nuke") }
+                if event.power == "bubble" { result.append("bubble-break") }
             case "freeze": result.append("frost")
             case "wave": result.append("wave")
             case "kill": result.append(event.frozen == true || event.color == "#70dce9" ? "shatter" : "hit")

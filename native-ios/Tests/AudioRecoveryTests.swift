@@ -15,6 +15,36 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testShieldCollisionPlaysSelectedBreakOnceAndRespectsMuteAndPause() throws {
+        let source = try String(contentsOf: XCTUnwrap(Bundle.main.url(forResource: "classic-core", withExtension: "js")), encoding: .utf8)
+        let context = try XCTUnwrap(JSContext())
+        context.evaluateScript("globalThis.CLASSIC_DIAGNOSTICS = true;")
+        context.evaluateScript(source)
+        let json = try XCTUnwrap(context.evaluateScript("""
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.activate('bubble');const frames=[g.snapshot()];g.events=[];
+          g.addEnemy(g.player.x+30,g.player.y,{speed:0,activeAt:0});
+          g.advance(1/120);frames.push(g.snapshot());g.advance(1/120);frames.push(g.snapshot());
+          return JSON.stringify(frames);})()
+        """)?.toString())
+        XCTAssertNil(context.exception, context.exception?.toString() ?? "")
+        let frames = try JSONDecoder().decode([ClassicFrame].self, from: Data(json.utf8))
+        XCTAssertTrue(frames[0].player.bubble); XCTAssertFalse(frames[1].player.bubble)
+        XCTAssertEqual(frames[1].events.filter { $0.kind == "blast" && $0.power == "bubble" }.count, 1)
+        var players: [String: FakePlayback] = [:]
+        let sound = ClassicSound(makePlayer: { a in let p=FakePlayback();players[a.file]=p;return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter())
+        let breakVoice = try XCTUnwrap(players["audio-bubble-break.wav"])
+        sound.startRun(); sound.consume(frames[0]); XCTAssertEqual(breakVoice.plays, 0)
+        sound.consume(frames[1]); XCTAssertEqual(breakVoice.plays, 1)
+        XCTAssertEqual(breakVoice.volume, 0.65, accuracy: 0.0001)
+        sound.consume(frames[1]); sound.consume(frames[2]); XCTAssertEqual(breakVoice.plays, 1)
+        breakVoice.currentTime=0.4; sound.pause(); XCTAssertFalse(breakVoice.isPlaying)
+        sound.playMusic(); XCTAssertTrue(breakVoice.isPlaying); XCTAssertEqual(breakVoice.currentTime, 0.4)
+        sound.setMuted(true); XCTAssertFalse(breakVoice.isPlaying)
+        sound.startRun(); sound.consume(frames[0]); sound.consume(frames[1])
+        XCTAssertEqual(breakVoice.plays, 2) // Resume above; the muted collision adds no play.
+        XCTAssertFalse(breakVoice.isPlaying)
+    }
     func testVortexFromRealSimulationStartsImmediatelyAndHonorsPauseMuteAndExpiry() throws {
         let source = try String(contentsOf: XCTUnwrap(Bundle.main.url(forResource: "classic-core", withExtension: "js")), encoding: .utf8)
         let context = try XCTUnwrap(JSContext())

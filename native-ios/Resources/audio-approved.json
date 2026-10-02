@@ -268,6 +268,16 @@
       "license": "CC0",
       "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
       "sha256": "443b88ba5c8273c9e9d211f8add3cb4a5a9ef27c0bef7b882579c526d42edece"
+    },
+    "bubble-break": {
+      "file": "audio-bubble-break.wav",
+      "volume": 0.65,
+      "proposal": "2026-10-02-shield-magic/bubble-break-D",
+      "author": "lentikula",
+      "source": "https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx",
+      "license": "CC0",
+      "changes": "Grabación publicada completa. Solo conversión a WAV y ajuste uniforme de volumen; sin síntesis, montajes, recortes ni cambios de tono.",
+      "sha256": "b29490c01444f74cad3d9b6444c504b07a8bc0c473c795327f3b32f83360a77e"
     }
   },
   "silent": [

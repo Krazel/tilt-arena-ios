@@ -6,7 +6,7 @@ const modulePromise=import('../play/sound.js');
 function harness(GameSound,random=()=>0){let time=0;const players={};const sound=new GameSound(catalog,file=>{const p={currentTime:0,paused:true,plays:0,pause(){this.paused=true},play(){this.paused=false;this.plays++;return Promise.resolve()},addEventListener(name,fn){this[name]=fn}};players[file]=p;return p},()=>time,random);return{sound,players,advance:()=>{time+=1},p:name=>players[catalog.assets[name].file]};}
 test('only selected files ship, with verified hashes, credits and half-second charges',()=>{
  const proposals=new Set(Object.values(catalog.assets).map(a=>a.proposal));
- assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','click-A','2026-10-02/lightning-short','boomerang-A','bounce-B','original-v058-laser',...['wave-B','burn-A','bubble-B','spikes-B','shatter-C'].map(n=>'2026-09-28/'+n),...['frost-C','wave-B','missiles-B','vortex-A','boomerang-C'].map(n=>'2026-10-01/'+n),...['kill-A','nuke-B','pickup-A'].map(n=>'2026-10-02/'+n)].sort());
+ assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','click-A','2026-10-02/lightning-short','2026-10-02-shield-magic/bubble-break-D','boomerang-A','bounce-B','original-v058-laser',...['wave-B','burn-A','bubble-B','spikes-B','shatter-C'].map(n=>'2026-09-28/'+n),...['frost-C','wave-B','missiles-B','vortex-A','boomerang-C'].map(n=>'2026-10-01/'+n),...['kill-A','nuke-B','pickup-A'].map(n=>'2026-10-02/'+n)].sort());
  for(const [name,a] of Object.entries(catalog.assets)){
   const b=fs.readFileSync(path.join(resources,a.file));assert.equal(crypto.createHash('sha256').update(b).digest('hex'),a.sha256);
   if(name.endsWith('-charge')){assert.equal(b.readUInt32LE(40)/(b.readUInt32LE(24)*2),.5);}
@@ -27,6 +27,20 @@ test('real power events include the newly requested effects at their actual acti
 });
 test('frozen enemies killed by a weapon still use ice break audio',async()=>{
  const {soundCues}=await modulePromise;const game=new ClassicGame(7,{spawning:false});const e=game.addEnemy(510,320,{activeAt:0,frozenUntil:4});game.kill(e,'dot');assert.equal(game.events[0].frozen,true);assert.deepEqual(soundCues(game.events),['shatter']);
+});
+
+test('real shield collision plays its chosen break once, separately from activation',async()=>{
+ const {GameSound,soundCues}=await modulePromise;const h=harness(GameSound),s=h.sound;
+ s.setMuted(false);s.startRun();const g=new ClassicGame(17,{spawning:false});g.activate('bubble');
+ s.consume(g.snapshot());assert.equal(h.p('bubble-break').plays,0);
+ g.addEnemy(g.player.x+30,g.player.y,{speed:0,activeAt:0});const frame=g.advance(1/120);
+ assert.equal(frame.player.bubble,false);assert.equal(frame.state,'running');
+ assert.equal(soundCues(frame.events).filter(c=>c==='bubble-break').length,1);
+ s.consume(frame);s.consume(frame);s.consume(g.advance(1/120));assert.equal(h.p('bubble-break').plays,1);
+ h.p('bubble-break').currentTime=.4;s.setMode('paused');assert(h.p('bubble-break').paused);
+ s.setMode('game');assert(!h.p('bubble-break').paused);assert.equal(h.p('bubble-break').currentTime,.4);
+ s.setMuted(true);s.startRun();g.activate('bubble');g.addEnemy(g.player.x+30,g.player.y,{speed:0,activeAt:0});
+ s.consume(g.advance(1/120));assert.equal(h.p('bubble-break').plays,2);assert(h.p('bubble-break').paused);
 });
 test('sustained laser audio resumes through pause and stops exactly with the effect',async()=>{
  const {GameSound}=await modulePromise;const h=harness(GameSound),s=h.sound;s.setMuted(false);s.startRun();

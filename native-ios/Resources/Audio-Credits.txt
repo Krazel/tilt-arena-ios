@@ -76,3 +76,8 @@ Earlier selections: trimmed, leveled, faded; half-second derived charges and spl
 Shield: retained small resampled pitch variants. No endorsement by the original authors is implied.
 
 Lightning duration update (0.5.18): same approved Augmentality recording, shortened to 0.65 s with a 10 ms fade. All music and other effects unchanged.
+
+Shield break (October 2): lentikula — Ice Spell Impact 5.wav
+https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx
+CC0: https://creativecommons.org/publicdomain/zero/1.0/
+Complete recording; WAV conversion and uniform volume adjustment only.

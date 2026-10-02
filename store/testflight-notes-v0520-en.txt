@@ -1,0 +1,1 @@
+The shield now plays your selected magical crystal break sound when an enemy breaks it. The shield activation sound, its subtle pitch variations, music and all other sound effects remain unchanged.
