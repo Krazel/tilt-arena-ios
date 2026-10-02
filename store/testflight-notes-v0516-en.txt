@@ -1,0 +1,3 @@
+Black hole audio level increased from 20% to 70%, retaining the exact chosen recording. Its activation, pause/resume, mute, background recovery and expiration are checked against the real simulation.
+All other sounds, music, gameplay, difficulty and visuals are unchanged.
+Please check whether the black hole is audible on the iPhone speaker alongside music and other effects, including Silent mode. This still needs physical listening.

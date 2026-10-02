@@ -1,0 +1,3 @@
+Nivel del agujero negro aumentado del 20 % al 70 %, conservando la grabación exacta elegida. Activación, pausa/reanudación, mute, segundo plano y finalización comprobados con la simulación real.
+El resto de sonidos, música, jugabilidad, dificultad y visuales se conservan.
+Comprueba si el agujero negro se oye en el altavoz del iPhone junto con música y otros efectos, también en modo silencio. Falta esa escucha física.

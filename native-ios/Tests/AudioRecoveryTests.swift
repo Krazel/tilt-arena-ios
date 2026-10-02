@@ -1,5 +1,6 @@
 import XCTest
 import AVFoundation
+import JavaScriptCore
 @testable import TiltArena
 
 private final class FakePlayback: AudioPlayback {
@@ -14,6 +15,38 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testVortexFromRealSimulationStartsImmediatelyAndHonorsPauseMuteAndExpiry() throws {
+        let source = try String(contentsOf: XCTUnwrap(Bundle.main.url(forResource: "classic-core", withExtension: "js")), encoding: .utf8)
+        let context = try XCTUnwrap(JSContext())
+        context.evaluateScript(source)
+        let json = try XCTUnwrap(context.evaluateScript("""
+        (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
+          g.activate('vortex');const frames=[g.snapshot()];
+          for(let i=0;i<240;i++)g.advance(1/120);frames.push(g.snapshot());
+          for(let i=0;i<241;i++)g.advance(1/120);frames.push(g.snapshot());
+          return JSON.stringify(frames);})()
+        """)?.toString())
+        let frames = try JSONDecoder().decode([ClassicFrame].self, from: Data(json.utf8))
+        XCTAssertTrue(frames[0].fields.contains { $0.kind == "vortex" && $0.remaining > 0 })
+        XCTAssertTrue(frames[2].fields.isEmpty)
+        var players: [String: FakePlayback] = [:]
+        let sound = ClassicSound(makePlayer: { asset in let p=FakePlayback(); players[asset.file]=p; return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter())
+        sound.startRun(); sound.consume(frames[0])
+        let vortex = try XCTUnwrap(players["audio-vortex.wav"])
+        XCTAssertTrue(vortex.isPlaying); XCTAssertEqual(vortex.plays, 1)
+        XCTAssertGreaterThan(vortex.volume, try XCTUnwrap(players["audio-music-a.mp3"]).volume)
+        XCTAssertEqual(vortex.numberOfLoops, -1)
+        vortex.currentTime = 0.8
+        sound.pause(); XCTAssertFalse(vortex.isPlaying)
+        sound.playMusic(); XCTAssertTrue(vortex.isPlaying); XCTAssertEqual(vortex.currentTime, 0.8)
+        sound.consume(frames[1]); XCTAssertTrue(vortex.isPlaying)
+        sound.setMuted(true); XCTAssertFalse(vortex.isPlaying)
+        sound.setMuted(false); XCTAssertTrue(vortex.isPlaying)
+        sound.setSuspended(true); XCTAssertFalse(vortex.isPlaying)
+        sound.setSuspended(false); XCTAssertTrue(vortex.isPlaying)
+        sound.consume(frames[2]); XCTAssertFalse(vortex.isPlaying); XCTAssertEqual(vortex.currentTime, 0)
+        sound.pause(); sound.playMusic(); XCTAssertFalse(vortex.isPlaying)
+    }
     func testRealSessionUsesPlaybackAndKeepsInGameMuteAndSuspension() throws {
         let session = AVAudioSession.sharedInstance()
         let previousCategory = session.category, previousMode = session.mode, previousOptions = session.categoryOptions
