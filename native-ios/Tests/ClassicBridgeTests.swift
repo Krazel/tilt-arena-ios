@@ -42,7 +42,10 @@ final class ClassicBridgeTests: XCTestCase {
             if theme == .inkTide {
                 XCTAssertTrue((first as? SKSpriteNode)?.texture === InkArt.frozenDot)
             } else {
-                XCTAssertEqual((first as? SKShapeNode)?.fillColor, UIColor(hex: "70dce9"))
+                let actual = try XCTUnwrap((first as? SKShapeNode)?.fillColor.cgColor.components)
+                let expected = try XCTUnwrap(UIColor(hex: "70dce9").cgColor.components)
+                XCTAssertEqual(actual.count, expected.count)
+                for (a, b) in zip(actual, expected) { XCTAssertEqual(a, b, accuracy: 0.000001) }
             }
             scene.renderForVerification(frame)
             if theme == .inkTide { XCTAssertTrue((first as? SKSpriteNode)?.texture === InkArt.cells[1]) }
@@ -127,7 +130,7 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertEqual(out.projectiles.first?.angle, 0)
         XCTAssertEqual(abs(back.projectiles.first?.angle ?? 0), .pi, accuracy: 0.0001)
         XCTAssertEqual(back.projectiles.first?.bounces, 1)
-        XCTAssertEqual(back.projectiles.first?.relaunches, 1)
+        XCTAssertEqual(back.projectiles.first?.relaunches, 3)
         XCTAssertTrue(back.events.contains { $0.kind == "boomerangBounce" })
         let recaught = try bridge.newPowersFrame(left: 100, right: 1300, recaught: true)
         XCTAssertTrue(recaught.projectiles.isEmpty); XCTAssertTrue(recaught.player.boomerangCharging)

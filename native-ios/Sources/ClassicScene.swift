@@ -15,6 +15,7 @@ final class ClassicScene: SKScene {
     private(set) var arenaBounds = CGRect(x: 24, y: 52, width: 912, height: 540)
     private var objects: [String: SKNode] = [:], textures: [String: SKTexture] = [:]
     private var textureAnchors: [String: CGPoint] = [:]
+    private var renderedDotFrozen: [Int: Bool] = [:]
     private var fireCharge = ThemedCharge(.fire, theme: VisualTheme.read())
     private var waveCharge = ThemedCharge(.wave, theme: VisualTheme.read())
     private var boomerangCharge = ThemedCharge(.boomerang, theme: VisualTheme.read())
@@ -177,7 +178,7 @@ final class ClassicScene: SKScene {
             if bridge == nil { bridge = try ClassicBridge() }
             if restart {
                 sound.startRun()
-                for node in objects.values { node.removeFromParent() }; objects.removeAll()
+                for node in objects.values { node.removeFromParent() }; objects.removeAll(); renderedDotFrozen.removeAll()
                 effects.removeAllChildren()
                 #if DEBUG
                 gameFrame = try bridge?.create(spawning: !uiTesting || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa"), mode: session.mode)
@@ -322,7 +323,7 @@ final class ClassicScene: SKScene {
         spikes = ClassicSpikes(theme: next)
         guard world.parent != nil else { return }
         for node in objects.values { node.removeFromParent() }
-        objects.removeAll(); textures.removeAll(); textureAnchors.removeAll()
+        objects.removeAll(); textures.removeAll(); textureAnchors.removeAll(); renderedDotFrozen.removeAll()
         effects.removeAllChildren(); arrow.removeAllChildren(); arrow.removeFromParent()
         hud.removeAllChildren(); drawArena(); drawPlayer(); drawHUD(); preparePowerTextures()
         if let frame = gameFrame { render(frame, replayEvents: false) }
@@ -429,9 +430,9 @@ final class ClassicScene: SKScene {
         for dot in frame.enemies {
             let key="d\(dot.id)";alive.insert(key)
             let node=sprite(key:key,style:"dot"), previous = objects[key]?.position ?? .zero
-            if let shape = node as? SKShapeNode {
+            if renderedDotFrozen[dot.id] != dot.frozen, let shape = node as? SKShapeNode {
                 let color = dot.frozen ? frozenDotColor : normalDotColor
-                if !shape.fillColor.isEqual(color) { shape.fillColor = color }
+                shape.fillColor = color
             }
             if theme == .inkTide, let ink = node as? SKSpriteNode {
                 let texture = dot.frozen ? InkArt.frozenDot : InkArt.cells[1]
@@ -442,6 +443,7 @@ final class ClassicScene: SKScene {
                 if ink.userData == nil { ink.userData = NSMutableDictionary() }
             }
             node.position=CGPoint(x:dot.x,y:dot.y)
+            renderedDotFrozen[dot.id] = dot.frozen
             node.alpha=dot.telegraph ? 0.22+0.12*sin(frame.time*18) : (dot.thawing ? 0.65+0.35*sin(frame.time*22) : 1)
             node.setScale(dot.telegraph ? 1.45 : 1);node.zPosition=3.5
         }
@@ -481,7 +483,10 @@ final class ClassicScene: SKScene {
             if field.kind == "vortex" { node.setScale(field.radius / 200) }
             if field.kind == "fire" { node.yScale = reduceEffects ? 1 : 0.9 + 0.1 * sin(frame.time * 12 + Double(field.id)) }
         }
-        for key in Array(objects.keys) where !alive.contains(key) { objects.removeValue(forKey:key)?.removeFromParent() }
+        for key in Array(objects.keys) where !alive.contains(key) {
+            objects.removeValue(forKey:key)?.removeFromParent()
+            if key.first == "d", let id = Int(key.dropFirst()) { renderedDotFrozen.removeValue(forKey: id) }
+        }
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
         if laser.parent == nil { world.addChild(laser) }
         laser.update(beam: frame.beam, remaining: frame.player.laserRemaining, time: frame.time, theme: theme, reduced: reduceEffects)
