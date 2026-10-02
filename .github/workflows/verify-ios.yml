@@ -2,6 +2,10 @@ name: Verify classic iOS candidate
 on:
   workflow_dispatch:
     inputs:
+      engine_only:
+        description: Native unit checks after an already reviewed rendering change
+        type: boolean
+        default: false
       controls_only:
         description: Verify calibration, saved posture and pause/resume
         type: boolean
@@ -40,6 +44,7 @@ jobs:
       - run: bash scripts/verify-ios.sh
         env:
           QA_CONTROLS_ONLY: ${{ inputs.controls_only }}
+          QA_ENGINE_ONLY: ${{ inputs.engine_only }}
           QA_AUDIO_ONLY: ${{ inputs.audio_only }}
           QA_VISUAL_ONLY: ${{ inputs.visual_only }}
           QA_HUD_ONLY: ${{ inputs.hud_only }}

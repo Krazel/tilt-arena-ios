@@ -3,6 +3,20 @@ import SpriteKit
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    func testCrowdedFireTrailRunsThroughNativeJavaScriptCoreAndDecoder() throws {
+        let bridge = try ClassicBridge()
+        var frame = try bridge.createStressRun(), samples: [Double] = []
+        XCTAssertEqual(frame.enemies.count, 550); XCTAssertEqual(frame.fields.count, 36)
+        for index in 0..<180 {
+            let start = ProcessInfo.processInfo.systemUptime
+            frame = try bridge.tick(dt: 1.0 / 60, x: 0, y: 0)
+            if index >= 30 { samples.append((ProcessInfo.processInfo.systemUptime - start) * 1000) }
+        }
+        XCTAssertEqual(frame.state, "running"); XCTAssertEqual(frame.time, 3, accuracy: 0.00001)
+        XCTAssertEqual(frame.enemies.count, 550); XCTAssertEqual(frame.fields.count, 36)
+        samples.sort()
+        print("NATIVE_ENGINE_STRESS dots=550 embers=36 p95CPUms=\(samples[142]) maxCPUms=\(samples.last!) JavaScriptCore=true SwiftDecoder=true simulatorOnly=true GPUFPS=false")
+    }
     @MainActor func testLoadedNativeRenderingReusesDotsBoundsEffectsAndPreservesFrozenArt() throws {
         let bridge = try ClassicBridge()
         let view = SKView(frame: CGRect(x: 0, y: 0, width: 874, height: 402))

@@ -28,7 +28,8 @@
     const dx = b.x - a.x, dy = b.y - a.y;
     const d = dx * dx + dy * dy;
     const t = d ? clamp(((c.x - a.x) * dx + (c.y - a.y) * dy) / d, 0, 1) : 0;
-    return length(a.x + t * dx - c.x, a.y + t * dy - c.y) <= radius;
+    const x=a.x+t*dx-c.x,y=a.y+t*dy-c.y;
+    return x*x+y*y <= radius*radius;
   }
   function circleHitTime(x,y,vx,vy,cx,cy,radius) {
     const dx=x-cx,dy=y-cy,c=dx*dx+dy*dy-radius*radius;
@@ -465,7 +466,11 @@
       for(const e of this.enemies)this.applyAreaEffects(e);
       for(const f of this.fields)if(f.until>this.time) {
         if(f.kind==='fire') {
-          for(const e of this.enemies)if(!e.dead&&distance(e,f)<f.radius+TUNING.dotRadius)this.kill(e,'dot');
+          const reach=f.radius+TUNING.dotRadius,reachSquared=reach*reach;
+          for(const e of this.enemies)if(!e.dead){
+            const dx=e.x-f.x,dy=e.y-f.y;
+            if(dx*dx+dy*dy<reachSquared)this.kill(e,'dot');
+          }
         } else if(f.kind==='vortex') {
           for(const e of this.enemies)if(!e.dead&&this.time>=e.activeAt) {
             const d=Math.max(1,distance(e,f));
@@ -602,6 +607,13 @@
     finish(){game.resume();game.die();return JSON.stringify(game.snapshot());},
     tilt(gx,gy,nx,ny,orientation,sensitivity){return tiltInput({x:gx,y:gy},{x:nx,y:ny},orientation,sensitivity);}};
   root.ClassicAPI=API;
-  if(root.CLASSIC_DIAGNOSTICS===true)root.ClassicDiagnostics={ClassicGame,POWERS,COLORS};
+  if(root.CLASSIC_DIAGNOSTICS===true)root.ClassicDiagnostics={ClassicGame,POWERS,COLORS,
+    createStressRun(){
+      game=new ClassicGame(19,{spawning:false});
+      for(let i=0;i<550;i++){const a=i*2.39996,r=150+i%10*11;
+        game.addEnemy(480+Math.cos(a)*r,320+Math.sin(a)*r,{activeAt:0,speed:0});}
+      for(let i=0;i<36;i++)game.fields.push({id:++game.id,kind:'fire',x:35+i%6*12,y:70+Math.floor(i/6)*12,radius:22,angle:0,until:100});
+      return JSON.stringify(game.snapshot());
+    }};
   if(typeof module!=='undefined'&&module.exports)module.exports={ClassicGame,RNG,TUNING,SCORING,BOUNDS,POWERS,COLORS,swept,tiltInput};
 })(typeof globalThis!=='undefined'?globalThis:this);

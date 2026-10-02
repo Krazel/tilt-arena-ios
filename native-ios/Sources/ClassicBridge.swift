@@ -94,6 +94,10 @@ final class ClassicBridge {
         try decode(call("resize", [left, right, bottom, top]))
     }
     #if DEBUG
+    func createStressRun() throws -> ClassicFrame {
+        guard let value = context.objectForKeyedSubscript("ClassicDiagnostics")?.invokeMethod("createStressRun", withArguments: []) else { throw Failure.invalidFrame }
+        return try decode(value)
+    }
     func stressFrame(frozen: Bool = false, empty: Bool = false, kills: Int = 0) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(19,{spawning:false});
