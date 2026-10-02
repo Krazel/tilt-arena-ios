@@ -126,7 +126,7 @@ struct InkMenuView: View {
     }
 
     private var settings: some View {
-        VStack(alignment: .leading, spacing: paused ? 6 : 8) {
+        VStack(alignment: .leading, spacing: 3) {
             posture
             HStack {
                 Text(GameText.sound).foregroundColor(muted)
