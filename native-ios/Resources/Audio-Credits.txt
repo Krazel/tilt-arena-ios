@@ -17,9 +17,13 @@ Kenney
 https://kenney.nl/assets/impact-sounds
 CC0
 
-Krazel Games
-Original synthesis: scripts/refresh-audio-v058.cjs
-Original project audio
+rubberduck
+https://opengameart.org/content/80-cc0-rpg-sfx
+CC0
+
+0f9ran
+https://opengameart.org/content/pop
+CC0
 
 Little Robot Sound Factory
 https://opengameart.org/content/sci-fi-sound-effects-library
@@ -45,8 +49,8 @@ artisticdude
 https://opengameart.org/content/swishes-sound-pack
 CC0
 
-Michel Baradari
-https://opengameart.org/content/2-high-quality-explosions
+dklon
+https://opengameart.org/content/boom-pack-1
 CC-BY 3.0
 
 lentikula
@@ -61,9 +65,9 @@ Kenney
 https://kenney.nl/assets/sci-fi-sounds
 CC0
 
-rubberduck
-https://opengameart.org/content/80-cc0-rpg-sfx
-CC0
+Krazel Games
+Original synthesis: scripts/refresh-audio-v058.cjs
+Original project audio
 
 CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
 CC0: https://creativecommons.org/publicdomain/zero/1.0/

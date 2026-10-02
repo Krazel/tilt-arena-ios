@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -20,22 +20,22 @@
     "pickup": {
       "file": "audio-pickup.wav",
       "volume": 0.72,
-      "proposal": "original-v058-pickup",
-      "author": "Krazel Games",
-      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
-      "license": "Original project audio",
-      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
-      "sha256": "b901540f7b82fb6a56ccee72b2f3a7c292f1feab56b1ecf8af70d13771f268ad"
+      "proposal": "2026-10-02/pickup-A",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/80-cc0-rpg-sfx",
+      "license": "CC0",
+      "changes": "Archivo publicado completo; solo conversión a WAV y ajuste uniforme de volumen. Sin síntesis, filtros, recortes, pitch ni montajes.",
+      "sha256": "3ab7bfd46dbda55820ec988b95d27c8c9ddafd333d893024858fc3a8ed98bed9"
     },
     "hit": {
       "file": "audio-hit.wav",
       "volume": 0.7,
-      "proposal": "original-v058-hit",
-      "author": "Krazel Games",
-      "source": "Original synthesis: scripts/refresh-audio-v058.cjs",
-      "license": "Original project audio",
-      "changes": "Synthesized PCM, soft attack/release; continuous phase for laser.",
-      "sha256": "b911afd0d87095b58ef33de62de2f5ed4ecf174640818423ebcd4ada88b9dc58"
+      "proposal": "2026-10-02/kill-A",
+      "author": "0f9ran",
+      "source": "https://opengameart.org/content/pop",
+      "license": "CC0",
+      "changes": "Archivo publicado completo; solo conversión a WAV y ajuste uniforme de volumen. Sin síntesis, filtros, recortes, pitch ni montajes.",
+      "sha256": "b6cce63fb81cdf44a1da1bcf86d8b9d712980d7b742bd56fc60b2c9f3dd9a405"
     },
     "vortex": {
       "file": "audio-vortex.wav",
@@ -170,12 +170,12 @@
     "nuke": {
       "file": "audio-nuke.wav",
       "volume": 0.7,
-      "proposal": "2026-10-01/nuke-A",
-      "author": "Michel Baradari",
-      "source": "https://opengameart.org/content/2-high-quality-explosions",
+      "proposal": "2026-10-02/nuke-B",
+      "author": "dklon",
+      "source": "https://opengameart.org/content/boom-pack-1",
       "license": "CC-BY 3.0",
-      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
-      "sha256": "a18f5858be2c404234697d1fc1a56d57ff1a515076626007074e0b1b16530aca"
+      "changes": "Archivo publicado completo; solo conversión a WAV y ajuste uniforme de volumen. Sin síntesis, filtros, recortes, pitch ni montajes.",
+      "sha256": "fd8d32a701e6569ceac2e9867bcbec10c93ac68002104d2ae1b1e598bf2b73fd"
     },
     "frost": {
       "file": "audio-frost.wav",
