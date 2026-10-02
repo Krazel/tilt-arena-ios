@@ -18,6 +18,7 @@ private final class FakePlayback: AudioPlayback {
     func testVortexFromRealSimulationStartsImmediatelyAndHonorsPauseMuteAndExpiry() throws {
         let source = try String(contentsOf: XCTUnwrap(Bundle.main.url(forResource: "classic-core", withExtension: "js")), encoding: .utf8)
         let context = try XCTUnwrap(JSContext())
+        context.evaluateScript("globalThis.CLASSIC_DIAGNOSTICS = true;")
         context.evaluateScript(source)
         let json = try XCTUnwrap(context.evaluateScript("""
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
@@ -26,6 +27,7 @@ private final class FakePlayback: AudioPlayback {
           for(let i=0;i<241;i++)g.advance(1/120);frames.push(g.snapshot());
           return JSON.stringify(frames);})()
         """)?.toString())
+        XCTAssertNil(context.exception, context.exception?.toString() ?? "")
         let frames = try JSONDecoder().decode([ClassicFrame].self, from: Data(json.utf8))
         XCTAssertTrue(frames[0].fields.contains { $0.kind == "vortex" && $0.remaining > 0 })
         XCTAssertTrue(frames[2].fields.isEmpty)
