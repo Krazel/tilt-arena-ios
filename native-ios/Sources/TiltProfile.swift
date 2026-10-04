@@ -34,12 +34,18 @@ struct TiltProfile {
         self.screenZ = screenZ ?? sqrt(max(0, 1 - screenX * screenX - screenY * screenY))
     }
     static func saved(defaults: UserDefaults) -> TiltProfile {
-        TiltProfile(screenX: defaults.double(forKey: "classic.neutralX"),
+        let legacy = TiltProfile(screenX: defaults.double(forKey: "classic.neutralX"),
                     screenY: defaults.double(forKey: "classic.neutralY"),
                     screenZ: defaults.object(forKey: "classic.neutralZ") as? Double)
+        return pitchOnly(y: legacy.screenY, z: legacy.screenZ) ?? preset(.normal)
+    }
+    private static func pitchOnly(y: Double, z: Double) -> TiltProfile? {
+        let length = hypot(y, z)
+        guard length.isFinite, length > 0.01 else { return nil }
+        return TiltProfile(screenX: 0, screenY: y / length, screenZ: z / length)
     }
     func save(defaults: UserDefaults) {
-        defaults.set(screenX, forKey: "classic.neutralX")
+        defaults.set(0.0, forKey: "classic.neutralX")
         defaults.set(screenY, forKey: "classic.neutralY")
         defaults.set(screenZ, forKey: "classic.neutralZ")
     }
@@ -62,10 +68,9 @@ struct TiltProfile {
         guard [x, y, z, timestamp, now].allSatisfy({ $0.isFinite }),
               now >= timestamp, now - timestamp <= 0.25,
               (0.8...1.2).contains(sqrt(x*x + y*y + z*z)) else { return nil }
-        let length = sqrt(x*x + y*y + z*z)
-        var profile = sampled(x: x / length, y: y / length, landscapeRight: landscapeRight)
-        profile.screenZ = -z / length
-        return profile
+        // Capture pitch only. Lateral tilt always steers relative to a level
+        // phone, even if the player rolls it while pressing Calibrate.
+        return pitchOnly(y: landscapeRight ? x : -x, z: -z)
     }
     func deviceNeutral(landscapeRight: Bool) -> (x: Double, y: Double) {
         landscapeRight ? (screenY, -screenX) : (-screenY, screenX)
@@ -76,7 +81,7 @@ struct TiltProfile {
         // edge keeps the same direction. Keep this sign fixed until recalibration.
         let facing = screenZ < 0 ? -1.0 : 1.0
         let pitch = atan2(sy, -z * facing) - atan2(screenY, screenZ * facing)
-        let roll = atan2(sx, hypot(sy, z)) - atan2(screenX, hypot(screenY, screenZ))
+        let roll = atan2(sx, hypot(sy, z))
         let dx = sin(roll), dy = sin(pitch)
         return landscapeRight ? (dy, -dx) : (-dy, dx)
     }

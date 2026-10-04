@@ -1,0 +1,4 @@
+Calibration saves only your up/down posture. Left/right movement always stays centered on a level phone, including previously saved calibration and face-down play.
+Blade deployment audio is much faster (about 0.4 seconds), preserving the approved recording and its pitch.
+Reduced unnecessary work in hidden blades, score ribbons and laser rendering. Gameplay, difficulty, music and other sounds are unchanged. iPhone performance and listening still need your physical-device check.
+Enemy death sound remains under review; no replacement has been selected.

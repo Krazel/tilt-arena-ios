@@ -3,6 +3,26 @@ import SpriteKit
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    @MainActor func testLaserKeepsExactWorldEndpointsAfterTranslationRotationAndThemeChanges() throws {
+        let world = SKNode(), laser = ClassicLaser(); world.addChild(laser)
+        for theme in VisualTheme.allCases {
+            for reduced in [false, true] {
+                for beam in [ClassicFrame.Beam(x: 20, y: 30, toX: 320, toY: 430, width: 28),
+                             ClassicFrame.Beam(x: 80, y: 90, toX: -220, toY: -310, width: 28),
+                             ClassicFrame.Beam(x: 10, y: 15, toX: 60, toY: 15, width: 16)] {
+                    laser.update(beam: beam, remaining: 1, time: 0, theme: theme, reduced: reduced)
+                    let shape = try XCTUnwrap(laser.children.first as? SKShapeNode)
+                    let path = try XCTUnwrap(shape.path)
+                    let start = laser.convert(.zero, to: world), end = laser.convert(path.currentPoint, to: world)
+                    XCTAssertEqual(Double(start.x), beam.x, accuracy: 0.00001); XCTAssertEqual(Double(start.y), beam.y, accuracy: 0.00001)
+                    XCTAssertEqual(Double(end.x), beam.toX, accuracy: 0.00001); XCTAssertEqual(Double(end.y), beam.toY, accuracy: 0.00001)
+                    XCTAssertEqual(Double(shape.lineWidth), beam.width); XCTAssertEqual(laser.children.count, 3)
+                }
+            }
+        }
+        laser.update(beam: nil, remaining: 0, time: 2, theme: .classic, reduced: false)
+        XCTAssertTrue(laser.isHidden)
+    }
     func testCrowdedFireTrailRunsThroughNativeJavaScriptCoreAndDecoder() throws {
         let bridge = try ClassicBridge()
         var frame = try bridge.createStressRun(), samples: [Double] = []
@@ -179,6 +199,9 @@ final class ClassicBridgeTests: XCTestCase {
         XCTAssertFalse(countdown.isHidden)
         node.update(time: 5, until: 5, heading: 0, reduced: false)
         XCTAssertTrue(node.isHidden)
+        node.update(time: active.time, until: active.player.spikesUntil, heading: active.player.angle, reduced: false)
+        XCTAssertFalse(node.isHidden); XCTAssertEqual(tooth.fillColor, activeColor)
+        XCTAssertEqual(tooth.alpha, 1); XCTAssertTrue(countdown.isHidden)
     }
     func testSavedPostureWorksInEitherLandscapeOrientation() throws {
         let profile = TiltProfile.sampled(x: 0.6, y: 0.1, landscapeRight: false)

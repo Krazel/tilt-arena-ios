@@ -5,8 +5,14 @@ final class ClassicSpikes: SKNode {
     private var teeth: [SKShapeNode] = []
     private let countdown = SKShapeNode()
     private let theme: VisualTheme
+    private let activeFill: UIColor, activeStroke: UIColor, warningFill: UIColor, warningStroke: UIColor
+    private var lastWarning: Bool?
     init(theme: VisualTheme = .classic) {
         self.theme = theme
+        activeFill = theme == .inkTide ? InkArt.paper : UIColor(hex: "ceeaff")
+        activeStroke = theme == .inkTide ? InkArt.gold : UIColor(hex: "223968")
+        warningFill = theme == .inkTide ? InkArt.gold : UIColor(hex: "ffbf55")
+        warningStroke = theme == .inkTide ? InkArt.paper : UIColor(hex: "fff4cd")
         super.init()
         zPosition = 0.3
         for index in 0..<12 {
@@ -32,7 +38,8 @@ final class ClassicSpikes: SKNode {
 
     func update(time: Double, until: Double, heading: Double, reduced: Bool) {
         let remaining = until - time
-        isHidden = remaining <= 0
+        guard remaining > 0 else { isHidden = true; return }
+        isHidden = false
         // Counteract the parent arrow's heading for continuous world-space spin.
         let spin = reduced ? 0 : time * 4.2
         zRotation = CGFloat(spin - heading)
@@ -41,10 +48,13 @@ final class ClassicSpikes: SKNode {
         // fixed-world countdown arc warn even with Reduce Motion enabled.
         alpha = 1; countdown.isHidden = !warning
         for tooth in teeth {
-            tooth.fillColor = theme == .inkTide ? (warning ? InkArt.gold : InkArt.paper) : UIColor(hex: warning ? "ffbf55" : "ceeaff")
-            tooth.strokeColor = theme == .inkTide ? (warning ? InkArt.paper : InkArt.gold) : UIColor(hex: warning ? "fff4cd" : "223968")
+            if lastWarning != warning {
+                tooth.fillColor = warning ? warningFill : activeFill
+                tooth.strokeColor = warning ? warningStroke : activeStroke
+            }
             tooth.alpha = warning && !reduced ? CGFloat(0.7 + 0.3 * cos(remaining * .pi * 4)) : 1
         }
+        lastWarning = warning
         if warning {
             let path = CGMutablePath()
             path.addArc(center: .zero, radius: 54, startAngle: .pi / 2,

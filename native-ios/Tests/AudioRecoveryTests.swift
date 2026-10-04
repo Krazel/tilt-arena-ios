@@ -46,7 +46,7 @@ private final class FakePlayback: AudioPlayback {
     func testSpikesDeploymentPreservesCompleteTailsAndHonorsPauseMuteAndStalledFrames() throws {
         let catalog = try ApprovedAudio.load(), base = try ClassicBridge().create(seed: 11, spawning: false)
         let deployment = try XCTUnwrap(catalog.assets["spikes"]?.deployment)
-        XCTAssertEqual(deployment.count, 8); XCTAssertEqual(deployment.interval, 0.12)
+        XCTAssertEqual(deployment.count, 8); XCTAssertEqual(deployment.interval, 0.04)
         let keys = ["spikes"] + deployment.alternates
         XCTAssertEqual(keys.count, 3)
         var players: [String: FakePlayback] = [:], clock: Double = 0
@@ -61,23 +61,23 @@ private final class FakePlayback: AudioPlayback {
         sound.startRun(); players["audio-music-a.mp3"]?.currentTime = 42
         sound.consume(frame(0, pickup: true)); XCTAssertEqual(count(), 1)
         voices[0].currentTime = 0.11
-        sound.consume(frame(0.12)); sound.consume(frame(0.12)); XCTAssertEqual(count(), 2)
-        sound.consume(frame(0.24)); XCTAssertEqual(voices[0].currentTime, 0.11)
-        for beat in 3..<8 { sound.consume(frame(Double(beat) * 0.12)) }
+        sound.consume(frame(0.04)); sound.consume(frame(0.04)); XCTAssertEqual(count(), 2)
+        sound.consume(frame(0.08)); XCTAssertEqual(voices[0].currentTime, 0.11)
+        for beat in 3..<8 { sound.consume(frame(Double(beat) * 0.04)) }
         XCTAssertEqual(voices.map(\.plays), [3, 3, 2]); sound.consume(frame(0.95)); XCTAssertEqual(count(), 8)
         XCTAssertEqual(players["audio-music-a.mp3"]?.currentTime, 42)
         sound.startRun(); sound.consume(frame(1, pickup: true)); sound.pause()
-        sound.setSuspended(true); sound.consume(frame(1.12)); let paused = count()
+        sound.setSuspended(true); sound.consume(frame(1.04)); let paused = count()
         sound.setSuspended(false); XCTAssertTrue(voices.allSatisfy { !$0.isPlaying })
-        sound.playMusic(); let resumed = count(); sound.consume(frame(1.12)); XCTAssertEqual(count(), resumed + 1)
+        sound.playMusic(); let resumed = count(); sound.consume(frame(1.04)); XCTAssertEqual(count(), resumed + 1)
         XCTAssertGreaterThanOrEqual(resumed, paused)
         sound.setMuted(true); let muted = count(); sound.setMuted(false); sound.consume(frame(1.5)); XCTAssertEqual(count(), muted)
         sound.startRun(); sound.consume(frame(2, pickup: true)); let start = count()
-        sound.consume(frame(2.5)); XCTAssertEqual(count(), start + 1)
-        sound.consume(frame(2.51)); XCTAssertEqual(count(), start + 1)
+        sound.consume(frame(2.17)); XCTAssertEqual(count(), start + 1)
+        sound.consume(frame(2.18)); XCTAssertEqual(count(), start + 1)
         sound.consume(frame(3, pickup: true)); let repeated = count()
-        sound.consume(frame(3.1)); XCTAssertEqual(count(), repeated)
-        sound.consume(frame(3.12)); XCTAssertEqual(count(), repeated + 1)
+        sound.consume(frame(3.02)); XCTAssertEqual(count(), repeated)
+        sound.consume(frame(3.04)); XCTAssertEqual(count(), repeated + 1)
         sound.consume(frame(3.2, state: "gameOver")); let dead = count()
         sound.consume(frame(3.6)); XCTAssertEqual(count(), dead)
     }

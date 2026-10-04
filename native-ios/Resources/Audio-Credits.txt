@@ -71,3 +71,5 @@ Generic orb pickup is silent. Its historical recording is retained without playb
 No endorsement by the original authors is implied.
 Spikes deployment: JC Sounds, Dagger Swing 01; CC BY 4.0. Eight separate complete recordings at 120 ms intervals; three playback voices, no synthesized or composited recording.
 Enemy deaths: rubberduck, slime_12.ogg from 40 CC0 water / splash / slime SFX. https://opengameart.org/content/40-cc0-water-splash-slime-sfx ; CC0. Complete 0.23-second recording, WAV conversion and uniform level only; four playback voices retain rapid-kill tails.
+
+Spikes speed adjustment (0.5.24): approved JC Sounds Dagger Swing01, CC BY 4.0; complete recording accelerated 2x with pitch-preserving atempo. Eight blades at 40 ms intervals. Music and other sounds unchanged.

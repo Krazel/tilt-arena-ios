@@ -1,0 +1,4 @@
+La calibración guarda solo la postura hacia arriba/abajo. Izquierda/derecha mantiene siempre el centro con el móvil recto, también con calibraciones anteriores y jugando boca abajo.
+El sonido de despliegue de cuchillas termina mucho antes: unos 0,4 segundos, conservando la grabación aprobada y su tono.
+Menos trabajo innecesario en los pinchos ocultos, las franjas de puntuación y el láser. Jugabilidad, dificultad, música y demás sonidos conservados. Falta comprobar rendimiento y escucha en tu iPhone físico.
+El sonido de muerte sigue en revisión; no se ha elegido sustituto.

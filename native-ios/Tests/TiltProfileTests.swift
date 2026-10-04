@@ -2,6 +2,26 @@ import XCTest
 @testable import TiltArena
 
 final class TiltProfileTests: XCTestCase {
+    func testCalibrationIgnoresRollAndStraighteningPhoneDoesNotDrift() throws {
+        for right in [false, true] {
+            for face in [-1.0, 1.0] {
+                for pitch in [-65.0, 0.0, 45.0, 80.0] {
+                    let angle = pitch * .pi / 180
+                    for roll in [-35.0, 0.0, 35.0] {
+                        let r = roll * .pi / 180
+                        let g = gravity(sin(r), sin(angle) * cos(r), face * cos(angle) * cos(r), right: right)
+                        let p = try XCTUnwrap(TiltProfile.capture(x: g.x, y: g.y, z: g.z, timestamp: 1, now: 1, landscapeRight: right))
+                        XCTAssertEqual(p.screenX, 0)
+                        XCTAssertEqual(p.screenY, sin(angle), accuracy: 1e-12)
+                        let straight = gravity(0, sin(angle), face * cos(angle), right: right)
+                        let d = p.motionDelta(x: straight.x, y: straight.y, z: straight.z, landscapeRight: right)
+                        XCTAssertEqual(d.x, 0, accuracy: 1e-12); XCTAssertEqual(d.y, 0, accuracy: 1e-12)
+                    }
+                }
+            }
+        }
+        XCTAssertNil(TiltProfile.capture(x: 0, y: 1, z: 0, timestamp: 1, now: 1, landscapeRight: false))
+    }
     private func gravity(_ sx: Double, _ sy: Double, _ z: Double, right: Bool) -> (x: Double, y: Double, z: Double) {
         right ? (sy, -sx, z) : (-sy, sx, z)
     }
@@ -15,7 +35,8 @@ final class TiltProfileTests: XCTestCase {
                             let p = try XCTUnwrap(TiltProfile.capture(x: g.x, y: g.y, z: g.z, timestamp: 1, now: 1, landscapeRight: right))
                             let d = p.motionDelta(x: g.x, y: g.y, z: g.z, landscapeRight: right)
                             XCTAssertEqual(d.x, 0, accuracy: 1e-12)
-                            XCTAssertEqual(d.y, 0, accuracy: 1e-12)
+                            XCTAssertEqual(d.y, right ? -sx : sx, accuracy: 1e-12)
+                            XCTAssertEqual(p.screenX, 0)
                             XCTAssertEqual(p.screenZ.sign, (-face).sign)
                         }
                     }
@@ -77,9 +98,10 @@ final class TiltProfileTests: XCTestCase {
         defaults.set(0.2, forKey: "classic.neutralX")
         defaults.set(-0.4, forKey: "classic.neutralY")
         let p = TiltProfile.saved(defaults: defaults)
-        XCTAssertEqual(p.screenZ, sqrt(0.8), accuracy: 1e-12)
+        XCTAssertEqual(p.screenX, 0)
+        XCTAssertEqual(p.screenZ, sqrt(0.8) / sqrt(0.96), accuracy: 1e-12)
         let d = p.motionDelta(x: 0.4, y: 0.2, z: -sqrt(0.8), landscapeRight: false)
-        XCTAssertEqual(d.x, 0, accuracy: 1e-12); XCTAssertEqual(d.y, 0, accuracy: 1e-12)
+        XCTAssertEqual(d.x, 0, accuracy: 1e-12); XCTAssertEqual(d.y, 0.2, accuracy: 1e-12)
     }
     func testCrossingVerticalDoesNotFlipTheCapturedFacingSign() throws {
         for face in [-1.0, 1.0] {

@@ -31,6 +31,7 @@ final class ClassicScene: SKScene {
     private let comboBar = SKSpriteNode(color: UIColor(hex: "d5f56b"), size: CGSize(width: 240, height: 3))
     private let normalDotColor = UIColor(hex: "ff5658"), frozenDotColor = UIColor(hex: "70dce9")
     private var lastHUDValues: [Int] = []
+    private var lastRibbonTexts: [String?] = []
     private var gameFrame: ClassicFrame?, lastTime: Double?
     private var calibratedOrientation: UIInterfaceOrientation = .unknown
     private var calibrationStart = 0.0
@@ -516,7 +517,11 @@ final class ClassicScene: SKScene {
             comboLabel.text = "COMBO  999999999 × 999999"
         }
         #endif
-        layoutRibbons()
+        let ribbonTexts = [scoreLabel.text, bestLabel.text, comboLabel.text]
+        if ribbonTexts != lastRibbonTexts {
+            layoutRibbons()
+            lastRibbonTexts = ribbonTexts
+        }
         guard replayEvents else { return }
         var particles=0
         for event in frame.events {
