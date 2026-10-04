@@ -328,7 +328,7 @@ final class ClassicBridgeTests: XCTestCase {
                 timestamp: 100, now: 100.02, landscapeRight: right))
             let delta = profile.motionDelta(x: gx, y: gy, z: gz, landscapeRight: right)
             XCTAssertEqual(delta.x, 0, accuracy: 0.000001)
-            XCTAssertEqual(delta.y, 0, accuracy: 0.000001)
+            XCTAssertEqual(delta.y, gy, accuracy: 0.000001)
         }
     }
     func testImmediateCalibrationRejectsStaleAndInvalidSensorReadings() {
