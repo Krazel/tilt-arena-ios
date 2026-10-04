@@ -24,7 +24,7 @@
       "author": "rubberduck",
       "source": "https://opengameart.org/content/80-cc0-rpg-sfx",
       "license": "CC0",
-      "changes": "Archivo publicado completo; solo conversiÃ³n a WAV y ajuste uniforme de volumen. Sin sÃ­ntesis, filtros, recortes, pitch ni montajes.",
+      "changes": "Archivo publicado completo; solo conversión a WAV y ajuste uniforme de volumen. Sin síntesis, filtros, recortes, pitch ni montajes.",
       "sha256": "3ab7bfd46dbda55820ec988b95d27c8c9ddafd333d893024858fc3a8ed98bed9"
     },
     "hit": {
@@ -34,7 +34,7 @@
       "author": "rubberduck",
       "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
       "license": "CC0",
-      "changes": "GrabaciÃ³n publicada completa. ConversiÃ³n a WAV y nivel uniforme; sin sÃ­ntesis, recortes, filtros ni cambios de tono.",
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
       "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96",
       "alternates": [
         "hit-echo",
@@ -59,7 +59,7 @@
       "author": "JC Sounds",
       "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
       "license": "CC-BY 4.0",
-      "changes": "GrabaciÃ³n publicada; conversiÃ³n a WAV y ajuste uniforme de volumen. Sin sÃ­ntesis, montajes, filtros ni cambios de tono. Fragmento inicial de 0.65 s y fundido de salida de 10 ms; se conserva tambiÃ©n el original completo.",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono. Fragmento inicial de 0.65 s y fundido de salida de 10 ms; se conserva también el original completo.",
       "sha256": "b30f2986b8da7bb40dbcc1e1e90aa8ed598ecad491325a5a616b16b288217f41"
     },
     "shatter-a": {
@@ -69,7 +69,7 @@
       "author": "Iwan qubodup Gabovitch",
       "source": "https://opengameart.org/content/ice-electricity-magic",
       "license": "CC-BY 3.0",
-      "changes": "Silencios recortados, nivel RMS comparable con lÃ­mite de pico, fundidos cortos. Fragmento de hasta 0.8 s.",
+      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Fragmento de hasta 0.8 s.",
       "sha256": "b80d349c61788955bf45b9e5cf6ce54e2bfe3431854340ac9781c1fd0b22b7a6"
     },
     "shatter-b": {
@@ -79,7 +79,7 @@
       "author": "Iwan qubodup Gabovitch",
       "source": "https://opengameart.org/content/ice-electricity-magic",
       "license": "CC-BY 3.0",
-      "changes": "Silencios recortados, nivel RMS comparable con lÃ­mite de pico, fundidos cortos. Fragmento de hasta 0.8 s.",
+      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Fragmento de hasta 0.8 s.",
       "sha256": "b80d349c61788955bf45b9e5cf6ce54e2bfe3431854340ac9781c1fd0b22b7a6"
     },
     "bounce": {
@@ -99,7 +99,7 @@
       "author": "artisticdude",
       "source": "https://opengameart.org/content/fire-evil-spell",
       "license": "CC-BY 3.0",
-      "changes": "Silencios recortados, nivel RMS comparable con lÃ­mite de pico, fundidos cortos. Fragmento de hasta 1.8 s. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
+      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Fragmento de hasta 1.8 s. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
       "sha256": "4915096959f271a1fd1eee87e213f4be906bb78d9fa8159891c3e3cf1fe9d315"
     },
     "burn-launch": {
@@ -109,7 +109,7 @@
       "author": "artisticdude",
       "source": "https://opengameart.org/content/fire-evil-spell",
       "license": "CC-BY 3.0",
-      "changes": "Silencios recortados, nivel RMS comparable con lÃ­mite de pico, fundidos cortos. Fragmento de hasta 1.8 s. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
+      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Fragmento de hasta 1.8 s. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
       "sha256": "1481dc9d511e0a53a4f3bd93cb3377cb76cfb4ebe9c11134b1f97da019dbaea6"
     },
     "boomerang-charge": {
@@ -129,7 +129,7 @@
       "author": "artisticdude",
       "source": "https://opengameart.org/content/swishes-sound-pack",
       "license": "CC0",
-      "changes": "Solo conversiÃ³n a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
       "sha256": "121b72369d381519d71f3abaea443d3e046134211d497369806ad13551211936"
     },
     "music-menu": {
@@ -139,7 +139,7 @@
       "author": "PeriTune / Sei Mutsuki",
       "source": "https://peritune.com/blog/2019/04/10/oboro2/",
       "license": "CC-BY 4.0",
-      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versiÃ³n instrumental si corresponde.",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
       "sha256": "b92cb895f599b6e7c6b3c54a808844361a7607061d47259bae32c622c9957616"
     },
     "music-a": {
@@ -149,7 +149,7 @@
       "author": "PeriTune / Sei Mutsuki",
       "source": "https://peritune.com/blog/2018/10/01/ametsuchi/",
       "license": "CC-BY 4.0",
-      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versiÃ³n instrumental si corresponde.",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
       "sha256": "039daae20ad585dc866e93a2d78e7669686701972c874d693cb190daa622becd"
     },
     "music-b": {
@@ -159,7 +159,7 @@
       "author": "PeriTune / Sei Mutsuki",
       "source": "https://peritune.com/blog/2021/08/17/kengeki/",
       "license": "CC-BY 4.0",
-      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versiÃ³n instrumental si corresponde.",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
       "sha256": "eb527e48f92c25935ea58c60ad705b14211322c1078411fbea84fab1f12c32b7"
     },
     "music-c": {
@@ -169,7 +169,7 @@
       "author": "PeriTune / Sei Mutsuki",
       "source": "https://peritune.com/blog/2022/12/23/conjurer/",
       "license": "CC-BY 4.0",
-      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versiÃ³n instrumental si corresponde.",
+      "changes": "Tema completo; volumen normalizado para comparar. Conjurer usa la versión instrumental si corresponde.",
       "sha256": "f8db8260cc58c10eb531c6ecc359f2fdca84d5b8ca27f8abcb2adefe2698b958"
     },
     "nuke": {
@@ -179,7 +179,7 @@
       "author": "JC Sounds",
       "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
       "license": "CC-BY 4.0",
-      "changes": "GrabaciÃ³n publicada; conversiÃ³n a WAV y ajuste uniforme de volumen. Sin sÃ­ntesis, montajes, filtros ni cambios de tono.",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono.",
       "sha256": "5432a22f299f5942b7b1ec4f22aebc442f9454448a298f3f17bc9a690bc1e469"
     },
     "frost": {
@@ -189,7 +189,7 @@
       "author": "JC Sounds",
       "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
       "license": "CC-BY 4.0",
-      "changes": "GrabaciÃ³n publicada; conversiÃ³n a WAV y ajuste uniforme de volumen. Sin sÃ­ntesis, montajes, filtros ni cambios de tono.",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono.",
       "sha256": "8a99f91dcf3c8e498ae4ccea2f0ff1aba3e387531878685998d28b327dc68ad2"
     },
     "wave": {
@@ -199,7 +199,7 @@
       "author": "Little Robot Sound Factory",
       "source": "https://opengameart.org/content/sci-fi-sound-effects-library",
       "license": "CC-BY 3.0",
-      "changes": "Solo conversiÃ³n a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
       "sha256": "167065c5d8d1aa8b1731d9026201a11f635f0843d7175278b116de84bf3f42f5"
     },
     "missiles": {
@@ -209,7 +209,7 @@
       "author": "Michel Baradari",
       "source": "https://opengameart.org/content/4-projectile-launches",
       "license": "CC-BY 3.0",
-      "changes": "Solo conversiÃ³n a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
+      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
       "sha256": "83d43a0a7c8c8b9dc528028eef33cf552b2f62c0ff9a3a30c363888abf49d2b7"
     },
     "bubble": {
@@ -219,7 +219,7 @@
       "author": "Kenney",
       "source": "https://kenney.nl/assets/sci-fi-sounds",
       "license": "CC0",
-      "changes": "Silencios recortados, nivel RMS comparable con lÃ­mite de pico, fundidos cortos. Four derived pitch variants (-40, -20, +20, +40 cents), equal RMS; original also selectable. Duration differs by at most 2.4%.",
+      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Four derived pitch variants (-40, -20, +20, +40 cents), equal RMS; original also selectable. Duration differs by at most 2.4%.",
       "sha256": "b011e50a712f5a888d4548957527f8f0b2211aeae5c9aca3d311cd57f401579d",
       "pitchVariants": [
         {
@@ -279,7 +279,7 @@
       "author": "Kenney",
       "source": "https://kenney.nl/assets/sci-fi-sounds",
       "license": "CC0",
-      "changes": "Silencios recortados, nivel RMS comparable con lÃ­mite de pico, fundidos cortos. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
+      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Montaje de carga de 0,5 s seguida del lanzamiento. Split at 0.5 s, synchronized to charge and release events.",
       "sha256": "443b88ba5c8273c9e9d211f8add3cb4a5a9ef27c0bef7b882579c526d42edece"
     },
     "bubble-break": {
@@ -289,7 +289,7 @@
       "author": "JC Sounds",
       "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
       "license": "CC-BY 4.0",
-      "changes": "GrabaciÃ³n publicada; conversiÃ³n a WAV y ajuste uniforme de volumen. Sin sÃ­ntesis, montajes, filtros ni cambios de tono.",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono.",
       "sha256": "32b6f67e0ea9162f0d366170541afa49fa7ee3496cb5a272f589d3a2e9d73189"
     },
     "spikes-echo": {
@@ -319,7 +319,7 @@
       "author": "rubberduck",
       "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
       "license": "CC0",
-      "changes": "GrabaciÃ³n publicada completa. ConversiÃ³n a WAV y nivel uniforme; sin sÃ­ntesis, recortes, filtros ni cambios de tono.",
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
       "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
     },
     "hit-echo2": {
@@ -329,7 +329,7 @@
       "author": "rubberduck",
       "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
       "license": "CC0",
-      "changes": "GrabaciÃ³n publicada completa. ConversiÃ³n a WAV y nivel uniforme; sin sÃ­ntesis, recortes, filtros ni cambios de tono.",
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
       "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
     },
     "hit-echo3": {
@@ -339,7 +339,7 @@
       "author": "rubberduck",
       "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
       "license": "CC0",
-      "changes": "GrabaciÃ³n publicada completa. ConversiÃ³n a WAV y nivel uniforme; sin sÃ­ntesis, recortes, filtros ni cambios de tono.",
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
       "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
     }
   },
