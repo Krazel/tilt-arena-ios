@@ -14,7 +14,22 @@ test('spikes B plays eight full overlapping recordings at 40 ms, without double 
  h.sound.consume(h.frame(.04));h.sound.consume(h.frame(.04));assert.equal(h.total(),2);assert.equal(h.players[0].currentTime,.11);
  h.sound.consume(h.frame(.08));assert.equal(h.players[0].currentTime,.11);assert.equal(h.total(),3);
  for(let beat=3;beat<8;beat++)h.sound.consume(h.frame(beat*.04));
- assert.deepEqual(h.players.map(p=>p.plays),[3,3,2]);h.sound.consume(h.frame(2));assert.equal(h.total(),8);
+ assert.deepEqual(h.players.map(p=>p.plays),[2,2,2,2]);h.sound.consume(h.frame(2));assert.equal(h.total(),8);
+});
+test('irregular frames never reuse a blade voice before its complete recording ends',async()=>{
+ const {GameSound}=await import('../play/sound.js');let now=0;const starts={};
+ const sound=new GameSound(catalog,file=>({paused:true,currentTime:0,play(){this.paused=false;(starts[file]??=[]).push(now);return Promise.resolve()},pause(){this.paused=true},addEventListener(){}}),()=>now);
+ sound.setMuted(false);sound.startRun();
+ for(const time of [0,.079,.08,.12,.16,.2,.24,.28]){
+  now=time;sound.consume({time,state:'running',events:time===0?[{kind:'pickup',power:'spikes'}]:[],fields:[],player:{}});
+ }
+ const fs=require('node:fs'),path=require('node:path');
+ for(const cue of ['spikes',...catalog.assets.spikes.deployment.alternates]){
+  const file=catalog.assets[cue].file,b=fs.readFileSync(path.join(__dirname,'../native-ios/Resources',file));
+  const data=b.indexOf(Buffer.from('data')),duration=b.readUInt32LE(data+4)/96000;
+  const times=starts[file];assert.equal(times.length,2);
+  assert(times[1]-times[0]>=duration,'An irregular frame clipped a complete blade tail');
+ }
 });
 test('spikes deployment pauses with the game, mute/menu/death cancel future blades',async()=>{
  const h=await setup();h.sound.consume(h.frame(0,h.pickup));h.sound.setMode('paused');const count=h.total();

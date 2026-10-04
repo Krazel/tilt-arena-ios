@@ -48,7 +48,7 @@ private final class FakePlayback: AudioPlayback {
         let deployment = try XCTUnwrap(catalog.assets["spikes"]?.deployment)
         XCTAssertEqual(deployment.count, 8); XCTAssertEqual(deployment.interval, 0.04)
         let keys = ["spikes"] + deployment.alternates
-        XCTAssertEqual(keys.count, 3)
+        XCTAssertEqual(keys.count, 4)
         var players: [String: FakePlayback] = [:], clock: Double = 0
         let sound = ClassicSound(catalog: catalog, makePlayer: { a in let p=FakePlayback();players[a.file]=p;return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter(), now: { clock })
         let voices = try keys.map { try XCTUnwrap(players[try XCTUnwrap(catalog.assets[$0]).file]) }
@@ -64,7 +64,7 @@ private final class FakePlayback: AudioPlayback {
         sound.consume(frame(0.04)); sound.consume(frame(0.04)); XCTAssertEqual(count(), 2)
         sound.consume(frame(0.08)); XCTAssertEqual(voices[0].currentTime, 0.11)
         for beat in 3..<8 { sound.consume(frame(Double(beat) * 0.04)) }
-        XCTAssertEqual(voices.map(\.plays), [3, 3, 2]); sound.consume(frame(0.95)); XCTAssertEqual(count(), 8)
+        XCTAssertEqual(voices.map(\.plays), [2, 2, 2, 2]); sound.consume(frame(0.95)); XCTAssertEqual(count(), 8)
         XCTAssertEqual(players["audio-music-a.mp3"]?.currentTime, 42)
         sound.startRun(); sound.consume(frame(1, pickup: true)); sound.pause()
         sound.setSuspended(true); sound.consume(frame(1.04)); let paused = count()

@@ -258,7 +258,8 @@
         "interval": 0.04,
         "alternates": [
           "spikes-echo",
-          "spikes-echo2"
+          "spikes-echo2",
+          "spikes-echo3"
         ]
       }
     },
@@ -341,6 +342,16 @@
       "license": "CC0",
       "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
       "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
+    },
+    "spikes-echo3": {
+      "file": "audio-spikes-echo3.wav",
+      "volume": 0.5,
+      "proposal": "2026-10-04-spikes/spikes-B",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Complete approved Dagger Swing01 recording accelerated 2x with pitch-preserving FFmpeg atempo; PCM mono 48 kHz. No trimming or synthesis.",
+      "sha256": "b401b69e1ed1107a77095401eeceff894a7c3f860dce63f0298bef7622c00f97"
     }
   },
   "silent": [
