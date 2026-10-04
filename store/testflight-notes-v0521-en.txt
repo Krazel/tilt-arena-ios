@@ -1,0 +1,4 @@
+Orb collection is now silent. Power charging and activation sounds remain.
+Updated explosion, ice, shield break and electricity sounds with the selected recordings. Music is unchanged.
+Automatic calibration on Play/Resume is enabled by default when no preference was saved; your saved choice is respected.
+Enemy death audio is still under review; this build keeps the previous recording.

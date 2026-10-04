@@ -13,6 +13,7 @@ struct ApprovedAudio: Decodable {
     let menu: String
     let playlist: [String]
     let assets: [String: Asset]
+    let silent: [String]?
     static func load(bundle: Bundle = .main) throws -> ApprovedAudio {
         let url = bundle.url(forResource: "audio-approved", withExtension: "json")!
         return try JSONDecoder().decode(Self.self, from: Data(contentsOf: url))
@@ -26,7 +27,6 @@ enum AudioCuePolicy {
         for event in events {
             switch event.kind {
             case "pickup":
-                result.append("pickup")
                 if event.power == "burn" { result.append("burn-charge") }
                 if event.power == "boomerang" { result.append("boomerang-charge") }
                 if event.power == "wave" { result.append("wave-charge") }
@@ -42,7 +42,6 @@ enum AudioCuePolicy {
             case "boomerangLaunch": result.append("boomerang-launch")
             case "boomerangBounce": result.append("bounce")
             case "boomerangCatch":
-                result.append("pickup")
                 if boomerangCharging { result.append("boomerang-charge") }
             default: break
             }
@@ -251,7 +250,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         for cue in AudioCuePolicy.cues(events: frame.events, boomerangCharging: frame.player.boomerangCharging) { play(cue) }
     }
     private func play(_ cue: String) {
-        guard audible, cue == "ui" || mode == .game else { return }
+        guard catalog?.silent?.contains(cue) != true, audible, cue == "ui" || mode == .game else { return }
         let now = self.now()
         let interval = cue == "hit" || cue == "shatter" ? 0.07 : cue == "bounce" ? 0.05 : 0.015
         guard now - (lastCue[cue] ?? -100) >= interval else { return }; lastCue[cue] = now

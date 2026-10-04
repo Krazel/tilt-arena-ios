@@ -199,10 +199,9 @@ final class ClassicFlowTests: XCTestCase {
             app.launch()
             let option = app.buttons["auto-calibrate"]
             XCTAssertTrue(option.waitForExistence(timeout: 10))
-            XCTAssertFalse(option.isSelected)
+            XCTAssertTrue(option.isSelected)
             XCTAssertEqual(option.label, language == "es" ? "Recalibrar al jugar o reanudar" : "Recalibrate on play or resume")
             app.buttons["posture-inclined"].tap()
-            option.tap(); XCTAssertTrue(option.isSelected)
             capture("auto-calibration-menu-\(theme)-\(language)", app: app)
             app.buttons["play"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))

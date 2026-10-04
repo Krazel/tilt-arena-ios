@@ -46,7 +46,7 @@ final class GameSession: ObservableObject {
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
     @Published var theme = VisualTheme.read()
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
-    @Published var autoCalibrate = false {
+    @Published var autoCalibrate = true {
         didSet { preferences.set(autoCalibrate, forKey: "classic.autoCalibrate") }
     }
     private let preferences: UserDefaults
@@ -56,7 +56,8 @@ final class GameSession: ObservableObject {
     let scene = ClassicScene()
     init(defaults: UserDefaults = .standard) {
         preferences = defaults
-        autoCalibrate = defaults.bool(forKey: "classic.autoCalibrate")
+        autoCalibrate = defaults.object(forKey: "classic.autoCalibrate") == nil
+            ? true : defaults.bool(forKey: "classic.autoCalibrate")
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--theme-classic-qa") { theme = .classic }
         if ProcessInfo.processInfo.arguments.contains("--theme-ink-qa") { theme = .inkTide }
@@ -64,7 +65,7 @@ final class GameSession: ObservableObject {
             for key in ["classic.posture", "classic.postureRevision", "classic.neutralX", "classic.neutralY", "classic.neutralZ", "classic.autoCalibrate"] {
                 UserDefaults.standard.removeObject(forKey: key)
             }
-            posture = .custom; hasCustom = false; autoCalibrate = false
+            posture = .custom; hasCustom = false; autoCalibrate = true
         }
         #endif
         scene.session = self

@@ -1,0 +1,4 @@
+Recoger orbes ahora es silencioso. Se conservan los sonidos de carga y activación de los poderes.
+Actualizados explosión, hielo, rotura del escudo y electricidad con las grabaciones elegidas. Música sin cambios.
+Recalibración al Jugar/Reanudar activada por defecto si no había una preferencia guardada; se respeta tu elección anterior.
+Las muertes de enemigos siguen en revisión; esta build conserva la grabación anterior.

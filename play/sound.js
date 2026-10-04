@@ -2,7 +2,7 @@
 export function soundCues(events, boomerangCharging=false) {
   const cues=[];
   for(const e of events){
-    if(e.kind==='pickup'){cues.push('pickup');if(['burn','boomerang','wave'].includes(e.power))cues.push(e.power+'-charge');if(['missiles','bubble','spikes'].includes(e.power))cues.push(e.power);}
+    if(e.kind==='pickup'){if(['burn','boomerang','wave'].includes(e.power))cues.push(e.power+'-charge');if(['missiles','bubble','spikes'].includes(e.power))cues.push(e.power);}
     if(e.kind==='blast'&&e.power==='nuke')cues.push('nuke');
     if(e.kind==='blast'&&e.power==='bubble')cues.push('bubble-break');
     if(e.kind==='freeze')cues.push('frost');
@@ -12,7 +12,7 @@ export function soundCues(events, boomerangCharging=false) {
     if(e.kind==='burnLaunch')cues.push('burn-launch');
     if(e.kind==='boomerangLaunch')cues.push('boomerang-launch');
     if(e.kind==='boomerangBounce')cues.push('bounce');
-    if(e.kind==='boomerangCatch'){cues.push('pickup');if(boomerangCharging)cues.push('boomerang-charge');}
+    if(e.kind==='boomerangCatch'){if(boomerangCharging)cues.push('boomerang-charge');}
   }
   return [...new Set(cues)];
 }
@@ -37,7 +37,7 @@ export class GameSound {
   refreshLaser(){const p=this.players.laser;if(!p)return;if(this.audible&&this.mode==='game'&&this.laser>0){p.volume=this.catalog.assets.laser.volume*Math.min(1,this.laser/.12);if(p.paused)this.playPlayer('laser');}else{p.pause();if(!this.laser)p.currentTime=0;}}
   refreshVortex(){this.refreshLaser();const p=this.players.vortex;if(this.audible&&this.mode==='game'&&this.vortex){if(p.paused)this.playPlayer('vortex');}else{p.pause();if(!this.vortex)p.currentTime=0;}}
   uiClick(){this.music();this.refreshVortex();this.play('ui');}
-  play(cue){if(!this.audible||(cue!=='ui'&&this.mode!=='game'))return;const now=this.now(),gap=['hit','shatter'].includes(cue)?.07:cue==='bounce'?.05:.015;if(now-(this.last[cue]??-100)<gap)return;this.last[cue]=now;let name=cue;if(cue==='shatter')name=this.shatter++%2?'shatter-b':'shatter-a';if(cue.endsWith('-launch'))this.players[cue.replace('-launch','-charge')]?.pause();if(cue==='wave')this.players['wave-charge']?.pause();
+  play(cue){if(this.catalog.silent?.includes(cue)||!this.audible||(cue!=='ui'&&this.mode!=='game'))return;const now=this.now(),gap=['hit','shatter'].includes(cue)?.07:cue==='bounce'?.05:.015;if(now-(this.last[cue]??-100)<gap)return;this.last[cue]=now;let name=cue;if(cue==='shatter')name=this.shatter++%2?'shatter-b':'shatter-a';if(cue.endsWith('-launch'))this.players[cue.replace('-launch','-charge')]?.pause();if(cue==='wave')this.players['wave-charge']?.pause();
     const keys=this.pitchKeys[name];if(keys?.length>1){const previous=this.lastPitch[name],count=keys.length-(previous===undefined?0:1);let index=Math.min(count-1,Math.max(0,Math.floor(this.random()*count)));if(previous!==undefined&&index>=previous)index++;this.lastPitch[name]=index;for(const key of keys){this.players[key].pause();this.players[key].currentTime=0;}name=keys[index];}
     const p=this.players[name];if(p){p.currentTime=0;this.playPlayer(name);}}
   consume(frame){if(this.mode!=='game'||!['running','gameOver'].includes(frame.state)||frame.time===this.lastFrame)return;this.lastFrame=frame.time;this.laser=frame.state==='running'?(frame.player.laserRemaining||0):0;if(this.now()-this.lastHealth>=1){this.lastHealth=this.now();this.music();}this.vortex=frame.fields.some(f=>f.kind==='vortex'&&f.remaining>0);this.refreshVortex();for(const cue of soundCues(frame.events,frame.player.boomerangCharging))this.play(cue);}

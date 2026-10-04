@@ -252,7 +252,8 @@ final class ClassicBridgeTests: XCTestCase {
         let defaults = UserDefaults(suiteName: suite)!
         defer { defaults.removePersistentDomain(forName: suite) }
         let session = GameSession(defaults: defaults)
-        XCTAssertFalse(session.autoCalibrate)
+        XCTAssertTrue(session.autoCalibrate, "Automatic calibration starts enabled without a saved choice")
+        session.autoCalibrate = false
         session.posture = .inclined
         session.scene.play(restart: true)
         XCTAssertEqual(session.posture, .inclined, "Disabled automatic calibration preserves the selected preset")

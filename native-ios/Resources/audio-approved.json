@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -50,12 +50,12 @@
     "lightning": {
       "file": "audio-lightning.wav",
       "volume": 0.55,
-      "proposal": "2026-10-02/lightning-short",
-      "author": "Augmentality (Brandon Morris)",
-      "source": "https://opengameart.org/content/spell-sounds",
-      "license": "CC0",
-      "changes": "Recorte de silencio, nivel ajustado y fundidos breves. Fragmento inicial de hasta 1.6 s. Cola acortada a 0,65 s; fundido final de 10 ms. Ataque, timbre y volumen conservados.",
-      "sha256": "195caa7f136da76817e1caddd1ad0a8f0ccee6eb7230dc4c331d16f6ad27e1d8"
+      "proposal": "2026-10-04-fresh/lightning-B",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono. Fragmento inicial de 0.65 s y fundido de salida de 10 ms; se conserva también el original completo.",
+      "sha256": "b30f2986b8da7bb40dbcc1e1e90aa8ed598ecad491325a5a616b16b288217f41"
     },
     "shatter-a": {
       "file": "audio-shatter-a.wav",
@@ -170,22 +170,22 @@
     "nuke": {
       "file": "audio-nuke.wav",
       "volume": 0.7,
-      "proposal": "2026-10-02/nuke-B",
-      "author": "dklon",
-      "source": "https://opengameart.org/content/boom-pack-1",
-      "license": "CC-BY 3.0",
-      "changes": "Archivo publicado completo; solo conversión a WAV y ajuste uniforme de volumen. Sin síntesis, filtros, recortes, pitch ni montajes.",
-      "sha256": "fd8d32a701e6569ceac2e9867bcbec10c93ac68002104d2ae1b1e598bf2b73fd"
+      "proposal": "2026-10-04-fresh/nuke-B",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono.",
+      "sha256": "5432a22f299f5942b7b1ec4f22aebc442f9454448a298f3f17bc9a690bc1e469"
     },
     "frost": {
       "file": "audio-frost.wav",
       "volume": 0.65,
-      "proposal": "2026-10-01/frost-C",
-      "author": "lentikula",
-      "source": "https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx",
-      "license": "CC0",
-      "changes": "Solo conversión a WAV y ajuste uniforme de volumen. Timbre y velocidad originales.",
-      "sha256": "b29490c01444f74cad3d9b6444c504b07a8bc0c473c795327f3b32f83360a77e"
+      "proposal": "2026-10-04-fresh/frost-A",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono.",
+      "sha256": "8a99f91dcf3c8e498ae4ccea2f0ff1aba3e387531878685998d28b327dc68ad2"
     },
     "wave": {
       "file": "audio-wave.wav",
@@ -272,17 +272,18 @@
     "bubble-break": {
       "file": "audio-bubble-break.wav",
       "volume": 0.65,
-      "proposal": "2026-10-02-shield-magic/bubble-break-D",
-      "author": "lentikula",
-      "source": "https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx",
-      "license": "CC0",
-      "changes": "Grabación publicada completa. Solo conversión a WAV y ajuste uniforme de volumen; sin síntesis, montajes, recortes ni cambios de tono.",
-      "sha256": "b29490c01444f74cad3d9b6444c504b07a8bc0c473c795327f3b32f83360a77e"
+      "proposal": "2026-10-04-fresh/bubble-break-B",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono.",
+      "sha256": "32b6f67e0ea9162f0d366170541afa49fa7ee3496cb5a272f589d3a2e9d73189"
     }
   },
   "silent": [
     "death",
     "warning",
-    "combo"
+    "combo",
+    "pickup"
   ]
 }

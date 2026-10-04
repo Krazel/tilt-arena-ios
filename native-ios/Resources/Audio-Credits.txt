@@ -29,9 +29,9 @@ Little Robot Sound Factory
 https://opengameart.org/content/sci-fi-sound-effects-library
 CC-BY 3.0
 
-Augmentality (Brandon Morris)
-https://opengameart.org/content/spell-sounds
-CC0
+JC Sounds
+https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1
+CC-BY 4.0
 
 Iwan qubodup Gabovitch
 https://opengameart.org/content/ice-electricity-magic
@@ -49,14 +49,6 @@ artisticdude
 https://opengameart.org/content/swishes-sound-pack
 CC0
 
-dklon
-https://opengameart.org/content/boom-pack-1
-CC-BY 3.0
-
-lentikula
-https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx
-CC0
-
 Michel Baradari
 https://opengameart.org/content/4-projectile-launches
 CC-BY 3.0
@@ -69,15 +61,11 @@ Krazel Games
 Original synthesis: scripts/refresh-audio-v058.cjs
 Original project audio
 
+CC BY 4.0: https://creativecommons.org/licenses/by/4.0/
 CC BY 3.0: https://creativecommons.org/licenses/by/3.0/
 CC0: https://creativecommons.org/publicdomain/zero/1.0/
-October selections: WAV conversion and uniform volume adjustment; black hole uses a 4-second excerpt with a 5 ms fade at the cut. Original timbre and speed retained.
-Earlier selections: trimmed, leveled, faded; half-second derived charges and split releases where indicated in audio-approved.json.
-Shield: retained small resampled pitch variants. No endorsement by the original authors is implied.
-
-Lightning duration update (0.5.18): same approved Augmentality recording, shortened to 0.65 s with a 10 ms fade. All music and other effects unchanged.
-
-Shield break (October 2): lentikula — Ice Spell Impact 5.wav
-https://lentikula.itch.io/freecc0-basic-spell-impacts-sfx
-CC0: https://creativecommons.org/publicdomain/zero/1.0/
-Complete recording; WAV conversion and uniform volume adjustment only.
+October 4 selections: JC Sounds recordings, PCM WAV conversion and uniform volume adjustment. Lightning uses a 0.65-second excerpt with a 10 ms final fade.
+Other selections: edits listed per asset in audio-approved.json; half-second derived charges and split releases where indicated.
+Black hole: 4-second excerpt with a 5 ms fade. Shield: retained small resampled pitch variants.
+Generic orb pickup is silent. Its historical recording is retained without playback.
+No endorsement by the original authors is implied.
