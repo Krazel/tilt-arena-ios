@@ -8,8 +8,10 @@ struct ApprovedAudio: Decodable {
         let volume: Float
         let pitchVariants: [PitchVariant]?
         let deployment: Deployment?
-        init(file: String, volume: Float, pitchVariants: [PitchVariant]? = nil, deployment: Deployment? = nil) {
+        let alternates: [String]?
+        init(file: String, volume: Float, pitchVariants: [PitchVariant]? = nil, deployment: Deployment? = nil, alternates: [String]? = nil) {
             self.file = file; self.volume = volume; self.pitchVariants = pitchVariants; self.deployment = deployment
+            self.alternates = alternates
         }
     }
     let menu: String
@@ -96,6 +98,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     private var laserRemaining: Double = 0
     private var spikesStart: Double?
     private var nextSpike = 0
+    private var nextVoice: [String: Int] = [:]
     private var audible: Bool { !muted && !suspended && !interrupted && !waitingForUser && servicesAvailable }
 
     init(catalog: ApprovedAudio? = try? ApprovedAudio.load(),
@@ -151,6 +154,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     private func rebuildPlayers() {
         let position = players[currentMusic ?? ""]?.currentTime ?? 0
         players.values.forEach { $0.stop() }; players.removeAll(); pitchKeys.removeAll()
+        nextVoice.removeAll()
         for (name, asset) in catalog?.assets ?? [:] {
             guard let player = makePlayer(asset) else { continue }
             player.volume = asset.volume; (player as? AVAudioPlayer)?.delegate = self
@@ -221,6 +225,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     func playMusic() { setMode(.game) }
     func uiClick() { recoverFromUserAction(); play("ui") }
     private func clearEffects() {
+        nextVoice.removeAll()
         spikesStart = nil; nextSpike = 0
         for (name, player) in players where !name.hasPrefix("music") && name != "ui" { player.stop(); player.currentTime = 0 }
         pausedEffects.removeAll()
@@ -284,6 +289,11 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         if cue == "shatter" { name = shatterIndex % 2 == 0 ? "shatter-a" : "shatter-b"; shatterIndex += 1 }
         if cue.hasSuffix("-launch") { players[cue.replacingOccurrences(of: "-launch", with: "-charge")]?.stop() }
         if cue == "wave" { players["wave-charge"]?.stop() }
+        if let alternates = catalog?.assets[name]?.alternates, !alternates.isEmpty {
+            let keys = [name] + alternates, index = nextVoice[name, default: 0] % (alternates.count + 1)
+            nextVoice[name] = (index + 1) % keys.count
+            name = keys[index]
+        }
         if let keys = pitchKeys[name], keys.count > 1 {
             let previous = lastPitch[name]
             let count = keys.count - (previous == nil ? 0 : 1)

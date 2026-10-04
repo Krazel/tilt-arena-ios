@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -30,12 +30,17 @@
     "hit": {
       "file": "audio-hit.wav",
       "volume": 0.7,
-      "proposal": "2026-10-02/kill-A",
-      "author": "0f9ran",
-      "source": "https://opengameart.org/content/pop",
+      "proposal": "2026-10-04-deaths/hit-A",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
       "license": "CC0",
-      "changes": "Archivo publicado completo; solo conversión a WAV y ajuste uniforme de volumen. Sin síntesis, filtros, recortes, pitch ni montajes.",
-      "sha256": "b6cce63fb81cdf44a1da1bcf86d8b9d712980d7b742bd56fc60b2c9f3dd9a405"
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
+      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96",
+      "alternates": [
+        "hit-echo",
+        "hit-echo2",
+        "hit-echo3"
+      ]
     },
     "vortex": {
       "file": "audio-vortex.wav",
@@ -306,6 +311,36 @@
       "license": "CC-BY 4.0",
       "changes": "Complete published Dagger Swing 01 recording; PCM conversion and level adjustment only. Separate voices preserve overlapping tails.",
       "sha256": "f72f61cbec541d5a75f742173d731135321c230d9e72b15fe026c26d61adc8f4"
+    },
+    "hit-echo": {
+      "file": "audio-hit-echo.wav",
+      "volume": 0.7,
+      "proposal": "2026-10-04-deaths/hit-A",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "license": "CC0",
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
+      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
+    },
+    "hit-echo2": {
+      "file": "audio-hit-echo2.wav",
+      "volume": 0.7,
+      "proposal": "2026-10-04-deaths/hit-A",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "license": "CC0",
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
+      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
+    },
+    "hit-echo3": {
+      "file": "audio-hit-echo3.wav",
+      "volume": 0.7,
+      "proposal": "2026-10-04-deaths/hit-A",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "license": "CC0",
+      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
+      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
     }
   },
   "silent": [

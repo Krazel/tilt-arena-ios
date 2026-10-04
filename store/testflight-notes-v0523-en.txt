@@ -1,0 +1,1 @@
+Enemy deaths now use the selected short gel pop (option A). Rapid eliminations preserve the complete sound using four playback voices. Music, frozen-enemy sounds, other power effects and gameplay remain unchanged.

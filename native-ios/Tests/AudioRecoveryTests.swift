@@ -15,6 +15,34 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testDeathAUsesFourFullVoicesAndKeepsMutePauseAndFrozenRouting() throws {
+        let catalog = try ApprovedAudio.load(), asset = try XCTUnwrap(catalog.assets["hit"])
+        let keys = ["hit"] + (asset.alternates ?? [])
+        XCTAssertEqual(keys.count, 4)
+        var players: [String: FakePlayback] = [:], clock: Double = 0
+        let sound = ClassicSound(catalog: catalog, makePlayer: { a in let p=FakePlayback();players[a.file]=p;return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter(), now: { clock })
+        let voices = try keys.map { try XCTUnwrap(players[try XCTUnwrap(catalog.assets[$0]).file]) }
+        let base = try ClassicBridge().create(seed: 11, spawning: false)
+        let event = ClassicFrame.Event(kind: "kill", x: nil, y: nil, radius: nil, angle: nil, toX: nil, toY: nil, color: nil, power: nil, value: nil, bonus: nil)
+        func frame(_ time: Double) -> ClassicFrame {
+            clock = time
+            return ClassicFrame(state: base.state, mode: base.mode, time: time, score: base.score, combo: base.combo, comboBase: base.comboBase, pendingBonus: base.pendingBonus, bestCombo: base.bestCombo, kills: base.kills, comboRemaining: base.comboRemaining, player: base.player, beam: base.beam, enemies: base.enemies, pickups: base.pickups, projectiles: base.projectiles, fields: base.fields, events: [event])
+        }
+        sound.startRun();players["audio-music-a.mp3"]?.currentTime = 42
+        for i in 0..<4 { sound.consume(frame(Double(i)*0.071));voices[i].currentTime = 0.01 }
+        XCTAssertEqual(voices.map(\.plays), [1,1,1,1]);XCTAssertEqual(voices[0].currentTime, 0.01)
+        sound.consume(frame(0.22));XCTAssertEqual(voices.map(\.plays), [1,1,1,1])
+        sound.consume(frame(0.284));XCTAssertEqual(voices.map(\.plays), [2,1,1,1])
+        sound.pause();XCTAssertTrue(voices.allSatisfy { !$0.isPlaying })
+        sound.playMusic();XCTAssertTrue(voices.allSatisfy { $0.isPlaying })
+        XCTAssertEqual(players["audio-music-a.mp3"]?.currentTime, 42)
+        sound.setMuted(true);sound.consume(frame(1));XCTAssertTrue(voices.allSatisfy { !$0.isPlaying && $0.currentTime == 0 })
+        sound.setMuted(false);sound.setMode(.menu);XCTAssertTrue(voices.allSatisfy { !$0.isPlaying })
+        sound.startRun();sound.consume(frame(2));XCTAssertEqual(voices[0].plays, 4)
+        var frozen = event;frozen.frozen = true
+        XCTAssertEqual(AudioCuePolicy.cues(events: [frozen], boomerangCharging: false), ["shatter"])
+        XCTAssertEqual(AudioCuePolicy.cues(events: Array(repeating: event, count: 20), boomerangCharging: false), ["hit"])
+    }
     func testSpikesDeploymentPreservesCompleteTailsAndHonorsPauseMuteAndStalledFrames() throws {
         let catalog = try ApprovedAudio.load(), base = try ClassicBridge().create(seed: 11, spawning: false)
         let deployment = try XCTUnwrap(catalog.assets["spikes"]?.deployment)

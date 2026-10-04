@@ -20,7 +20,7 @@ export class GameSound {
   constructor(catalog, makeAudio=file=>new Audio('/'+file), now=()=>performance.now()/1000, random=Math.random){
     this.catalog=catalog;this.now=now;this.players={};this.mode='menu';this.muted=true;this.suspended=false;
     this.track=-1;this.current=null;this.last={};this.paused=new Set();this.shatter=0;this.lastFrame=null;this.vortex=false;this.laser=0;this.lastHealth=-100;
-    this.random=random;this.pitchKeys={};this.lastPitch={};this.spikesStart=null;this.nextSpike=0;
+    this.random=random;this.pitchKeys={};this.lastPitch={};this.spikesStart=null;this.nextSpike=0;this.nextVoice={};
     for(const [name,a] of Object.entries(catalog.assets)){const p=makeAudio(a.file);p.preload='auto';p.volume=a.volume;p.loop=name===catalog.menu||['vortex','laser'].includes(name);this.players[name]=p;
       if(a.pitchVariants?.length&&!name.startsWith('music')){this.pitchKeys[name]=[name];a.pitchVariants.forEach((v,i)=>{const key=name+'#pitch'+i,voice=makeAudio(v.file);voice.preload='auto';voice.volume=a.volume;voice.loop=false;this.players[key]=voice;this.pitchKeys[name].push(key);});}
       p.addEventListener('ended',()=>{if(this.mode==='game'&&this.current===name){this.advanceTrack();this.players[this.current].currentTime=0;this.music();}});}
@@ -29,7 +29,7 @@ export class GameSound {
   playPlayer(name){this.players[name]?.play().catch(()=>{});}
   advanceTrack(){this.track=(this.track+1)%this.catalog.playlist.length;this.current=this.catalog.playlist[this.track];}
   music(){const wanted=this.mode==='menu'?this.catalog.menu:this.mode==='game'?this.current:null;for(const [n,p] of Object.entries(this.players))if(n.startsWith('music')){if(this.audible&&n===wanted){if(p.paused)this.playPlayer(n);}else p.pause();}}
-  clearEffects(){this.spikesStart=null;this.nextSpike=0;for(const [n,p]of Object.entries(this.players))if(!n.startsWith('music')&&n!=='ui'){p.pause();p.currentTime=0;}this.paused.clear();}
+  clearEffects(){this.nextVoice={};this.spikesStart=null;this.nextSpike=0;for(const [n,p]of Object.entries(this.players))if(!n.startsWith('music')&&n!=='ui'){p.pause();p.currentTime=0;}this.paused.clear();}
   setMuted(value){this.muted=value;if(value){Object.values(this.players).forEach(p=>p.pause());this.clearEffects();}else{this.music();this.refreshVortex();}}
   setSuspended(value){this.suspended=value;if(value)Object.values(this.players).forEach(p=>p.pause());else{this.music();this.refreshVortex();}}
   startRun(){this.clearEffects();this.last={};this.lastFrame=null;this.vortex=false;this.laser=0;this.lastHealth=-100;this.advanceTrack();this.players[this.current].currentTime=0;this.mode='game';this.music();}
@@ -41,6 +41,7 @@ export class GameSound {
   play(cue){if(this.catalog.silent?.includes(cue)||!this.audible||(cue!=='ui'&&this.mode!=='game'))return;const now=this.now(),gap=['hit','shatter'].includes(cue)?.07:cue==='bounce'?.05:.015;if(now-(this.last[cue]??-100)<gap)return;this.last[cue]=now;
     if(cue==='spikes'&&this.catalog.assets.spikes.deployment&&this.lastFrame!==null){for(const key of [cue,...this.catalog.assets.spikes.deployment.alternates]){this.players[key]?.pause();if(this.players[key])this.players[key].currentTime=0;this.paused.delete(key);}this.spikesStart=this.lastFrame;this.nextSpike=0;return;}
     let name=cue;if(cue==='shatter')name=this.shatter++%2?'shatter-b':'shatter-a';if(cue.endsWith('-launch'))this.players[cue.replace('-launch','-charge')]?.pause();if(cue==='wave')this.players['wave-charge']?.pause();
+    const alternates=this.catalog.assets[name]?.alternates;if(alternates?.length){const voices=[name,...alternates],index=(this.nextVoice[name]||0)%voices.length;this.nextVoice[name]=(index+1)%voices.length;name=voices[index];}
     const keys=this.pitchKeys[name];if(keys?.length>1){const previous=this.lastPitch[name],count=keys.length-(previous===undefined?0:1);let index=Math.min(count-1,Math.max(0,Math.floor(this.random()*count)));if(previous!==undefined&&index>=previous)index++;this.lastPitch[name]=index;for(const key of keys){this.players[key].pause();this.players[key].currentTime=0;}name=keys[index];}
     const p=this.players[name];if(p){p.currentTime=0;this.playPlayer(name);}}
   consume(frame){if(this.mode!=='game'||!['running','gameOver'].includes(frame.state)||frame.time===this.lastFrame)return;this.lastFrame=frame.time;this.laser=frame.state==='running'?(frame.player.laserRemaining||0):0;if(this.now()-this.lastHealth>=1){this.lastHealth=this.now();this.music();}this.vortex=frame.fields.some(f=>f.kind==='vortex'&&f.remaining>0);this.refreshVortex();for(const cue of soundCues(frame.events,frame.player.boomerangCharging))if(cue!=='spikes'||frame.state==='running')this.play(cue);if(frame.state==='running')this.advanceSpikes(frame.time);else this.spikesStart=null;}
