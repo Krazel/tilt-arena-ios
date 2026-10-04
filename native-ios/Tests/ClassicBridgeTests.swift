@@ -13,7 +13,7 @@ final class ClassicBridgeTests: XCTestCase {
                     laser.update(beam: beam, remaining: 1, time: 0, theme: theme, reduced: reduced)
                     let shape = try XCTUnwrap(laser.children.first as? SKShapeNode)
                     let path = try XCTUnwrap(shape.path)
-                    let start = laser.convert(.zero, to: world), end = laser.convert(path.currentPoint, to: world)
+                    let start = laser.convert(CGPoint.zero, to: world), end = laser.convert(path.currentPoint, to: world)
                     XCTAssertEqual(Double(start.x), beam.x, accuracy: 0.00001); XCTAssertEqual(Double(start.y), beam.y, accuracy: 0.00001)
                     XCTAssertEqual(Double(end.x), beam.toX, accuracy: 0.00001); XCTAssertEqual(Double(end.y), beam.toY, accuracy: 0.00001)
                     XCTAssertEqual(Double(shape.lineWidth), beam.width); XCTAssertEqual(laser.children.count, 3)
