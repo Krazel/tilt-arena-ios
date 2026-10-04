@@ -10,7 +10,7 @@ final class ApprovedAudioTests: XCTestCase {
     }
     func testAllApprovedResourcesDecodeOnIOSAndChargesMatchSimulation() throws {
         let catalog = try ApprovedAudio.load()
-        XCTAssertEqual(catalog.assets.count, 31)
+        XCTAssertEqual(catalog.assets.count, 33)
         XCTAssertTrue(catalog.silent?.contains("pickup") == true)
         XCTAssertEqual(catalog.playlist, ["music-a", "music-b", "music-c"])
         XCTAssertEqual(catalog.menu, "music-menu")
@@ -22,11 +22,12 @@ final class ApprovedAudioTests: XCTestCase {
             if name.hasSuffix("-charge") { XCTAssertEqual(player.duration, 0.5, accuracy: 0.001) }
             if name.hasPrefix("music") { XCTAssertGreaterThan(player.duration, 60) }
             for variant in asset.pitchVariants ?? [] {
-                XCTAssertEqual(name, "bubble"); XCTAssertLessThanOrEqual(abs(variant.cents), 40)
+                XCTAssertTrue(name == "bubble" || name.hasPrefix("hit"))
+                XCTAssertLessThanOrEqual(abs(variant.cents), name == "bubble" ? 40 : 60)
                 let file = variant.file as NSString
                 let url = try XCTUnwrap(Bundle.main.url(forResource: file.deletingPathExtension, withExtension: file.pathExtension))
                 let pitched = try AVAudioPlayer(contentsOf: url)
-                XCTAssertEqual(pitched.duration, player.duration, accuracy: player.duration * 0.024)
+                XCTAssertEqual(pitched.duration, player.duration, accuracy: player.duration * (name == "bubble" ? 0.024 : 0.036))
             }
         }
         XCTAssertNotNil(Bundle.main.url(forResource: "Audio-Credits", withExtension: "txt"))

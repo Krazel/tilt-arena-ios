@@ -15,30 +15,44 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
-    func testDeathAUsesFourFullVoicesAndKeepsMutePauseAndFrozenRouting() throws {
+    func testBubbleDeathsVaryPitchAcrossOverlappingVoicesAndRetainMutePauseAndFrozenRouting() throws {
         let catalog = try ApprovedAudio.load(), asset = try XCTUnwrap(catalog.assets["hit"])
         let keys = ["hit"] + (asset.alternates ?? [])
-        XCTAssertEqual(keys.count, 4)
-        var players: [String: FakePlayback] = [:], clock: Double = 0
-        let sound = ClassicSound(catalog: catalog, makePlayer: { a in let p=FakePlayback();players[a.file]=p;return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter(), now: { clock })
-        let voices = try keys.map { try XCTUnwrap(players[try XCTUnwrap(catalog.assets[$0]).file]) }
+        XCTAssertEqual(keys.count, 6)
+        var players: [String: FakePlayback] = [:], clock: Double = 0, random: Double = 0
+        let sound = ClassicSound(catalog: catalog, makePlayer: { a in let p=FakePlayback();players[a.file]=p;return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter(), random: { random }, now: { clock })
+        let files = try keys.flatMap { key -> [String] in
+            let a = try XCTUnwrap(catalog.assets[key]); return [a.file] + (a.pitchVariants ?? []).map(\.file)
+        }
         let base = try ClassicBridge().create(seed: 11, spawning: false)
         let event = ClassicFrame.Event(kind: "kill", x: nil, y: nil, radius: nil, angle: nil, toX: nil, toY: nil, color: nil, power: nil, value: nil, bonus: nil)
         func frame(_ time: Double) -> ClassicFrame {
             clock = time
-            return ClassicFrame(state: base.state, mode: base.mode, time: time, score: base.score, combo: base.combo, comboBase: base.comboBase, pendingBonus: base.pendingBonus, bestCombo: base.bestCombo, kills: base.kills, comboRemaining: base.comboRemaining, player: base.player, beam: base.beam, enemies: base.enemies, pickups: base.pickups, projectiles: base.projectiles, fields: base.fields, events: [event])
+            return ClassicFrame(state: base.state, mode: base.mode, time: time, score: base.score, combo: base.combo, comboBase: base.comboBase, pendingBonus: base.pendingBonus, bestCombo: base.bestCombo, kills: base.kills, comboRemaining: base.comboRemaining, player: base.player, beam: base.beam, enemies: base.enemies, pickups: base.pickups, projectiles: base.projectiles, fields: base.fields, events: Array(repeating: event, count: 20))
         }
         sound.startRun();players["audio-music-a.mp3"]?.currentTime = 42
-        for i in 0..<4 { sound.consume(frame(Double(i)*0.071));voices[i].currentTime = 0.01 }
-        XCTAssertEqual(voices.map(\.plays), [1,1,1,1]);XCTAssertEqual(voices[0].currentTime, 0.01)
-        sound.consume(frame(0.22));XCTAssertEqual(voices.map(\.plays), [1,1,1,1])
-        sound.consume(frame(0.284));XCTAssertEqual(voices.map(\.plays), [2,1,1,1])
-        sound.pause();XCTAssertTrue(voices.allSatisfy { !$0.isPlaying })
-        sound.playMusic();XCTAssertTrue(voices.allSatisfy { $0.isPlaying })
+        var lastPitch: Int?, first: FakePlayback?, used = Set<Int>()
+        for i in 0..<18 {
+            random = [0.0,0.0,0.999,0.999,0.5,0.5][i % 6]
+            let before = files.map { players[$0]!.plays }
+            sound.consume(frame(Double(i)*0.071))
+            let changed = files.indices.filter { players[files[$0]]!.plays > before[$0] }
+            XCTAssertEqual(changed.count, 1)
+            let index = try XCTUnwrap(changed.first), pitch = index % 5
+            if let previous = lastPitch { XCTAssertNotEqual(pitch, previous) }
+            lastPitch = pitch; used.insert(pitch)
+            if i == 0 { first = players[files[index]];first?.currentTime = 0.01 }
+            if i == 5 { XCTAssertEqual(first?.currentTime, 0.01); XCTAssertTrue(first?.isPlaying == true) }
+            let total = files.reduce(0) { $0 + players[$1]!.plays }
+            sound.consume(frame(clock+0.001));XCTAssertEqual(files.reduce(0) { $0 + players[$1]!.plays }, total)
+        }
+        XCTAssertEqual(used.count, 5)
+        let active = files.filter { players[$0]!.isPlaying }
+        sound.pause();XCTAssertTrue(files.allSatisfy { !players[$0]!.isPlaying })
+        sound.playMusic();XCTAssertTrue(active.allSatisfy { players[$0]!.isPlaying })
         XCTAssertEqual(players["audio-music-a.mp3"]?.currentTime, 42)
-        sound.setMuted(true);sound.consume(frame(1));XCTAssertTrue(voices.allSatisfy { !$0.isPlaying && $0.currentTime == 0 })
-        sound.setMuted(false);sound.setMode(.menu);XCTAssertTrue(voices.allSatisfy { !$0.isPlaying })
-        sound.startRun();sound.consume(frame(2));XCTAssertEqual(voices[0].plays, 4)
+        sound.setMuted(true);sound.consume(frame(3));XCTAssertTrue(files.allSatisfy { !players[$0]!.isPlaying && players[$0]!.currentTime == 0 })
+        sound.setMuted(false);sound.setMode(.menu);XCTAssertTrue(files.allSatisfy { !players[$0]!.isPlaying })
         var frozen = event;frozen.frozen = true
         XCTAssertEqual(AudioCuePolicy.cues(events: [frozen], boomerangCharging: false), ["shatter"])
         XCTAssertEqual(AudioCuePolicy.cues(events: Array(repeating: event, count: 20), boomerangCharging: false), ["hit"])

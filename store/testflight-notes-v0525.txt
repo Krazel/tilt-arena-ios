@@ -1,0 +1,1 @@
+Las muertes de enemigos usan la burbuja que estalla elegida, con una pequeña variación aleatoria de tono. Las muertes seguidas conservan la cola del sonido. Música, sonidos de enemigos congelados y jugabilidad sin cambios.

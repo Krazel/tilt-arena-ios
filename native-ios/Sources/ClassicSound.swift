@@ -295,13 +295,16 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
             name = keys[index]
         }
         if let keys = pitchKeys[name], keys.count > 1 {
-            let previous = lastPitch[name]
+            // Death voices share one pitch history, so consecutive kills differ
+            // even when the next overlapping playback voice is selected.
+            let history = cue == "hit" ? cue : name
+            let previous = lastPitch[history]
             let count = keys.count - (previous == nil ? 0 : 1)
             var index = min(count - 1, max(0, Int(random() * Double(count))))
             if let previous, index >= previous { index += 1 }
-            lastPitch[name] = index
+            lastPitch[history] = index
             // Preserve the single-voice policy when retriggering the shield.
-            for key in keys { players[key]?.stop() }
+            if cue != "hit" { for key in keys { players[key]?.stop() } }
             name = keys[index]
         }
         players[name]?.currentTime = 0; playPlayer(name)

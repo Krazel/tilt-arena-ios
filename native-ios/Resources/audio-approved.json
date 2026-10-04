@@ -30,16 +30,40 @@
     "hit": {
       "file": "audio-hit.wav",
       "volume": 0.7,
-      "proposal": "2026-10-04-deaths/hit-A",
-      "author": "rubberduck",
-      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "proposal": "2026-10-04-hordes/hit-5",
+      "author": "farfadet46",
+      "source": "https://opengameart.org/content/bubbles-pop",
       "license": "CC0",
-      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
-      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96",
+      "changes": "Complete approved bubble-pop recording, uniform audition level. Four prerecorded pitch variants at -60, -30, +30, +60 cents; no synthesis or trimming. Six rotating playback voices preserve overlapping tails.",
+      "sha256": "4d5eac9856cb7d605eed251df04aa504468d2cc7a4c7adc079375a24464098d5",
+      "pitchVariants": [
+        {
+          "file": "audio-hit-pitch--60.wav",
+          "cents": -60,
+          "sha256": "10fc7d26b606f151c52d67887b57641f8863b595e606a788ca1806a22d5c12fd"
+        },
+        {
+          "file": "audio-hit-pitch--30.wav",
+          "cents": -30,
+          "sha256": "dc24c72d65859c71571e6dc65c9542746729b22c9f40a01e13ac57dcead766e4"
+        },
+        {
+          "file": "audio-hit-pitch-+30.wav",
+          "cents": 30,
+          "sha256": "a50e02b65328623457a5475e4c4f88ed5aae1349df4fbe7401b6c596cec1cf77"
+        },
+        {
+          "file": "audio-hit-pitch-+60.wav",
+          "cents": 60,
+          "sha256": "15aefad666264bf74025e36e06dce0280759f5ea1d37fbcab411df636f231dd2"
+        }
+      ],
       "alternates": [
         "hit-echo",
         "hit-echo2",
-        "hit-echo3"
+        "hit-echo3",
+        "hit-echo4",
+        "hit-echo5"
       ]
     },
     "vortex": {
@@ -316,32 +340,98 @@
     "hit-echo": {
       "file": "audio-hit-echo.wav",
       "volume": 0.7,
-      "proposal": "2026-10-04-deaths/hit-A",
-      "author": "rubberduck",
-      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "proposal": "2026-10-04-hordes/hit-5",
+      "author": "farfadet46",
+      "source": "https://opengameart.org/content/bubbles-pop",
       "license": "CC0",
-      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
-      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
+      "changes": "Complete approved bubble-pop recording, uniform audition level. Four prerecorded pitch variants at -60, -30, +30, +60 cents; no synthesis or trimming. Six rotating playback voices preserve overlapping tails.",
+      "sha256": "4d5eac9856cb7d605eed251df04aa504468d2cc7a4c7adc079375a24464098d5",
+      "pitchVariants": [
+        {
+          "file": "audio-hit-echo-pitch--60.wav",
+          "cents": -60,
+          "sha256": "10fc7d26b606f151c52d67887b57641f8863b595e606a788ca1806a22d5c12fd"
+        },
+        {
+          "file": "audio-hit-echo-pitch--30.wav",
+          "cents": -30,
+          "sha256": "dc24c72d65859c71571e6dc65c9542746729b22c9f40a01e13ac57dcead766e4"
+        },
+        {
+          "file": "audio-hit-echo-pitch-+30.wav",
+          "cents": 30,
+          "sha256": "a50e02b65328623457a5475e4c4f88ed5aae1349df4fbe7401b6c596cec1cf77"
+        },
+        {
+          "file": "audio-hit-echo-pitch-+60.wav",
+          "cents": 60,
+          "sha256": "15aefad666264bf74025e36e06dce0280759f5ea1d37fbcab411df636f231dd2"
+        }
+      ]
     },
     "hit-echo2": {
       "file": "audio-hit-echo2.wav",
       "volume": 0.7,
-      "proposal": "2026-10-04-deaths/hit-A",
-      "author": "rubberduck",
-      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "proposal": "2026-10-04-hordes/hit-5",
+      "author": "farfadet46",
+      "source": "https://opengameart.org/content/bubbles-pop",
       "license": "CC0",
-      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
-      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
+      "changes": "Complete approved bubble-pop recording, uniform audition level. Four prerecorded pitch variants at -60, -30, +30, +60 cents; no synthesis or trimming. Six rotating playback voices preserve overlapping tails.",
+      "sha256": "4d5eac9856cb7d605eed251df04aa504468d2cc7a4c7adc079375a24464098d5",
+      "pitchVariants": [
+        {
+          "file": "audio-hit-echo2-pitch--60.wav",
+          "cents": -60,
+          "sha256": "10fc7d26b606f151c52d67887b57641f8863b595e606a788ca1806a22d5c12fd"
+        },
+        {
+          "file": "audio-hit-echo2-pitch--30.wav",
+          "cents": -30,
+          "sha256": "dc24c72d65859c71571e6dc65c9542746729b22c9f40a01e13ac57dcead766e4"
+        },
+        {
+          "file": "audio-hit-echo2-pitch-+30.wav",
+          "cents": 30,
+          "sha256": "a50e02b65328623457a5475e4c4f88ed5aae1349df4fbe7401b6c596cec1cf77"
+        },
+        {
+          "file": "audio-hit-echo2-pitch-+60.wav",
+          "cents": 60,
+          "sha256": "15aefad666264bf74025e36e06dce0280759f5ea1d37fbcab411df636f231dd2"
+        }
+      ]
     },
     "hit-echo3": {
       "file": "audio-hit-echo3.wav",
       "volume": 0.7,
-      "proposal": "2026-10-04-deaths/hit-A",
-      "author": "rubberduck",
-      "source": "https://opengameart.org/content/40-cc0-water-splash-slime-sfx",
+      "proposal": "2026-10-04-hordes/hit-5",
+      "author": "farfadet46",
+      "source": "https://opengameart.org/content/bubbles-pop",
       "license": "CC0",
-      "changes": "Grabación publicada completa. Conversión a WAV y nivel uniforme; sin síntesis, recortes, filtros ni cambios de tono.",
-      "sha256": "25a1f2972a648ebc0e501023121ea24828709bc755abcb042caba4b151d62e96"
+      "changes": "Complete approved bubble-pop recording, uniform audition level. Four prerecorded pitch variants at -60, -30, +30, +60 cents; no synthesis or trimming. Six rotating playback voices preserve overlapping tails.",
+      "sha256": "4d5eac9856cb7d605eed251df04aa504468d2cc7a4c7adc079375a24464098d5",
+      "pitchVariants": [
+        {
+          "file": "audio-hit-echo3-pitch--60.wav",
+          "cents": -60,
+          "sha256": "10fc7d26b606f151c52d67887b57641f8863b595e606a788ca1806a22d5c12fd"
+        },
+        {
+          "file": "audio-hit-echo3-pitch--30.wav",
+          "cents": -30,
+          "sha256": "dc24c72d65859c71571e6dc65c9542746729b22c9f40a01e13ac57dcead766e4"
+        },
+        {
+          "file": "audio-hit-echo3-pitch-+30.wav",
+          "cents": 30,
+          "sha256": "a50e02b65328623457a5475e4c4f88ed5aae1349df4fbe7401b6c596cec1cf77"
+        },
+        {
+          "file": "audio-hit-echo3-pitch-+60.wav",
+          "cents": 60,
+          "sha256": "15aefad666264bf74025e36e06dce0280759f5ea1d37fbcab411df636f231dd2"
+        }
+      ]
     },
     "spikes-echo3": {
       "file": "audio-spikes-echo3.wav",
@@ -352,6 +442,70 @@
       "license": "CC-BY 4.0",
       "changes": "Complete approved Dagger Swing01 recording accelerated 2x with pitch-preserving FFmpeg atempo; PCM mono 48 kHz. No trimming or synthesis.",
       "sha256": "b401b69e1ed1107a77095401eeceff894a7c3f860dce63f0298bef7622c00f97"
+    },
+    "hit-echo4": {
+      "file": "audio-hit-echo4.wav",
+      "volume": 0.7,
+      "proposal": "2026-10-04-hordes/hit-5",
+      "author": "farfadet46",
+      "source": "https://opengameart.org/content/bubbles-pop",
+      "license": "CC0",
+      "changes": "Complete approved bubble-pop recording, uniform audition level. Four prerecorded pitch variants at -60, -30, +30, +60 cents; no synthesis or trimming. Six rotating playback voices preserve overlapping tails.",
+      "sha256": "4d5eac9856cb7d605eed251df04aa504468d2cc7a4c7adc079375a24464098d5",
+      "pitchVariants": [
+        {
+          "file": "audio-hit-echo4-pitch--60.wav",
+          "cents": -60,
+          "sha256": "10fc7d26b606f151c52d67887b57641f8863b595e606a788ca1806a22d5c12fd"
+        },
+        {
+          "file": "audio-hit-echo4-pitch--30.wav",
+          "cents": -30,
+          "sha256": "dc24c72d65859c71571e6dc65c9542746729b22c9f40a01e13ac57dcead766e4"
+        },
+        {
+          "file": "audio-hit-echo4-pitch-+30.wav",
+          "cents": 30,
+          "sha256": "a50e02b65328623457a5475e4c4f88ed5aae1349df4fbe7401b6c596cec1cf77"
+        },
+        {
+          "file": "audio-hit-echo4-pitch-+60.wav",
+          "cents": 60,
+          "sha256": "15aefad666264bf74025e36e06dce0280759f5ea1d37fbcab411df636f231dd2"
+        }
+      ]
+    },
+    "hit-echo5": {
+      "file": "audio-hit-echo5.wav",
+      "volume": 0.7,
+      "proposal": "2026-10-04-hordes/hit-5",
+      "author": "farfadet46",
+      "source": "https://opengameart.org/content/bubbles-pop",
+      "license": "CC0",
+      "changes": "Complete approved bubble-pop recording, uniform audition level. Four prerecorded pitch variants at -60, -30, +30, +60 cents; no synthesis or trimming. Six rotating playback voices preserve overlapping tails.",
+      "sha256": "4d5eac9856cb7d605eed251df04aa504468d2cc7a4c7adc079375a24464098d5",
+      "pitchVariants": [
+        {
+          "file": "audio-hit-echo5-pitch--60.wav",
+          "cents": -60,
+          "sha256": "10fc7d26b606f151c52d67887b57641f8863b595e606a788ca1806a22d5c12fd"
+        },
+        {
+          "file": "audio-hit-echo5-pitch--30.wav",
+          "cents": -30,
+          "sha256": "dc24c72d65859c71571e6dc65c9542746729b22c9f40a01e13ac57dcead766e4"
+        },
+        {
+          "file": "audio-hit-echo5-pitch-+30.wav",
+          "cents": 30,
+          "sha256": "a50e02b65328623457a5475e4c4f88ed5aae1349df4fbe7401b6c596cec1cf77"
+        },
+        {
+          "file": "audio-hit-echo5-pitch-+60.wav",
+          "cents": 60,
+          "sha256": "15aefad666264bf74025e36e06dce0280759f5ea1d37fbcab411df636f231dd2"
+        }
+      ]
     }
   },
   "silent": [

@@ -10,7 +10,7 @@ test('shield random pitch avoids consecutive repeats and respects pause, mute, s
  for(let i=1;i<selected.length;i++)assert.notEqual(selected[i],selected[i-1]);
  const last=selected.at(-1);voices[last].currentTime=.2;s.setMode('paused');assert(files.every(f=>voices[f].paused));s.setMode('game');assert.equal(voices[last].currentTime,.2);assert(!voices[last].paused);
  s.setMuted(true);assert(files.every(f=>voices[f].paused));time++;s.play('bubble');assert(files.every(f=>voices[f].paused));
- assert.equal(voices[catalog.assets['music-a'].file].currentTime,42);assert(!Object.keys(s.pitchKeys).some(n=>n!=='bubble'));
+ assert.equal(voices[catalog.assets['music-a'].file].currentTime,42);assert(!Object.keys(s.pitchKeys).some(n=>n!=='bubble'&&!n.startsWith('hit')));
 });
 test('wave release cancels its charge and exiting cancels all pending effects',async()=>{
  const {GameSound}=await import('../play/sound.js');let time=0;const s=new GameSound(catalog,()=>({currentTime:0,paused:true,pause(){this.paused=true},play(){this.paused=false;return Promise.resolve()},addEventListener(){}}),()=>time);

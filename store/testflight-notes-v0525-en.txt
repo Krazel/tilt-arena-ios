@@ -1,0 +1,1 @@
+Enemy deaths now use the selected bubble-pop sound, with subtle random pitch variation. Overlapping kills retain their sound tails. Music, frozen enemy sounds and gameplay are unchanged.
