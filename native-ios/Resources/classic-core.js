@@ -561,13 +561,16 @@
           }
         }
         m.x+=m.vx*dt;m.y+=m.vy*dt;
+        // The wave direction is shared by every enemy in this projectile step.
+        const waveCos=m.kind==='wave'?Math.cos(m.angle):0;
+        const waveSin=m.kind==='wave'?Math.sin(m.angle):0;
         for(const e of this.enemies)if(!e.dead&&this.time>=e.activeAt) {
           let hit=false;
           if(m.kind==='wave') {
             // A wide front perpendicular to travel, not an all-direction radial bomb.
             const dx=e.x-m.x,dy=e.y-m.y;
-            const along=dx*Math.cos(m.angle)+dy*Math.sin(m.angle);
-            const across=-dx*Math.sin(m.angle)+dy*Math.cos(m.angle);
+            const along=dx*waveCos+dy*waveSin;
+            const across=-dx*waveSin+dy*waveCos;
             hit=Math.abs(along)<16 && Math.abs(across)<m.radius+TUNING.dotRadius;
           } else hit=swept(before,m,e,m.radius+TUNING.dotRadius);
           if(hit) {

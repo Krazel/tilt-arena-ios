@@ -1,8 +1,33 @@
 import XCTest
 import SpriteKit
+import JavaScriptCore
 @testable import TiltArena
 
 final class ClassicBridgeTests: XCTestCase {
+    func testWaveHordeThroughNativeJavaScriptCoreAndDecoder() throws {
+        let context = try XCTUnwrap(JSContext())
+        let url = try XCTUnwrap(Bundle.main.url(forResource: "classic-core", withExtension: "js"))
+        context.evaluateScript("globalThis.CLASSIC_DIAGNOSTICS=true;")
+        context.evaluateScript(try String(contentsOf: url, encoding: .utf8))
+        context.evaluateScript("""
+        var waveStress=new ClassicDiagnostics.ClassicGame(19,{spawning:false});
+        for(let i=0;i<550;i++){const a=i*2.39996,r=150+i%10*11;
+          waveStress.addEnemy(480+Math.cos(a)*r,320+Math.sin(a)*r,{activeAt:0,speed:0});}
+        for(let i=0;i<12;i++)waveStress.projectiles.push({id:++waveStress.id,kind:'wave',x:40,y:70+i*5,vx:0,vy:0,angle:.4,radius:48,until:100});
+        """)
+        var samples: [Double] = []
+        for index in 0..<180 {
+            let start = ProcessInfo.processInfo.systemUptime
+            let json = try XCTUnwrap(context.evaluateScript("JSON.stringify(waveStress.advance(1/60))")?.toString())
+            XCTAssertNil(context.exception, context.exception?.toString() ?? "")
+            let frame = try JSONDecoder().decode(ClassicFrame.self, from: Data(json.utf8))
+            XCTAssertEqual(frame.enemies.count, 550); XCTAssertEqual(frame.projectiles.count, 12)
+            XCTAssertEqual(frame.time, Double(index + 1) / 60, accuracy: 0.00001)
+            if index >= 30 { samples.append((ProcessInfo.processInfo.systemUptime - start) * 1000) }
+        }
+        samples.sort()
+        print("NATIVE_WAVE_STRESS dots=550 waves=12 p95CPUms=\(samples[142]) maxCPUms=\(samples.last!) JavaScriptCore=true SwiftDecoder=true simulatorOnly=true GPUFPS=false")
+    }
     @MainActor func testLaserKeepsExactWorldEndpointsAfterTranslationRotationAndThemeChanges() throws {
         let world = SKNode(), laser = ClassicLaser(); world.addChild(laser)
         for theme in VisualTheme.allCases {
@@ -15,7 +40,9 @@ final class ClassicBridgeTests: XCTestCase {
                     let path = try XCTUnwrap(shape.path)
                     let start = laser.convert(CGPoint.zero, to: world), end = laser.convert(path.currentPoint, to: world)
                     XCTAssertEqual(Double(start.x), beam.x, accuracy: 0.00001); XCTAssertEqual(Double(start.y), beam.y, accuracy: 0.00001)
-                    XCTAssertEqual(Double(end.x), beam.toX, accuracy: 0.00001); XCTAssertEqual(Double(end.y), beam.toY, accuracy: 0.00001)
+                    // SpriteKit world transforms use float precision (~3e-5
+                    // points here); keep the tolerance far below a pixel.
+                    XCTAssertEqual(Double(end.x), beam.toX, accuracy: 0.0001); XCTAssertEqual(Double(end.y), beam.toY, accuracy: 0.0001)
                     XCTAssertEqual(Double(shape.lineWidth), beam.width); XCTAssertEqual(laser.children.count, 3)
                 }
             }
