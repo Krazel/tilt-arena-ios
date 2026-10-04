@@ -1,0 +1,1 @@
+Spikes now use the selected blade sound, played eight times as the blades deploy. Normal and Inclined keep their selected posture when playing, resuming or restarting. Automatic recalibration applies to Custom calibration. Music and other approved sounds are unchanged. Enemy death audio remains under review.

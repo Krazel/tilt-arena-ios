@@ -69,3 +69,4 @@ Other selections: edits listed per asset in audio-approved.json; half-second der
 Black hole: 4-second excerpt with a 5 ms fade. Shield: retained small resampled pitch variants.
 Generic orb pickup is silent. Its historical recording is retained without playback.
 No endorsement by the original authors is implied.
+Spikes deployment: JC Sounds, Dagger Swing 01; CC BY 4.0. Eight separate complete recordings at 120 ms intervals; three playback voices, no synthesized or composited recording.

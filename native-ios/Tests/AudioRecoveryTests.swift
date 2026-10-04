@@ -15,6 +15,44 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testSpikesDeploymentPreservesCompleteTailsAndHonorsPauseMuteAndStalledFrames() throws {
+        let catalog = try ApprovedAudio.load(), base = try ClassicBridge().create(seed: 11, spawning: false)
+        let deployment = try XCTUnwrap(catalog.assets["spikes"]?.deployment)
+        XCTAssertEqual(deployment.count, 8); XCTAssertEqual(deployment.interval, 0.12)
+        let keys = ["spikes"] + deployment.alternates
+        XCTAssertEqual(keys.count, 3)
+        var players: [String: FakePlayback] = [:], clock: Double = 0
+        let sound = ClassicSound(catalog: catalog, makePlayer: { a in let p=FakePlayback();players[a.file]=p;return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter(), now: { clock })
+        let voices = try keys.map { try XCTUnwrap(players[try XCTUnwrap(catalog.assets[$0]).file]) }
+        let pickup = ClassicFrame.Event(kind: "pickup", x: nil, y: nil, radius: nil, angle: nil, toX: nil, toY: nil, color: nil, power: "spikes", value: nil, bonus: nil)
+        func frame(_ time: Double, pickup includePickup: Bool = false, state: String = "running") -> ClassicFrame {
+            clock = time
+            return ClassicFrame(state: state, mode: base.mode, time: time, score: base.score, combo: base.combo, comboBase: base.comboBase, pendingBonus: base.pendingBonus, bestCombo: base.bestCombo, kills: base.kills, comboRemaining: base.comboRemaining, player: base.player, beam: base.beam, enemies: base.enemies, pickups: base.pickups, projectiles: base.projectiles, fields: base.fields, events: includePickup ? [pickup] : [])
+        }
+        func count() -> Int { voices.reduce(0) { $0 + $1.plays } }
+        sound.startRun(); players["audio-music-a.mp3"]?.currentTime = 42
+        sound.consume(frame(0, pickup: true)); XCTAssertEqual(count(), 1)
+        voices[0].currentTime = 0.11
+        sound.consume(frame(0.12)); sound.consume(frame(0.12)); XCTAssertEqual(count(), 2)
+        sound.consume(frame(0.24)); XCTAssertEqual(voices[0].currentTime, 0.11)
+        for beat in 3..<8 { sound.consume(frame(Double(beat) * 0.12)) }
+        XCTAssertEqual(voices.map(\.plays), [3, 3, 2]); sound.consume(frame(0.95)); XCTAssertEqual(count(), 8)
+        XCTAssertEqual(players["audio-music-a.mp3"]?.currentTime, 42)
+        sound.startRun(); sound.consume(frame(1, pickup: true)); sound.pause()
+        sound.setSuspended(true); sound.consume(frame(1.12)); let paused = count()
+        sound.setSuspended(false); XCTAssertTrue(voices.allSatisfy { !$0.isPlaying })
+        sound.playMusic(); let resumed = count(); sound.consume(frame(1.12)); XCTAssertEqual(count(), resumed + 1)
+        XCTAssertGreaterThanOrEqual(resumed, paused)
+        sound.setMuted(true); let muted = count(); sound.setMuted(false); sound.consume(frame(1.5)); XCTAssertEqual(count(), muted)
+        sound.startRun(); sound.consume(frame(2, pickup: true)); let start = count()
+        sound.consume(frame(2.5)); XCTAssertEqual(count(), start + 1)
+        sound.consume(frame(2.51)); XCTAssertEqual(count(), start + 1)
+        sound.consume(frame(3, pickup: true)); let repeated = count()
+        sound.consume(frame(3.1)); XCTAssertEqual(count(), repeated)
+        sound.consume(frame(3.12)); XCTAssertEqual(count(), repeated + 1)
+        sound.consume(frame(3.2, state: "gameOver")); let dead = count()
+        sound.consume(frame(3.6)); XCTAssertEqual(count(), dead)
+    }
     func testShieldCollisionPlaysSelectedBreakOnceAndRespectsMuteAndPause() throws {
         let source = try String(contentsOf: XCTUnwrap(Bundle.main.url(forResource: "classic-core", withExtension: "js")), encoding: .utf8)
         let context = try XCTUnwrap(JSContext())

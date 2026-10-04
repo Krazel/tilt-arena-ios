@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -242,12 +242,20 @@
     "spikes": {
       "file": "audio-spikes.wav",
       "volume": 0.5,
-      "proposal": "2026-09-28/spikes-B",
-      "author": "rubberduck",
-      "source": "https://opengameart.org/content/80-cc0-rpg-sfx",
-      "license": "CC0",
-      "changes": "Silencios recortados, nivel RMS comparable con límite de pico, fundidos cortos. Fragmento de hasta 1.2 s.",
-      "sha256": "7d4ea4f4d17751d0a4a8ace0ac67f1f85ea95521124642925ea2fecb19e9fe07"
+      "proposal": "2026-10-04-spikes/spikes-B",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Complete published Dagger Swing 01 recording; PCM conversion and level adjustment only. Separate voices preserve overlapping tails.",
+      "sha256": "f72f61cbec541d5a75f742173d731135321c230d9e72b15fe026c26d61adc8f4",
+      "deployment": {
+        "count": 8,
+        "interval": 0.12,
+        "alternates": [
+          "spikes-echo",
+          "spikes-echo2"
+        ]
+      }
     },
     "laser": {
       "file": "audio-laser.wav",
@@ -278,6 +286,26 @@
       "license": "CC-BY 4.0",
       "changes": "Grabación publicada; conversión a WAV y ajuste uniforme de volumen. Sin síntesis, montajes, filtros ni cambios de tono.",
       "sha256": "32b6f67e0ea9162f0d366170541afa49fa7ee3496cb5a272f589d3a2e9d73189"
+    },
+    "spikes-echo": {
+      "file": "audio-spikes-echo.wav",
+      "volume": 0.5,
+      "proposal": "2026-10-04-spikes/spikes-B",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Complete published Dagger Swing 01 recording; PCM conversion and level adjustment only. Separate voices preserve overlapping tails.",
+      "sha256": "f72f61cbec541d5a75f742173d731135321c230d9e72b15fe026c26d61adc8f4"
+    },
+    "spikes-echo2": {
+      "file": "audio-spikes-echo2.wav",
+      "volume": 0.5,
+      "proposal": "2026-10-04-spikes/spikes-B",
+      "author": "JC Sounds",
+      "source": "https://opengameart.org/content/jc-sounds-fantasy-sfx-pack-vol-1",
+      "license": "CC-BY 4.0",
+      "changes": "Complete published Dagger Swing 01 recording; PCM conversion and level adjustment only. Separate voices preserve overlapping tails.",
+      "sha256": "f72f61cbec541d5a75f742173d731135321c230d9e72b15fe026c26d61adc8f4"
     }
   },
   "silent": [

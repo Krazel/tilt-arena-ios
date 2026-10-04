@@ -1,0 +1,1 @@
+Los pinchos usan el sonido de cuchillas elegido, con ocho golpes sucesivos al desplegarse. Normal e Inclinado conservan la postura seleccionada al jugar, reanudar y reiniciar. La recalibración automática se aplica a Personalizado. La música y los demás sonidos aprobados se mantienen. El sonido de muerte de enemigos sigue en revisión.

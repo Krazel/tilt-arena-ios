@@ -164,7 +164,7 @@ final class ClassicScene: SKScene {
     }
     func play(restart: Bool) {
         guard let session = session else { return }
-        if session.autoCalibrate || (session.posture == .custom && !session.hasCustom) {
+        if session.posture == .custom && (session.autoCalibrate || !session.hasCustom) {
             calibrate(restart: restart); return
         }
         beginPlay(restart: restart)

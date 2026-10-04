@@ -1,13 +1,15 @@
 import AVFoundation
 
 struct ApprovedAudio: Decodable {
+    struct Deployment: Decodable { let count: Int; let interval: Double; let alternates: [String] }
     struct PitchVariant: Decodable { let file: String; let cents: Int }
     struct Asset: Decodable {
         let file: String
         let volume: Float
         let pitchVariants: [PitchVariant]?
-        init(file: String, volume: Float, pitchVariants: [PitchVariant]? = nil) {
-            self.file = file; self.volume = volume; self.pitchVariants = pitchVariants
+        let deployment: Deployment?
+        init(file: String, volume: Float, pitchVariants: [PitchVariant]? = nil, deployment: Deployment? = nil) {
+            self.file = file; self.volume = volume; self.pitchVariants = pitchVariants; self.deployment = deployment
         }
     }
     let menu: String
@@ -92,6 +94,8 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     private var shatterIndex = 0
     private var vortexWanted = false
     private var laserRemaining: Double = 0
+    private var spikesStart: Double?
+    private var nextSpike = 0
     private var audible: Bool { !muted && !suspended && !interrupted && !waitingForUser && servicesAvailable }
 
     init(catalog: ApprovedAudio? = try? ApprovedAudio.load(),
@@ -217,6 +221,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     func playMusic() { setMode(.game) }
     func uiClick() { recoverFromUserAction(); play("ui") }
     private func clearEffects() {
+        spikesStart = nil; nextSpike = 0
         for (name, player) in players where !name.hasPrefix("music") && name != "ui" { player.stop(); player.currentTime = 0 }
         pausedEffects.removeAll()
     }
@@ -247,13 +252,34 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         let now = self.now()
         if now - lastHealthCheck >= 1 { lastHealthCheck = now; refreshMusic() }
         refreshVortex()
-        for cue in AudioCuePolicy.cues(events: frame.events, boomerangCharging: frame.player.boomerangCharging) { play(cue) }
+        for cue in AudioCuePolicy.cues(events: frame.events, boomerangCharging: frame.player.boomerangCharging) {
+            if cue != "spikes" || frame.state == "running" { play(cue) }
+        }
+        if frame.state == "running" { advanceSpikes(at: frame.time) } else { spikesStart = nil }
+    }
+    private func advanceSpikes(at time: Double) {
+        guard audible, mode == .game, let start = spikesStart,
+              let deployment = catalog?.assets["spikes"]?.deployment,
+              deployment.count > 0, deployment.interval > 0 else { return }
+        // Skip overdue beats after a stalled frame instead of playing a burst all at once.
+        let beat = min(deployment.count - 1, max(0, Int(floor((time - start + 0.0000001) / deployment.interval))))
+        guard beat >= nextSpike else { return }
+        let voices = ["spikes"] + deployment.alternates
+        let name = voices[beat % voices.count]
+        players[name]?.currentTime = 0; playPlayer(name)
+        nextSpike = beat + 1
+        if nextSpike >= deployment.count { spikesStart = nil }
     }
     private func play(_ cue: String) {
         guard catalog?.silent?.contains(cue) != true, audible, cue == "ui" || mode == .game else { return }
         let now = self.now()
         let interval = cue == "hit" || cue == "shatter" ? 0.07 : cue == "bounce" ? 0.05 : 0.015
         guard now - (lastCue[cue] ?? -100) >= interval else { return }; lastCue[cue] = now
+        if cue == "spikes", let deployment = catalog?.assets[cue]?.deployment, let time = lastFrameTime {
+            for name in [cue] + deployment.alternates { players[name]?.stop(); pausedEffects.remove(name) }
+            spikesStart = time; nextSpike = 0
+            return
+        }
         var name = cue
         if cue == "shatter" { name = shatterIndex % 2 == 0 ? "shatter-a" : "shatter-b"; shatterIndex += 1 }
         if cue.hasSuffix("-launch") { players[cue.replacingOccurrences(of: "-launch", with: "-charge")]?.stop() }
