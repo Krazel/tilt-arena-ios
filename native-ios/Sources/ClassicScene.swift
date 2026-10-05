@@ -197,11 +197,7 @@ final class ClassicScene: SKScene {
                 if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, bouncing: bouncingPreview, electricity: electricityPreview, charging: boomerangChargePreview, recaught: recaughtPreview) }
-                if ProcessInfo.processInfo.arguments.contains("--death-a-qa") {
-                let death = ClassicDeathEffect(reduced: false); death.removeAllActions(); death.update(age: 0.35)
-                death.position = arrow.position; effects.addChild(death); arrow.isHidden = true
-            }
-            if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
@@ -210,6 +206,10 @@ final class ClassicScene: SKScene {
             session.message = ""; session.phase = .running
             if let frame = gameFrame { render(frame) }; sound.playMusic()
             #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--death-a-qa") {
+                let death = ClassicDeathEffect(reduced: false); death.removeAllActions(); death.update(age: 0.35)
+                death.position = arrow.position; effects.addChild(death); arrow.isHidden = true
+            }
             if ProcessInfo.processInfo.arguments.contains("--gameover-qa") && !showedGameOverQA {
                 showedGameOverQA = true; halt(); finishPausedRun()
             }
