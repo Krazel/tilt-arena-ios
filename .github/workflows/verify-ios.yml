@@ -2,6 +2,11 @@ name: Verify classic iOS candidate
 on:
   workflow_dispatch:
     inputs:
+      area_effects_only:
+        description: 'Native units and approved area VFX captures'
+        required: false
+        default: false
+        type: boolean
       menu_effects_only:
         description: Verify compact posture menus, localization and complete radial effects
         type: boolean
@@ -49,6 +54,7 @@ jobs:
         env:
           QA_CONTROLS_ONLY: ${{ inputs.controls_only }}
           QA_MENU_EFFECTS_ONLY: ${{ inputs.menu_effects_only }}
+          QA_AREA_EFFECTS_ONLY: ${{ inputs.area_effects_only }}
           QA_ENGINE_ONLY: ${{ inputs.engine_only }}
           QA_AUDIO_ONLY: ${{ inputs.audio_only }}
           QA_VISUAL_ONLY: ${{ inputs.visual_only }}

@@ -1,0 +1,1 @@
+VFX aprobados: hielo A Fractura y explosión A Detonación, con partículas independientes, onda de presión, gas caliente y humo. Audio, controles, equilibrio y duración de los poderes conservados. Los demás VFX siguen pendientes de elección.

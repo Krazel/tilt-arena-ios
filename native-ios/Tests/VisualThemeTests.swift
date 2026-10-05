@@ -179,12 +179,19 @@ final class VisualThemeTests: XCTestCase {
             }
             effect.update(remaining: 0.7, duration: 1.2)
             let bounds = effect.calculateAccumulatedFrame(), count = effect.children.count
+            var allNodes: [SKNode] = []
+            effect.enumerateChildNodes(withName: "//*") { node, _ in allNodes.append(node) }
+            XCTAssertLessThan(allNodes.count, 240, "Per-field particle budget remains bounded")
+            let particle = try XCTUnwrap(effect.childNode(withName: kind == "frost" ? "//ice-fragment" : "//ember"))
+            let position = particle.position
             effect.update(remaining: 0.7, duration: 1.2)
             XCTAssertEqual(effect.calculateAccumulatedFrame(), bounds)
             XCTAssertEqual(effect.children.count, count)
             XCTAssertLessThan(bounds.width, radius * 2.1)
             XCTAssertLessThan(bounds.height, radius * 2.1)
             XCTAssertFalse(effect.hasActions(), "Simulation time controls both pause and effect expiry")
+            effect.update(remaining: 0.5, duration: 1.2)
+            XCTAssertNotEqual(particle.position, position, "Approved fragments move independently through time")
             effect.update(remaining: 0, duration: 1.2); XCTAssertEqual(effect.alpha, 0)
         } } }
     }

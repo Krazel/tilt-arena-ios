@@ -60,10 +60,17 @@ if [ "${QA_MENU_EFFECTS_ONLY:-false}" = "true" ]; then
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
     -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes)
 fi
+if [ "${QA_AREA_EFFECTS_ONLY:-false}" = "true" ]; then
+  test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes)
+fi
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \
   -derivedDataPath DerivedData -resultBundlePath ../artifacts/ios-verification/TiltArena-tests.xcresult \
   -parallel-testing-enabled NO "${test_selection[@]}" CODE_SIGNING_ALLOWED=NO test
+# The area UI test already captures both styles at peak and lingering times.
+# Avoid a second simulator boot solely for an unrelated default-menu screenshot.
+if [ "${QA_AREA_EFFECTS_ONLY:-false}" = "true" ]; then exit 0; fi
 xcrun simctl bootstatus "$device_id" -b
 xcrun simctl install "$device_id" DerivedData/Build/Products/Debug-iphonesimulator/TiltArena.app
 xcrun simctl launch "$device_id" com.dmkr.tiltarena
