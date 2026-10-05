@@ -200,13 +200,13 @@ final class ClassicBridge {
         guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
         return try decode(value)
     }
-    func lingeringAreasFrame(left: Double, right: Double) throws -> ClassicFrame {
+    func lingeringAreasFrame(left: Double, right: Double, elapsed: Double = 0.9) throws -> ClassicFrame {
         let script = """
         (function(){const g=new ClassicDiagnostics.ClassicGame(17,{spawning:false});
           g.resize(\(left),\(right),52,592);g.player.x=(\(left)+\(right))/2;g.player.y=100;
           g.activate('frost',{x:\(left)+245,y:290});g.activate('nuke',{x:\(right)-215,y:290});
           ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+60+i*(\(right)-\(left)-120)/9,520));
-          for(let i=0;i<108;i++)g.advance(1/120,{x:0,y:0});
+          for(let i=0;i<\(Int(elapsed * 120)))g.advance(1/120,{x:0,y:0});
           g.events=[];return JSON.stringify(g.snapshot());})()
         """
         guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }

@@ -1,0 +1,1 @@
+More compact menus, without the saved-posture line. Automatic recalibration is shown only for the Calibrate posture. Updated Hard description. New complete ice and explosion effects. English/Spanish follow the device language. Audio and gameplay are unchanged.

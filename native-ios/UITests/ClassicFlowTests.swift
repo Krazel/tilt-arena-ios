@@ -87,6 +87,7 @@ final class ClassicFlowTests: XCTestCase {
             app.launch()
             XCTAssertTrue(app.buttons["mode-hard"].waitForExistence(timeout: 10))
             app.buttons["mode-hard"].tap(); XCTAssertTrue(app.buttons["mode-hard"].isSelected)
+            XCTAssertTrue(app.staticTexts[language == "es" ? "Un reto mayor. Cada decisión cuenta." : "A tougher challenge. Every decision counts."].exists)
             app.buttons["posture-normal"].tap(); capture("29-hard-menu-\(language)", app: app)
             app.buttons["play"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
@@ -202,6 +203,9 @@ final class ClassicFlowTests: XCTestCase {
             XCTAssertTrue(option.isSelected)
             XCTAssertEqual(option.label, language == "es" ? "Recalibrar al jugar o reanudar" : "Recalibrate on play or resume")
             app.buttons["posture-normal"].tap()
+            XCTAssertFalse(option.exists)
+            XCTAssertFalse(app.staticTexts["Posture saved · ready to play"].exists)
+            XCTAssertFalse(app.staticTexts["Postura guardada · lista para jugar"].exists)
             capture("auto-calibration-menu-\(theme)-\(language)", app: app)
             app.buttons["play"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
@@ -221,8 +225,10 @@ final class ClassicFlowTests: XCTestCase {
             capture("auto-calibration-pause-\(theme)-\(language)", app: app)
             app.terminate()
             app.launchArguments.removeAll { $0 == "--fresh-controls-qa" }; app.launch()
-            XCTAssertTrue(option.waitForExistence(timeout: 10)); XCTAssertTrue(option.isSelected)
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10)); XCTAssertFalse(option.exists)
             XCTAssertTrue(app.buttons["posture-inclined"].isSelected)
+            app.buttons["posture-custom"].tap()
+            XCTAssertTrue(option.exists); XCTAssertTrue(option.isSelected)
             option.tap(); XCTAssertFalse(option.isSelected)
             app.buttons["posture-inclined"].tap(); app.buttons["play"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
@@ -234,9 +240,11 @@ final class ClassicFlowTests: XCTestCase {
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             pauseByTouch(app); XCTAssertTrue(app.buttons["posture-normal"].isSelected)
             app.terminate(); app.launch()
-            XCTAssertTrue(option.waitForExistence(timeout: 10)); XCTAssertFalse(option.isSelected)
+            XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10)); XCTAssertFalse(option.exists)
             XCTAssertTrue(app.buttons["posture-normal"].isSelected)
-            app.buttons["posture-custom"].tap(); app.buttons["play"].tap()
+            app.buttons["posture-custom"].tap(); XCTAssertTrue(option.exists); XCTAssertFalse(option.isSelected)
+            capture("compact-custom-menu-\(theme)-\(language)", app: app)
+            app.buttons["play"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             pauseByTouch(app); XCTAssertTrue(app.buttons["posture-custom"].isSelected)
             option.tap(); app.buttons["resume"].tap()
@@ -274,15 +282,15 @@ final class ClassicFlowTests: XCTestCase {
     }
     func testLingeringAreasAndColoredOrbsInBothThemes() {
         let app = XCUIApplication()
-        for theme in ["ink", "classic"] {
-            app.launchArguments = ["--ui-testing", "--lingering-areas-qa", "--theme-\(theme)-qa"]
+        for (theme, peak) in [("ink", false), ("classic", false), ("ink", true), ("classic", true)] {
+            app.launchArguments = ["--ui-testing", "--lingering-areas-qa", "--theme-\(theme)-qa"] + (peak ? ["--area-peak-qa"] : [])
             app.launch()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             XCTAssertTrue(app.otherElements["temporary-theme-control"].exists)
             capture(theme == "ink" ? "27-small-theme-menu" : "28-small-theme-original-menu", app: app)
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
-            capture(theme == "ink" ? "25-lingering-ink" : "26-lingering-original", app: app)
+            capture("area-\(theme)-\(peak ? "peak" : "linger")", app: app)
             app.terminate()
         }
     }

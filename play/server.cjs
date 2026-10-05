@@ -15,6 +15,7 @@ const routes = {
   '/Audio-Credits.txt': ['native-ios/Resources/Audio-Credits.txt', 'text/plain; charset=utf-8'],
   '/game.js': ['play/game.js', 'text/javascript; charset=utf-8'],
   '/renderer.js': ['play/renderer.js', 'text/javascript; charset=utf-8'],
+  '/area-vfx.js': ['play/area-vfx.js', 'text/javascript; charset=utf-8'],
   '/presentation.js': ['play/presentation.js', 'text/javascript; charset=utf-8'],
   '/menu.css': ['play/menu.css', 'text/css; charset=utf-8'],
   '/hud.css': ['play/hud.css', 'text/css; charset=utf-8'],

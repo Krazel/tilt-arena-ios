@@ -31,8 +31,8 @@ enum InkMenuArt {
 enum InkMenuLayout {
     static let size = CGSize(width: 874, height: 402)
     static let panel = CGRect(x: 70, y: 13, width: 734, height: 364)
-    static let main = CGRect(x: 113, y: 63, width: 317, height: 290)
-    static let settings = CGRect(x: 478, y: 64, width: 284, height: 290)
+    static let main = CGRect(x: 113, y: 55, width: 317, height: 290)
+    static let settings = CGRect(x: 478, y: 56, width: 284, height: 290)
     static let divider = CGRect(x: 451, y: 49, width: 1, height: 282)
 }
 
@@ -135,7 +135,6 @@ struct InkMenuView: View {
                     Label(game.muted ? GameText.disabled : GameText.enabled, systemImage: game.muted ? "speaker.slash.fill" : "speaker.wave.2.fill")
                 }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
             }.font(.system(size: 11.5)).frame(height: 27)
-            AutoCalibrationButton(game: game, accent: Color(InkArt.gold), foreground: paper)
             modes
             if paused {
                 paintedButton(GameText.recalibrate, id: "recalibrate", size: 14) { game.scene.calibrate(restart: false) }.frame(height: 38)
@@ -163,8 +162,9 @@ struct InkMenuView: View {
             }
             Text(game.posture.description).font(.system(size: 11.5)).foregroundColor(muted)
                 .frame(height: 30, alignment: .topLeading).fixedSize(horizontal: false, vertical: true)
-            Text(game.posture == .custom ? (game.hasCustom ? GameText.savedPosture : GameText.customHint) : "")
-                .font(.system(size: 10)).foregroundColor(Color(InkArt.gold)).frame(height: 13)
+            if game.posture == .custom {
+                AutoCalibrationButton(game: game, accent: Color(InkArt.gold), foreground: paper)
+            }
         }
     }
 

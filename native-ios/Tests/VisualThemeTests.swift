@@ -167,6 +167,27 @@ final class VisualThemeTests: XCTestCase {
         }
         XCTAssertEqual(Set(InkArt.orbColors.values).count, 11)
     }
+    func testNewAreaEffectsHaveCompleteBoundariesAndDeterministicPauseState() throws {
+        for kind in ["frost", "blast"] { for theme in VisualTheme.allCases { for reduced in [false, true] {
+            let radius: CGFloat = kind == "frost" ? 205 : 155
+            let effect = ClassicAreaEffect(kind: kind, radius: radius, theme: theme, reduced: reduced)
+            let wash = try XCTUnwrap(effect.childNode(withName: "//complete-area") as? SKShapeNode)
+            let path = try XCTUnwrap(wash.path)
+            for i in 0..<36 {
+                let angle = CGFloat(i) * .pi / 18
+                XCTAssertTrue(path.contains(CGPoint(x: cos(angle)*radius*0.9, y: sin(angle)*radius*0.9)))
+            }
+            effect.update(remaining: 0.7, duration: 1.2)
+            let bounds = effect.calculateAccumulatedFrame(), count = effect.children.count
+            effect.update(remaining: 0.7, duration: 1.2)
+            XCTAssertEqual(effect.calculateAccumulatedFrame(), bounds)
+            XCTAssertEqual(effect.children.count, count)
+            XCTAssertLessThan(bounds.width, radius * 2.1)
+            XCTAssertLessThan(bounds.height, radius * 2.1)
+            XCTAssertFalse(effect.hasActions(), "Simulation time controls both pause and effect expiry")
+            effect.update(remaining: 0, duration: 1.2); XCTAssertEqual(effect.alpha, 0)
+        } } }
+    }
     func testProductionInkAtlasHasAlphaAndAllEightCellsContainVisibleArt() throws {
         let image = try XCTUnwrap(UIImage(named: "ink-tide-sprites")?.cgImage)
         XCTAssertNotEqual(image.alphaInfo, .none)

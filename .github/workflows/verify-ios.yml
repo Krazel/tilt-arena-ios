@@ -2,6 +2,10 @@ name: Verify classic iOS candidate
 on:
   workflow_dispatch:
     inputs:
+      menu_effects_only:
+        description: Verify compact posture menus, localization and complete radial effects
+        type: boolean
+        default: false
       engine_only:
         description: Native unit checks after an already reviewed rendering change
         type: boolean
@@ -44,6 +48,7 @@ jobs:
       - run: bash scripts/verify-ios.sh
         env:
           QA_CONTROLS_ONLY: ${{ inputs.controls_only }}
+          QA_MENU_EFFECTS_ONLY: ${{ inputs.menu_effects_only }}
           QA_ENGINE_ONLY: ${{ inputs.engine_only }}
           QA_AUDIO_ONLY: ${{ inputs.audio_only }}
           QA_VISUAL_ONLY: ${{ inputs.visual_only }}

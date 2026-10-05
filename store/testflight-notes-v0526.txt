@@ -1,0 +1,1 @@
+Menú más compacto, sin la línea de postura guardada. Recalibrado automático visible solo al seleccionar Calibrar. Nueva descripción de Difícil y nuevos efectos completos de hielo y explosión. Español/inglés según el idioma del dispositivo. Audio y jugabilidad sin cambios.

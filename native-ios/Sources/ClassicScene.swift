@@ -191,7 +191,7 @@ final class ClassicScene: SKScene {
                 if ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") {
                     for _ in 0..<120 { gameFrame = try bridge?.tick(dt: 1.0 / 60, x: 0, y: 0) }
                 }
-                if lingeringAreasPreview { gameFrame = try bridge?.lingeringAreasFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                if lingeringAreasPreview { gameFrame = try bridge?.lingeringAreasFrame(left: arenaBounds.minX, right: arenaBounds.maxX, elapsed: ProcessInfo.processInfo.arguments.contains("--area-peak-qa") ? 0.25 : 0.9) }
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") { gameFrame = try bridge?.fireRecoveryFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }

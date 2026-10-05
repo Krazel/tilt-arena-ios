@@ -8,7 +8,7 @@ enum GameLanguage: Equatable {
 
     static func resolve(preferredLanguages: [String]) -> GameLanguage {
         let preferred = preferredLanguages.first?.lowercased() ?? ""
-        return preferred.hasPrefix("es") ? .spanish : .english
+        return preferred.split(whereSeparator: { $0 == "-" || $0 == "_" }).first == "es" ? .spanish : .english
     }
 
     static var current: GameLanguage { resolve(preferredLanguages: Locale.preferredLanguages) }
@@ -25,7 +25,7 @@ enum GameText {
     static var classicMode: String { text("Classic", "Clásico") }
     static var hardMode: String { text("Hard", "Difícil") }
     static var classicDescription: String { text("The pressure builds over time.", "La presión aumenta poco a poco.") }
-    static var hardDescription: String { text("A tougher challenge, with a gradual start.", "Un reto mayor, con un inicio gradual.") }
+    static var hardDescription: String { text("A tougher challenge. Every decision counts.", "Un reto mayor. Cada decisión cuenta.") }
     static var tagline: String { text("Dodge. Collect. Chain.", "Esquiva. Recoge. Encadena.") }
     static var play: String { text("Play", "Jugar") }
     static var calibrateAndPlay: String { text("Calibrate & play", "Calibrar y jugar") }
@@ -51,8 +51,6 @@ enum GameText {
     static var controlPosture: String { text("CONTROL POSTURE", "POSTURA DE CONTROL") }
     static var visualStyle: String { text("VISUAL STYLE", "ESTILO VISUAL") }
     static var originalStyle: String { text("Original", "Original") }
-    static var savedPosture: String { text("Posture saved · ready to play", "Postura guardada · lista para jugar") }
-    static var customHint: String { text("Tap Calibrate to save your posture", "Pulsa Calibrar para guardar tu postura") }
     static var sound: String { text("Sound", "Sonido") }
     static var enabled: String { text("On", "Activado") }
     static var disabled: String { text("Off", "Desactivado") }

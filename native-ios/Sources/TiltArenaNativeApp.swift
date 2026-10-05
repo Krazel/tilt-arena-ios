@@ -275,8 +275,7 @@ struct GameView: View {
             }
             Text(game.posture.description).font(.system(size: 12)).foregroundColor(.white.opacity(0.7)).frame(minHeight: 34, alignment: .top)
             if game.posture == .custom {
-                Text(game.hasCustom ? GameText.savedPosture : GameText.customHint)
-                    .font(.system(size: 11, weight: .semibold)).foregroundColor(accent)
+                AutoCalibrationButton(game: game, accent: accent, foreground: paper)
             }
             HStack {
                 Text(GameText.sound).font(.system(size: 12)).foregroundColor(.white.opacity(0.65))
@@ -286,7 +285,6 @@ struct GameView: View {
                         .font(.system(size: 12)).frame(minHeight: 36)
                 }.accessibilityLabel(game.muted ? GameText.enableSound : GameText.muteSound)
             }
-            AutoCalibrationButton(game: game, accent: accent, foreground: paper)
             VStack(alignment: .leading, spacing: 4) {
                 Text(GameText.gameMode).font(.system(size: 10, weight: .bold)).tracking(2).foregroundColor(accent)
                 if game.phase == .menu {
