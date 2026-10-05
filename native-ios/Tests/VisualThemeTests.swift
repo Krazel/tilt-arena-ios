@@ -3,6 +3,33 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    @MainActor func testLaserTrialStylesPreserveSegmentAndBoundNodes() throws {
+        let frame = try ClassicBridge().laserFrame(left: 100, right: 1300), beam = try XCTUnwrap(frame.beam)
+        let node = ClassicLaser()
+        for theme in VisualTheme.allCases { for style in LaserStyle.allCases {
+            node.update(beam: beam, remaining: 0.95, time: 1, theme: theme, reduced: false, style: style)
+            XCTAssertEqual(node.position.x, beam.x, accuracy: 0.001)
+            XCTAssertEqual(node.position.y, beam.y, accuracy: 0.001)
+            var count = 0; node.enumerateChildNodes(withName: "//*") { _, _ in count += 1 }
+            XCTAssertLessThan(count, 25)
+            node.update(beam: nil, remaining: 0, time: 2, theme: theme, reduced: false, style: style)
+            XCTAssertTrue(node.isHidden)
+        } }
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: "laser-test-" + UUID().uuidString))
+        XCTAssertEqual(LaserStyle.read(defaults: defaults), .current)
+        LaserStyle.inkBeam.save(defaults: defaults); XCTAssertEqual(LaserStyle.read(defaults: defaults), .inkBeam)
+        defaults.set("unknown", forKey: LaserStyle.key); XCTAssertEqual(LaserStyle.read(defaults: defaults), .current)
+    }
+    @MainActor func testApprovedDeathHasThirteenMovingFragmentsAndExpires() throws {
+        let node = ClassicDeathEffect(reduced: false); node.removeAllActions()
+        XCTAssertEqual(node.children.count, 14)
+        node.update(age: 0.2); let position = node.children[1].position
+        node.update(age: 0.5); XCTAssertNotEqual(node.children[1].position, position)
+        let bounds = node.calculateAccumulatedFrame(); node.update(age: 0.5)
+        XCTAssertEqual(node.calculateAccumulatedFrame(), bounds)
+        node.update(age: 2.4); XCTAssertTrue(node.children.allSatisfy { $0.alpha < 0.001 })
+    }
+
     @MainActor func testLaserUsesDecodedSegmentAndStopsRenderingAtExpiry() throws {
         let frame = try ClassicBridge().laserFrame(left: 100, right: 1300)
         let beam = try XCTUnwrap(frame.beam)

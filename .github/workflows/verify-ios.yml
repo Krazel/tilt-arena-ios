@@ -2,6 +2,11 @@ name: Verify classic iOS candidate
 on:
   workflow_dispatch:
     inputs:
+      laser_trial_only:
+        description: 'Laser trial selector, three visual styles and approved death'
+        required: false
+        default: false
+        type: boolean
       area_effects_only:
         description: 'Native units and approved area VFX captures'
         required: false
@@ -52,6 +57,7 @@ jobs:
       - run: brew install xcodegen
       - run: bash scripts/verify-ios.sh
         env:
+          QA_LASER_TRIAL_ONLY: ${{ inputs.laser_trial_only }}
           QA_CONTROLS_ONLY: ${{ inputs.controls_only }}
           QA_MENU_EFFECTS_ONLY: ${{ inputs.menu_effects_only }}
           QA_AREA_EFFECTS_ONLY: ${{ inputs.area_effects_only }}

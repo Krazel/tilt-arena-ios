@@ -1,0 +1,1 @@
+Laser visual trial: choose Current, A (Plasma) or B (Ink beam) in the small menu/pause selector. Your choice is saved. Player death uses approved A, Broken arrow. Other VFX, audio and gameplay remain unchanged.

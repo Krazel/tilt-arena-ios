@@ -75,3 +75,9 @@ html[lang="es"] #ui[data-theme="inkTide"]{--title-size:var(--titleEs-size);--tit
 .confirm-card>div{display:flex;gap:10px}.confirm-card button{flex:1;min-height:44px;background:#ffffff12;border-radius:6px;font-size:13px}#confirm-accept{background:var(--accent);color:#161713;font-weight:700}
 #ui[data-theme="inkTide"] .confirm-card{border:0;border-radius:0;background:url('/menu-panel.png') center/100% 100% no-repeat;padding:40px;width:440px}
 #ui[data-theme="inkTide"] .confirm-card h2{font-family:InkBrush,sans-serif;font-weight:400}
+
+/* Temporary visual trial, separate from normal game settings. */
+#laser-trial{position:absolute;left:95px;bottom:2px;height:28px;display:flex;align-items:center;gap:3px;background:#161713cc;border-radius:4px;padding:0 6px;color:#eee4c9;font:9px Arial,sans-serif;pointer-events:auto}
+#laser-trial button{font:10px Arial,sans-serif;height:28px;min-width:30px;background:transparent;color:#eee4c988;padding:0 6px}
+#laser-trial button[aria-pressed="true"]{color:#fff1ce;text-decoration:underline;text-underline-offset:3px}
+#ui[data-phase="running"] #laser-trial,#ui:has(#run-confirm:not([hidden])) #laser-trial{display:none!important}

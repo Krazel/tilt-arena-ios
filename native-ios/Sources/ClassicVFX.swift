@@ -17,6 +17,11 @@ final class ClassicVFX {
         })
     }()
     func show(_ event: ClassicFrame.Event, reduced: Bool) {
+        if event.kind == "death", let x = event.x, let y = event.y {
+            if layer.children.count >= 40 { layer.children.first?.removeFromParent() }
+            let effect = ClassicDeathEffect(reduced: reduced); effect.position = CGPoint(x: x, y: y)
+            layer.addChild(effect); return
+        }
         if theme == .inkTide { ink.show(event, reduced: reduced); return }
         guard let x = event.x, let y = event.y else { return }
         let important = ["blast", "freeze", "death", "wave", "pickup", "burnLaunch", "electricPulse", "boomerangLaunch", "boomerangBounce", "boomerangCatch"].contains(event.kind)

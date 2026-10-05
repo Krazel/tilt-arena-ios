@@ -3,6 +3,7 @@ const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
 const routes = {
+  '/trial-vfx.js': ['play/trial-vfx.js', 'text/javascript; charset=utf-8'],
   '/': ['play/index.html', 'text/html; charset=utf-8'],
   '/hud-review.html': ['play/index.html', 'text/html; charset=utf-8'],
   '/hud-review.js': ['qa/hud-review.js', 'text/javascript; charset=utf-8'],

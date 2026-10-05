@@ -45,6 +45,7 @@ final class GameSession: ObservableObject {
     @Published var best = ClassicScoreRecord.read(mode: GameMode.read())
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
     @Published var theme = VisualTheme.read()
+    @Published var laserStyle = LaserStyle.read()
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
     @Published var autoCalibrate = true {
         didSet { preferences.set(autoCalibrate, forKey: "classic.autoCalibrate") }
@@ -157,7 +158,10 @@ struct GameView: View {
             }
         }.overlay(alignment: .bottomTrailing) {
             if showSettings {
-                temporaryThemeControl.padding(.trailing, 8).padding(.bottom, 2)
+                HStack(spacing: 12) {
+                    temporaryLaserControl
+                    temporaryThemeControl
+                }.padding(.trailing, 8).padding(.bottom, 2)
             }
         }.overlay(alignment: .bottomLeading) {
             if showSettings {
@@ -193,6 +197,7 @@ struct GameView: View {
         }
         .onChange(of: reduceMotion) { game.scene.reduceEffects = $0 }
         .onChange(of: game.posture) { UserDefaults.standard.set($0.rawValue, forKey: "classic.posture") }
+        .onChange(of: game.laserStyle) { $0.save() }
         .onChange(of: game.theme) { theme in theme.save(); game.scene.setTheme(theme) }
         .onChange(of: game.muted) {
             UserDefaults.standard.set($0, forKey: "classic.muted"); game.scene.sound.setMuted($0)
@@ -242,6 +247,20 @@ struct GameView: View {
     }
     // Temporary comparison control, independent of the player-facing settings.
     // Remove this overlay when the visual direction is final.
+    private var temporaryLaserControl: some View {
+        HStack(spacing: 2) {
+            Text(GameLanguage.current == .spanish ? "Prueba láser" : "Laser test").font(.system(size: 9))
+            ForEach(LaserStyle.allCases) { style in
+                Button { game.uiClick(); game.laserStyle = style } label: {
+                    Text(style.title).font(.system(size: 10, weight: .medium))
+                        .foregroundColor(game.laserStyle == style ? paper : paper.opacity(0.5))
+                        .padding(.horizontal, 6).frame(height: 28).contentShape(Rectangle())
+                }.buttonStyle(.plain).accessibilityIdentifier("laser-style-\(style.rawValue)")
+                    .accessibilityAddTraits(game.laserStyle == style ? .isSelected : [])
+            }
+        }.padding(.horizontal, 6).background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 4))
+        .accessibilityElement(children: .contain).accessibilityIdentifier("temporary-laser-control")
+    }
     private var temporaryThemeControl: some View {
         HStack(spacing: 2) {
             ForEach(VisualTheme.allCases) { theme in

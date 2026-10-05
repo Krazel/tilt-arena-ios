@@ -1,6 +1,36 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testLaserTrialSelectorPersistsAndSwitchesDuringPause() {
+        let app = XCUIApplication()
+        for language in ["en", "es"] {
+            app.launchArguments = ["--ui-testing", "--laser-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
+            app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            for style in ["current", "plasma", "inkBeam"] {
+                app.buttons["laser-style-\(style)"].tap()
+                capture("laser-menu-\(language)-\(style)", app: app)
+                if app.buttons["play"].exists { app.buttons["posture-normal"].tap(); app.buttons["play"].tap() }
+                else { app.buttons["resume"].tap() }
+                XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+                XCTAssertFalse(app.buttons["laser-style-current"].exists)
+                capture("laser-effect-\(language)-\(style)", app: app)
+                pauseByTouch(app)
+            }
+            app.terminate(); app.launch()
+            XCTAssertTrue(app.buttons["laser-style-inkBeam"].waitForExistence(timeout: 10))
+            XCTAssertTrue(app.buttons["laser-style-inkBeam"].isSelected)
+            app.buttons["laser-style-current"].tap(); app.terminate()
+        }
+    }
+    func testApprovedDeathFragmentCapture() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--death-a-qa"]
+        app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+        app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+        capture("death-approved-A", app: app)
+    }
+
     func testFireRecoveryIndicatorAfterDash() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--fire-recovery-qa"]

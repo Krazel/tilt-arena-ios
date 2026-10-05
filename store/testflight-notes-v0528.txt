@@ -1,0 +1,1 @@
+Prueba visual del láser: elige Actual, A (Plasma) o B (Haz de tinta) en el pequeño selector del menú o pausa. La elección se guarda. Muerte del protagonista: A, Flecha rota. Los demás VFX, audio y reglas se conservan.

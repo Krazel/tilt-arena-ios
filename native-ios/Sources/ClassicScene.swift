@@ -197,7 +197,11 @@ final class ClassicScene: SKScene {
                 if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, bouncing: bouncingPreview, electricity: electricityPreview, charging: boomerangChargePreview, recaught: recaughtPreview) }
-                if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+                if ProcessInfo.processInfo.arguments.contains("--death-a-qa") {
+                let death = ClassicDeathEffect(reduced: false); death.removeAllActions(); death.update(age: 0.35)
+                death.position = arrow.position; effects.addChild(death); arrow.isHidden = true
+            }
+            if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
@@ -247,6 +251,7 @@ final class ClassicScene: SKScene {
         if session.phase == .calibrating { sampleCalibration(); lastTime = nil; return }
         guard session.phase == .running else { lastTime = nil; return }
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--death-a-qa") { return }
         if explosionPreview || lingeringAreasPreview || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa") || ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") || ProcessInfo.processInfo.arguments.contains("--laser-qa") { return }
         if newPowersPreview {
             // Rendered once by play(); don't replay transient events each frame.
@@ -488,9 +493,10 @@ final class ClassicScene: SKScene {
             objects.removeValue(forKey:key)?.removeFromParent()
             if key.first == "d", let id = Int(key.dropFirst()) { renderedDotFrozen.removeValue(forKey: id) }
         }
+        arrow.isHidden = frame.state == "gameOver"
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
         if laser.parent == nil { world.addChild(laser) }
-        laser.update(beam: frame.beam, remaining: frame.player.laserRemaining, time: frame.time, theme: theme, reduced: reduceEffects)
+        laser.update(beam: frame.beam, remaining: frame.player.laserRemaining, time: frame.time, theme: theme, reduced: reduceEffects, style: session?.laserStyle ?? .current)
         bubble.isHidden = !frame.player.bubble
         fireRecoveryRing.isHidden = frame.player.fireRecoveryRemaining <= 0
         fireRecoveryRing.alpha = min(1, frame.player.fireRecoveryRemaining / 0.5) * (reduceEffects ? 1 : 0.65 + 0.35 * cos(frame.time * 24))
