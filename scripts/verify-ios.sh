@@ -67,13 +67,7 @@ fi
 if [ "${QA_LASER_TRIAL_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
     -only-testing:TiltArenaUITests/ClassicFlowTests/testFinalEffectsAndMenuInBothLanguages
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testReleaseIgnoresOldVisualPreferences
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testApprovedAudioCreditsAreAccessibleInBothLanguages
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testAutomaticCalibrationSettingInBothLanguagesAndThemes
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testRestartAfterDeathIsImmediateInBothThemes
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes)
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testReleaseIgnoresOldVisualPreferences)
 fi
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \

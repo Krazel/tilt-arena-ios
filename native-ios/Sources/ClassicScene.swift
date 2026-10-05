@@ -16,14 +16,14 @@ final class ClassicScene: SKScene {
     private var objects: [String: SKNode] = [:], textures: [String: SKTexture] = [:]
     private var textureAnchors: [String: CGPoint] = [:]
     private var renderedDotFrozen: [Int: Bool] = [:]
-    private var fireCharge = ThemedCharge(.fire, theme: VisualTheme.read())
-    private var waveCharge = ThemedCharge(.wave, theme: VisualTheme.read())
-    private var boomerangCharge = ThemedCharge(.boomerang, theme: VisualTheme.read())
+    private var fireCharge = ThemedCharge(.fire, theme: .inkTide)
+    private var waveCharge = ThemedCharge(.wave, theme: .inkTide)
+    private var boomerangCharge = ThemedCharge(.boomerang, theme: .inkTide)
     private let arrow = SKNode()
     private var bubble = SKShapeNode()
     private let fireRecoveryRing = SKShapeNode(circleOfRadius: 26)
     private let laser = ClassicLaser()
-    private var spikes = ClassicSpikes(theme: VisualTheme.read())
+    private var spikes = ClassicSpikes(theme: .inkTide)
     private let scoreLabel = SKLabelNode(fontNamed: "AvenirNext-Heavy")
     private let comboLabel = SKLabelNode(fontNamed: "AvenirNext-Bold")
     private let bestLabel = SKLabelNode(fontNamed: "AvenirNext-DemiBold")
