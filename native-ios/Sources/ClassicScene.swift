@@ -194,13 +194,15 @@ final class ClassicScene: SKScene {
                 if lingeringAreasPreview { gameFrame = try bridge?.lingeringAreasFrame(left: arenaBounds.minX, right: arenaBounds.maxX, elapsed: ProcessInfo.processInfo.arguments.contains("--area-peak-qa") ? 0.25 : 0.9) }
                 if visualPreview { gameFrame = try bridge?.visualFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if ProcessInfo.processInfo.arguments.contains("--fire-recovery-qa") { gameFrame = try bridge?.fireRecoveryFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
-                if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if spikesPreview { gameFrame = try bridge?.spikesVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, warning: spikesWarningPreview) }
                 if newPowersPreview { gameFrame = try bridge?.newPowersFrame(left: arenaBounds.minX, right: arenaBounds.maxX, bouncing: bouncingPreview, electricity: electricityPreview, charging: boomerangChargePreview, recaught: recaughtPreview) }
                 if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
             } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
+            #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
+            #endif
             lastTime = nil; touchOrigin = nil; touchVector = (0, 0)
             world.isPaused = false; effects.isPaused = false
             session.message = ""; session.phase = .running
