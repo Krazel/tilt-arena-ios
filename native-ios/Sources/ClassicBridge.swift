@@ -206,7 +206,7 @@ final class ClassicBridge {
           g.resize(\(left),\(right),52,592);g.player.x=(\(left)+\(right))/2;g.player.y=100;
           g.activate('frost',{x:\(left)+245,y:290});g.activate('nuke',{x:\(right)-215,y:290});
           ClassicDiagnostics.POWERS.forEach((p,i)=>g.addPickup(p,\(left)+60+i*(\(right)-\(left)-120)/9,520));
-          for(let i=0;i<\(Int(elapsed * 120)))g.advance(1/120,{x:0,y:0});
+          for(let i=0;i<\(Int(elapsed * 120));i++)g.advance(1/120,{x:0,y:0});
           g.events=[];return JSON.stringify(g.snapshot());})()
         """
         guard let value = context.evaluateScript(script) else { throw Failure.invalidFrame }
