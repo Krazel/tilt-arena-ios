@@ -43,7 +43,7 @@ final class ClassicBridgeTests: XCTestCase {
                     // SpriteKit world transforms use float precision (~3e-5
                     // points here); keep the tolerance far below a pixel.
                     XCTAssertEqual(Double(end.x), beam.toX, accuracy: 0.0001); XCTAssertEqual(Double(end.y), beam.toY, accuracy: 0.0001)
-                    XCTAssertEqual(Double(shape.lineWidth), beam.width); XCTAssertEqual(laser.children.count, 3)
+                    XCTAssertEqual(Double(shape.lineWidth), beam.width); XCTAssertEqual(laser.children.filter { !$0.isHidden }.count, 3)
                 }
             }
         }
