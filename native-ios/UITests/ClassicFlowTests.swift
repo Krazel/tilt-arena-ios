@@ -1,25 +1,22 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
-    func testLaserTrialSelectorPersistsAndSwitchesDuringPause() {
+    func testFinalEffectsAndMenuInBothLanguages() {
         let app = XCUIApplication()
         for language in ["en", "es"] {
-            app.launchArguments = ["--ui-testing", "--laser-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
-            app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
-            for style in ["current", "plasma", "inkBeam"] {
-                app.buttons["laser-style-\(style)"].tap()
-                capture("laser-menu-\(language)-\(style)", app: app)
-                if app.buttons["play"].exists { app.buttons["posture-normal"].tap(); app.buttons["play"].tap() }
-                else { app.buttons["resume"].tap() }
+            for power in ["laser", "electricity"] {
+                app.launchArguments = ["--ui-testing", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"] + (power == "laser" ? ["--laser-qa"] : ["--new-powers-qa", "--electricity-qa"])
+                app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+                XCTAssertFalse(app.otherElements["temporary-laser-control"].exists)
+                XCTAssertFalse(app.otherElements["temporary-theme-control"].exists)
+                capture("final-menu-\(language)-\(power)", app: app)
+                app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
                 XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
-                XCTAssertFalse(app.buttons["laser-style-current"].exists)
-                capture("laser-effect-\(language)-\(style)", app: app)
-                pauseByTouch(app)
+                capture("final-effect-\(language)-\(power)", app: app)
+                pauseByTouch(app); app.buttons["resume"].tap()
+                XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+                app.terminate()
             }
-            app.terminate(); app.launch()
-            XCTAssertTrue(app.buttons["laser-style-inkBeam"].waitForExistence(timeout: 10))
-            XCTAssertTrue(app.buttons["laser-style-inkBeam"].isSelected)
-            app.buttons["laser-style-current"].tap(); app.terminate()
         }
     }
     func testApprovedDeathFragmentCapture() {
@@ -131,28 +128,13 @@ final class ClassicFlowTests: XCTestCase {
         }
     }
 
-    func testInkAndOriginalCanSwitchDuringPauseAndPersist() {
+    func testReleaseIgnoresOldVisualPreferences() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--visual-qa"]
-        app.launch()
-        XCTAssertTrue(app.buttons["theme-inkTide"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["theme-inkTide"].isSelected)
-        capture("20-ink-menu", app: app)
-        app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
-        capture("21-ink-arena", app: app)
-        pauseByTouch(app); app.buttons["theme-classic"].tap()
-        XCTAssertTrue(app.buttons["theme-classic"].isSelected)
-        app.buttons["resume"].tap()
-        XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
-        capture("22-original-preserved", app: app)
-        app.terminate(); app.launchArguments = ["--ui-testing"]; app.launch()
-        XCTAssertTrue(app.buttons["theme-classic"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["theme-classic"].isSelected)
-        app.buttons["theme-inkTide"].tap()
-        app.terminate(); app.launch()
-        XCTAssertTrue(app.buttons["theme-inkTide"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["theme-inkTide"].isSelected)
+        app.launchArguments = ["--ui-testing", "-classic.visualTheme", "classic", "-classic.laserStyleTrial", "inkBeam"]
+        app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["theme-classic"].exists)
+        XCTAssertFalse(app.buttons["laser-style-inkBeam"].exists)
+        capture("final-clean-menu-upgrade", app: app)
     }
     func testExplosionHotCoreAndDissipation() {
         let app = XCUIApplication()
@@ -316,7 +298,7 @@ final class ClassicFlowTests: XCTestCase {
             app.launchArguments = ["--ui-testing", "--lingering-areas-qa", "--theme-\(theme)-qa"] + (peak ? ["--area-peak-qa"] : [])
             app.launch()
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
-            XCTAssertTrue(app.otherElements["temporary-theme-control"].exists)
+            XCTAssertFalse(app.otherElements["temporary-theme-control"].exists)
             capture(theme == "ink" ? "27-small-theme-menu" : "28-small-theme-original-menu", app: app)
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))

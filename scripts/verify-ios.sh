@@ -40,17 +40,17 @@ if [ "${QA_VISUAL_ONLY:-false}" = "true" ]; then
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
     -only-testing:TiltArenaUITests/ClassicFlowTests/testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes
     -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist)
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testReleaseIgnoresOldVisualPreferences)
 fi
 if [ "${QA_HUD_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHUDRibbonsWithLargeNumbersInBothLanguages
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist)
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testReleaseIgnoresOldVisualPreferences)
 fi
 if [ "${QA_GAMEPLAY_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
     -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testInkAndOriginalCanSwitchDuringPauseAndPersist
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testReleaseIgnoresOldVisualPreferences
     -only-testing:TiltArenaUITests/ClassicFlowTests/testFireRecoveryIndicatorAfterDash
     -only-testing:TiltArenaUITests/ClassicFlowTests/testLaserAndRevisedWaveOrbInBothThemes)
 fi
@@ -66,8 +66,14 @@ if [ "${QA_AREA_EFFECTS_ONLY:-false}" = "true" ]; then
 fi
 if [ "${QA_LASER_TRIAL_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testLaserTrialSelectorPersistsAndSwitchesDuringPause
-    -only-testing:TiltArenaUITests/ClassicFlowTests/testApprovedDeathFragmentCapture)
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testFinalEffectsAndMenuInBothLanguages
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testReleaseIgnoresOldVisualPreferences
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testApprovedAudioCreditsAreAccessibleInBothLanguages
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testAutomaticCalibrationSettingInBothLanguagesAndThemes
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testIllustratedMenuAndConfirmedRunActionsInBothLanguagesAndThemes
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testRestartAfterDeathIsImmediateInBothThemes
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testHardModeSelectionPersistsAndOpeningIsCrowded
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testLingeringAreasAndColoredOrbsInBothThemes)
 fi
 xcodebuild -project TiltArena.xcodeproj -scheme TiltArena \
   -destination "platform=iOS Simulator,id=$device_id" \

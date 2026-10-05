@@ -6,7 +6,7 @@ final class ClassicScene: SKScene {
     weak var session: GameSession?
     let sound = ClassicSound()
     var reduceEffects = false
-    private(set) var theme = VisualTheme.read()
+    private(set) var theme: VisualTheme = .inkTide
     private let motion = CMMotionManager()
     private var bridge: ClassicBridge?
     private let world = SKNode(), effects = SKNode(), hud = SKNode()
@@ -208,6 +208,11 @@ final class ClassicScene: SKScene {
             session.message = ""; session.phase = .running
             if let frame = gameFrame { render(frame) }; sound.playMusic()
             #if DEBUG
+            if electricityPreview {
+                for node in effects.children.compactMap({ $0 as? ClassicLightning }) {
+                    node.removeAllActions(); node.update(age: 0.08)
+                }
+            }
             if ProcessInfo.processInfo.arguments.contains("--death-a-qa") {
                 let death = ClassicDeathEffect(reduced: false); death.removeAllActions(); death.update(age: 0.35)
                 death.position = arrow.position; effects.addChild(death); arrow.isHidden = true
@@ -498,7 +503,7 @@ final class ClassicScene: SKScene {
         arrow.isHidden = frame.state == "gameOver"
         arrow.position=CGPoint(x:frame.player.x,y:frame.player.y);arrow.zRotation=frame.player.angle
         if laser.parent == nil { world.addChild(laser) }
-        laser.update(beam: frame.beam, remaining: frame.player.laserRemaining, time: frame.time, theme: theme, reduced: reduceEffects, style: session?.laserStyle ?? .current)
+        laser.update(beam: frame.beam, remaining: frame.player.laserRemaining, time: frame.time, theme: theme, reduced: reduceEffects, style: .plasma)
         bubble.isHidden = !frame.player.bubble
         fireRecoveryRing.isHidden = frame.player.fireRecoveryRemaining <= 0
         fireRecoveryRing.alpha = min(1, frame.player.fireRecoveryRemaining / 0.5) * (reduceEffects ? 1 : 0.65 + 0.35 * cos(frame.time * 24))

@@ -81,3 +81,5 @@ html[lang="es"] #ui[data-theme="inkTide"]{--title-size:var(--titleEs-size);--tit
 #laser-trial button{font:10px Arial,sans-serif;height:28px;min-width:30px;background:transparent;color:#eee4c988;padding:0 6px}
 #laser-trial button[aria-pressed="true"]{color:#fff1ce;text-decoration:underline;text-underline-offset:3px}
 #ui[data-phase="running"] #laser-trial,#ui:has(#run-confirm:not([hidden])) #laser-trial{display:none!important}
+
+#ui[data-phase="running"] #power-lab-link,#ui:has(#run-confirm:not([hidden])) #power-lab-link{display:none}

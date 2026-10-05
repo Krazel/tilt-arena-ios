@@ -3,6 +3,22 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    @MainActor func testApprovedLightningIsBoundedDeterministicAndExpires() throws {
+        let frame = try ClassicBridge().newPowersFrame(left: 50, right: 1250, electricity: true)
+        let event = try XCTUnwrap(frame.events.first { $0.kind == "lightning" })
+        for reduced in [false, true] {
+            let node = ClassicLightning(event: event, reduced: reduced); node.removeAllActions()
+            XCTAssertEqual(node.children.count, 6)
+            node.update(age: 0.08)
+            let path = try XCTUnwrap((node.children[1] as? SKShapeNode)?.path)
+            XCTAssertEqual(path.currentPoint.x, (event.toX ?? 0) - (event.x ?? 0), accuracy: 0.001)
+            XCTAssertEqual(path.currentPoint.y, (event.toY ?? 0) - (event.y ?? 0), accuracy: 0.001)
+            let bounds = node.calculateAccumulatedFrame(); node.update(age: 0.08)
+            XCTAssertEqual(node.calculateAccumulatedFrame(), bounds)
+            node.update(age: 0.55)
+            XCTAssertTrue(node.children.allSatisfy { $0.isHidden || $0.alpha == 0 })
+        }
+    }
     @MainActor func testLaserTrialStylesPreserveSegmentAndBoundNodes() throws {
         let frame = try ClassicBridge().laserFrame(left: 100, right: 1300), beam = try XCTUnwrap(frame.beam)
         let node = ClassicLaser()

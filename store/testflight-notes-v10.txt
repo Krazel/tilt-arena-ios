@@ -1,0 +1,1 @@
+Candidata final 1.0: láser Plasma y rayo ramificado definitivos. Menú sin controles de pruebas. Conserva hielo, explosión, audio y jugabilidad aprobados. Comprobar en iPhone los dos efectos, pausa, calibración, sonido y fluidez.

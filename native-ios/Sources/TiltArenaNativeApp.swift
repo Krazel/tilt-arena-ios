@@ -44,8 +44,7 @@ final class GameSession: ObservableObject {
     @Published var mode = GameMode.read()
     @Published var best = ClassicScoreRecord.read(mode: GameMode.read())
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
-    @Published var theme = VisualTheme.read()
-    @Published var laserStyle = LaserStyle.read()
+    @Published var theme: VisualTheme = .inkTide
     @Published var posture = TiltProfile.initialPosture(defaults: .standard)
     @Published var autoCalibrate = true {
         didSet { preferences.set(autoCalibrate, forKey: "classic.autoCalibrate") }
@@ -156,13 +155,6 @@ struct GameView: View {
                     }.frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
-        }.overlay(alignment: .bottomTrailing) {
-            if showSettings {
-                HStack(spacing: 12) {
-                    temporaryLaserControl
-                    temporaryThemeControl
-                }.padding(.trailing, 8).padding(.bottom, 2)
-            }
         }.overlay(alignment: .bottomLeading) {
             if showSettings {
                 Button(GameLanguage.current == .spanish ? "Créditos" : "Credits") { game.uiClick(); showCredits = true }
@@ -171,6 +163,10 @@ struct GameView: View {
         }.sheet(isPresented: $showCredits) {
             NavigationStack {
                 ScrollView {
+                    VStack(spacing: 12) {
+                        Link(GameLanguage.current == .spanish ? "Privacidad" : "Privacy", destination: URL(string: "https://krazel.github.io/tilt-arena/privacy/")!)
+                        Link(GameLanguage.current == .spanish ? "Ayuda" : "Support", destination: URL(string: "https://krazel.github.io/tilt-arena/support/")!)
+                    }.padding().accessibilityIdentifier("legal-links")
                     Text((try? String(contentsOf: Bundle.main.url(forResource: "Audio-Credits", withExtension: "txt")!, encoding: .utf8)) ?? "")
                         .font(.footnote).textSelection(.enabled).padding()
                 }.navigationTitle(GameLanguage.current == .spanish ? "Créditos" : "Credits")
@@ -197,7 +193,6 @@ struct GameView: View {
         }
         .onChange(of: reduceMotion) { game.scene.reduceEffects = $0 }
         .onChange(of: game.posture) { UserDefaults.standard.set($0.rawValue, forKey: "classic.posture") }
-        .onChange(of: game.laserStyle) { $0.save() }
         .onChange(of: game.theme) { theme in theme.save(); game.scene.setTheme(theme) }
         .onChange(of: game.muted) {
             UserDefaults.standard.set($0, forKey: "classic.muted"); game.scene.sound.setMuted($0)
@@ -244,36 +239,6 @@ struct GameView: View {
             case .running: EmptyView()
             }
         }.frame(maxWidth: .infinity)
-    }
-    // Temporary comparison control, independent of the player-facing settings.
-    // Remove this overlay when the visual direction is final.
-    private var temporaryLaserControl: some View {
-        HStack(spacing: 2) {
-            Text(GameLanguage.current == .spanish ? "Prueba láser" : "Laser test").font(.system(size: 9))
-            ForEach(LaserStyle.allCases) { style in
-                Button { game.uiClick(); game.laserStyle = style } label: {
-                    Text(style.title).font(.system(size: 10, weight: .medium))
-                        .foregroundColor(game.laserStyle == style ? paper : paper.opacity(0.5))
-                        .padding(.horizontal, 6).frame(height: 28).contentShape(Rectangle())
-                }.buttonStyle(.plain).accessibilityIdentifier("laser-style-\(style.rawValue)")
-                    .accessibilityAddTraits(game.laserStyle == style ? .isSelected : [])
-            }
-        }.padding(.horizontal, 6).background(.black.opacity(0.5), in: RoundedRectangle(cornerRadius: 4))
-        .accessibilityElement(children: .contain).accessibilityIdentifier("temporary-laser-control")
-    }
-    private var temporaryThemeControl: some View {
-        HStack(spacing: 2) {
-            ForEach(VisualTheme.allCases) { theme in
-                Button { game.uiClick(); game.theme = theme } label: {
-                    Text(theme.title).font(.system(size: 9, weight: .medium))
-                        .foregroundColor(game.theme == theme ? paper : paper.opacity(0.5))
-                        .padding(.horizontal, 6).frame(height: 24)
-                        .contentShape(Rectangle())
-                }.buttonStyle(.plain).accessibilityIdentifier("theme-\(theme.rawValue)")
-                .accessibilityAddTraits(game.theme == theme ? .isSelected : [])
-            }
-        }.padding(.horizontal, 3).background(.black.opacity(0.35), in: RoundedRectangle(cornerRadius: 4))
-        .accessibilityElement(children: .contain).accessibilityIdentifier("temporary-theme-control")
     }
     private var settings: some View {
         VStack(alignment: .leading, spacing: 8) {
