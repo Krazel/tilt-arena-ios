@@ -2,6 +2,10 @@ name: Verify classic iOS candidate
 on:
   workflow_dispatch:
     inputs:
+      death_only:
+        description: Verify death animation before results and immediate restart
+        type: boolean
+        default: false
       laser_trial_only:
         description: 'Laser trial selector, three visual styles and approved death'
         required: false
@@ -57,6 +61,7 @@ jobs:
       - run: brew install xcodegen
       - run: bash scripts/verify-ios.sh
         env:
+          QA_DEATH_ONLY: ${{ inputs.death_only }}
           QA_LASER_TRIAL_ONLY: ${{ inputs.laser_trial_only }}
           QA_CONTROLS_ONLY: ${{ inputs.controls_only }}
           QA_MENU_EFFECTS_ONLY: ${{ inputs.menu_effects_only }}

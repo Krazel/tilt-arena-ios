@@ -2,6 +2,7 @@ import SpriteKit
 
 /// Approved A: paper/red fragments and a short warm flash, independent of theme.
 final class ClassicDeathEffect: SKNode {
+    static let duration: TimeInterval = 2.4
     private var shards: [SKShapeNode] = []
     private let flash = SKShapeNode(circleOfRadius: 16)
     private let reduced: Bool
@@ -19,7 +20,7 @@ final class ClassicDeathEffect: SKNode {
             addChild(shard); shards.append(shard)
         }
         update(age: 0)
-        run(.sequence([.customAction(withDuration: 2.4) { [weak self] _, time in self?.update(age: Double(time)) }, .removeFromParent()]))
+        run(.sequence([.customAction(withDuration: Self.duration) { [weak self] _, time in self?.update(age: Double(time)) }, .removeFromParent()]))
     }
     required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
     func update(age: Double) {

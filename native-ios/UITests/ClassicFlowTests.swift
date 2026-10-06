@@ -1,6 +1,24 @@
 import XCTest
 
 final class ClassicFlowTests: XCTestCase {
+    func testDeathFragmentsAppearBeforeResultsAndRestartNeedsNoConfirmation() {
+        let app = XCUIApplication()
+        for theme in ["ink", "classic"] {
+            app.launchArguments = ["--ui-testing", "--theme-\(theme)-qa", "--death-sequence-qa"]
+            app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.otherElements["arena-dying"].waitForExistence(timeout: 3))
+            XCTAssertFalse(app.buttons["replay"].exists)
+            XCTAssertFalse(app.buttons["main-menu"].exists)
+            capture("death-before-results-\(theme)", app: app)
+            XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 6))
+            capture("death-results-\(theme)", app: app)
+            app.buttons["replay"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["confirm-cancel"].exists)
+            app.terminate()
+        }
+    }
     func testFinalEffectsAndMenuInBothLanguages() {
         let app = XCUIApplication()
         for language in ["en", "es"] {

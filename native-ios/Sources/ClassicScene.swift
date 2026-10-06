@@ -43,11 +43,14 @@ final class ClassicScene: SKScene {
     private var calibrationReturnPhase: GameSession.Phase = .menu
     private var sensorGraceUntil = 0.0
     private var trailTime = 0.0
+    private let deathResultAction = "show-death-results"
     #if DEBUG
     var frameForVerification: ClassicFrame? { gameFrame }
     func renderForVerification(_ frame: ClassicFrame) { render(frame) }
     var liveObjectCountForVerification: Int { objects.count }
     var transientRootCountForVerification: Int { effects.children.count }
+    var deathPresentationPendingForVerification: Bool { effects.action(forKey: deathResultAction) != nil }
+    var deathPresentationPausedForVerification: Bool { effects.isPaused }
     func enemyNodeForVerification(_ id: Int) -> SKNode? { objects["d\(id)"] }
     private let uiTesting = ProcessInfo.processInfo.arguments.contains("--ui-testing")
     private let lingeringAreasPreview = ProcessInfo.processInfo.arguments.contains("--lingering-areas-qa")
@@ -164,6 +167,7 @@ final class ClassicScene: SKScene {
         session?.message = ""
     }
     func play(restart: Bool) {
+        guard session?.phase != .dying else { return }
         guard let session = session else { return }
         if session.posture == .custom && (session.autoCalibrate || !session.hasCustom) {
             calibrate(restart: restart); return
@@ -204,6 +208,7 @@ final class ClassicScene: SKScene {
                 if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
             #endif
             lastTime = nil; touchOrigin = nil; touchVector = (0, 0)
+            effects.removeAction(forKey: deathResultAction)
             world.isPaused = false; effects.isPaused = false
             session.message = ""; session.phase = .running
             if let frame = gameFrame { render(frame) }; sound.playMusic()
@@ -219,6 +224,15 @@ final class ClassicScene: SKScene {
             }
             if ProcessInfo.processInfo.arguments.contains("--gameover-qa") && !showedGameOverQA {
                 showedGameOverQA = true; halt(); finishPausedRun()
+            }
+            if ProcessInfo.processInfo.arguments.contains("--death-sequence-qa") && !showedGameOverQA {
+                showedGameOverQA = true
+                run(.sequence([.wait(forDuration: 0.4), .run { [weak self] in
+                    guard let self, self.session?.phase == .running else { return }
+                    do { if let frame = try self.bridge?.finish() {
+                        self.gameFrame = frame; self.render(frame); self.presentDeath(frame)
+                    } } catch { self.session?.fail(error) }
+                }]))
             }
             if explosionPreview {
                 let blast: SKNode
@@ -240,13 +254,29 @@ final class ClassicScene: SKScene {
         halt(); session?.message = message; session?.phase = .paused
     }
     func halt() {
+        effects.removeAction(forKey: deathResultAction)
         lastTime = nil; touchVector = (0,0); touchOrigin = nil
         world.isPaused = true; effects.isPaused = true; sound.pause()
     }
     func suspend() {
         if session?.phase == .running { pauseRun() }
         else if session?.phase == .calibrating { cancelCalibration() }
+        else if session?.phase == .dying { effects.isPaused = true }
         motion.stopDeviceMotionUpdates()
+    }
+    func resumePresentation() {
+        if session?.phase == .dying { effects.isPaused = false }
+    }
+    func presentDeath(_ frame: ClassicFrame) {
+        guard session?.phase == .running else { return }
+        halt(); effects.isPaused = false
+        session?.finish(frame, animated: true)
+        // The result menu follows the same SpriteKit clock as the fragments.
+        // Pausing the effects in the background also pauses this completion.
+        effects.run(.sequence([.wait(forDuration: ClassicDeathEffect.duration), .run { [weak self] in
+            guard let self, self.session?.phase == .dying else { return }
+            self.session?.phase = .gameOver
+        }]), withKey: deathResultAction)
     }
     func menu() { halt(); session?.phase = .menu; session?.message = ""; startMotion() }
     func finishPausedRun() {
@@ -309,7 +339,7 @@ final class ClassicScene: SKScene {
             #endif
             if let next = try bridge?.tick(dt: dt, x: input.0, y: input.1) {
                 gameFrame = next; render(next)
-                if next.state == "gameOver" { halt(); effects.isPaused = false; session.finish(next) }
+                if next.state == "gameOver" { presentDeath(next) }
             }
         } catch { session.fail(error) }
     }

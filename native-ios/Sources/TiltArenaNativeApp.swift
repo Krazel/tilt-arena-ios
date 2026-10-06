@@ -35,7 +35,7 @@ enum RunAction: Equatable { case restart, mainMenu
 }
 
 final class GameSession: ObservableObject {
-    enum Phase { case menu, calibrating, running, paused, gameOver, failed }
+    enum Phase { case menu, calibrating, running, dying, paused, gameOver, failed }
     @Published var phase: Phase = .menu
     @Published var message = ""
     @Published var resultScore = 0
@@ -81,7 +81,7 @@ final class GameSession: ObservableObject {
     }
     func updateAudioPhase() {
         switch phase {
-        case .running: scene.sound.setMode(.game)
+        case .running, .dying: scene.sound.setMode(.game)
         case .paused: scene.sound.setMode(.paused)
         case .menu, .gameOver, .calibrating: scene.sound.setMode(.menu)
         case .failed: scene.sound.setMode(.off)
@@ -111,10 +111,10 @@ final class GameSession: ObservableObject {
         print("Classic: \(error)")
         #endif
     }
-    func finish(_ frame: ClassicFrame) {
+    func finish(_ frame: ClassicFrame, animated: Bool = false) {
         resultScore = frame.score; resultCombo = frame.bestCombo; resultTime = Int(frame.time)
         best = ClassicScoreRecord.save(frame.score, mode: GameMode(rawValue: frame.mode) ?? .classic)
-        phase = .gameOver
+        phase = animated ? .dying : .gameOver
     }
 }
 
@@ -131,10 +131,10 @@ struct GameView: View {
     private var showSettings: Bool { game.phase == .menu || game.phase == .paused || game.phase == .gameOver }
     private var gameContent: some View {
         ZStack {
-            ArenaView(scene: game.scene, isRunning: game.phase == .running).ignoresSafeArea()
+            ArenaView(scene: game.scene, isRunning: game.phase == .running, isDying: game.phase == .dying).ignoresSafeArea()
             if ink && showSettings {
                 InkMenuView(game: game) { pendingAction = $0 }.ignoresSafeArea()
-            } else if game.phase != .running {
+            } else if game.phase != .running && game.phase != .dying {
                 GeometryReader { geometry in
                     ZStack {
                         Color.black.opacity(0.26).ignoresSafeArea()
@@ -189,7 +189,7 @@ struct GameView: View {
         .onAppear { game.scene.reduceEffects = reduceMotion; game.scene.sound.setMuted(game.muted); game.updateAudioPhase() }
         .onChange(of: game.phase) { _ in game.updateAudioPhase() }
         .onChange(of: appPhase) { phase in
-            if phase != .active { game.scene.suspend(); game.scene.sound.setSuspended(true) } else { game.scene.sound.setSuspended(false); game.scene.startMotion(); game.updateAudioPhase() }
+            if phase != .active { game.scene.suspend(); game.scene.sound.setSuspended(true) } else { game.scene.sound.setSuspended(false); game.scene.resumePresentation(); game.scene.startMotion(); game.updateAudioPhase() }
         }
         .onChange(of: reduceMotion) { game.scene.reduceEffects = $0 }
         .onChange(of: game.posture) { UserDefaults.standard.set($0.rawValue, forKey: "classic.posture") }
@@ -236,7 +236,7 @@ struct GameView: View {
                 Text(GameText.moment).font(.title2.bold())
                 Text(game.message).multilineTextAlignment(.center)
                 primary(GameText.menu, id: "menu") { game.scene.menu() }
-            case .running: EmptyView()
+            case .running, .dying: EmptyView()
             }
         }.frame(maxWidth: .infinity)
     }

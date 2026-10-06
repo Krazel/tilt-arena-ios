@@ -4,6 +4,7 @@ import SpriteKit
 struct ArenaView: UIViewRepresentable {
     let scene: ClassicScene
     let isRunning: Bool
+    var isDying = false
     func makeUIView(context: Context) -> ArenaSKView {
         let view = ArenaSKView()
         view.preferredFramesPerSecond = 60
@@ -13,10 +14,10 @@ struct ArenaView: UIViewRepresentable {
         return view
     }
     func updateUIView(_ view: ArenaSKView, context: Context) {
-        view.isAccessibilityElement = isRunning
-        view.accessibilityIdentifier = isRunning ? "arena-running" : "arena"
+        view.isAccessibilityElement = isRunning || isDying
+        view.accessibilityIdentifier = isDying ? "arena-dying" : isRunning ? "arena-running" : "arena"
         view.accessibilityLabel = GameText.arenaAccessibility
-        view.accessibilityHint = GameText.pauseHint
+        view.accessibilityHint = isRunning ? GameText.pauseHint : nil
         view.setNeedsLayout()
     }
 }
