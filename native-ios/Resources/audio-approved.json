@@ -1,5 +1,5 @@
 {
-  "version": 11,
+  "version": 12,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -508,14 +508,14 @@
       ]
     },
     "death": {
-      "file": "audio-player-death.wav",
       "volume": 0.72,
-      "proposal": "2026-10-06/player-death-glass",
-      "author": "rubberduck",
-      "source": "https://opengameart.org/content/100-cc0-sfx-2",
+      "author": "Mafon2",
       "license": "CC0",
-      "changes": "Complete glass-breaking recording, mono PCM conversion and uniform level only. No synthesis, trimming or pitch change.",
-      "sha256": "f81af99a6d6614ecc66ffd656a527dca1a7f8243138ff26d7d5bc2bc6930bcee"
+      "sha256": "60cb968da93c4aefeb56f20532f9375bebd3e7f281f63e643c7d245e0e36e8a3",
+      "file": "audio-player-death.wav",
+      "proposal": "2026-10-07/paper-cuts/C",
+      "changes": "Approved 0.35-second scissors-cutting-paper excerpt, mono PCM, normalized level and 3ms edge fades. Original pitch; no synthesis.",
+      "source": "https://freesound.org/people/Mafon2/sounds/219351/"
     }
   },
   "silent": [

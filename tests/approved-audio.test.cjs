@@ -20,7 +20,7 @@ test('player death sounds once, ducks music, stops weapons, and restores menu an
 });
 test('only selected files ship, with verified hashes, credits and half-second charges',()=>{
  const proposals=new Set(Object.values(catalog.assets).map(a=>a.proposal));
- assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','2026-10-06/player-death-glass','click-A','boomerang-A','bounce-B','original-v058-laser',...['wave-B','burn-A','bubble-B','shatter-C'].map(n=>'2026-09-28/'+n),...['wave-B','missiles-B','vortex-A','boomerang-C'].map(n=>'2026-10-01/'+n),'2026-10-02/pickup-A','2026-10-04-hordes/hit-5','2026-10-04-spikes/spikes-B',...['nuke-B','frost-A','bubble-break-B','lightning-B'].map(n=>'2026-10-04-fresh/'+n)].sort());
+ assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','2026-10-07/paper-cuts/C','click-A','boomerang-A','bounce-B','original-v058-laser',...['wave-B','burn-A','bubble-B','shatter-C'].map(n=>'2026-09-28/'+n),...['wave-B','missiles-B','vortex-A','boomerang-C'].map(n=>'2026-10-01/'+n),'2026-10-02/pickup-A','2026-10-04-hordes/hit-5','2026-10-04-spikes/spikes-B',...['nuke-B','frost-A','bubble-break-B','lightning-B'].map(n=>'2026-10-04-fresh/'+n)].sort());
  for(const [name,a] of Object.entries(catalog.assets)){
   const b=fs.readFileSync(path.join(resources,a.file));assert.equal(crypto.createHash('sha256').update(b).digest('hex'),a.sha256);
   if(name.endsWith('-charge')){assert.equal(b.readUInt32LE(40)/(b.readUInt32LE(24)*2),.5);}

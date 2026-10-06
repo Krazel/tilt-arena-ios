@@ -1,0 +1,1 @@
+Sonido C de corte de papel aprobado al morir. La música baja durante la animación y la música del menú entra suavemente. Toca la pantalla para saltar a resultados. Conserva la flecha simétrica y el círculo rojo del tamaño original. Velocidad máxima 600; las pruebas de velocidad siguen aparte en navegador.

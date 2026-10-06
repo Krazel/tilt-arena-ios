@@ -1,0 +1,1 @@
+Approved paper-cut sound C on player death. Music lowers during the death animation and the menu music fades in. Tap the screen to skip to results. The approved symmetric arrow and original-size red circle are preserved. Maximum speed remains 600; browser speed trials remain separate.
