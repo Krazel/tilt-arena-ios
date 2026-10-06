@@ -22,9 +22,16 @@ final class VisualThemeTests: XCTestCase {
         let rw = try XCTUnwrap(redX.max()) - XCTUnwrap(redX.min()) + 1
         let rh = try XCTUnwrap(redY.max()) - XCTUnwrap(redY.min()) + 1
         XCTAssertEqual(Double(rw), Double(rh), accuracy: 2)
+        // Original seal is 76 atlas pixels in a 443.5px cell rendered at 62pt.
+        // The rejected enlarged seal was 49 pixels at this 4x rendering scale.
+        XCTAssertEqual(Double(rw), 76*62/443.5*4, accuracy: 2)
+        XCTAssertEqual(Double(rh), 76*62/443.5*4, accuracy: 2)
         XCTAssertEqual(Double(try XCTUnwrap(redY.max()) + XCTUnwrap(redY.min()))/2, Double(h-1)/2, accuracy: 1)
         XCTAssertTrue(InkArt.node(style: "arrow") is SKSpriteNode)
         XCTAssertEqual(InkArt.node(style: "missileShot").children.count, 1)
+        let attachment = XCTAttachment(image: InkArt.symmetricArrowImage)
+        attachment.name = "approved-arrow-original-size-seal"; attachment.lifetime = .keepAlways
+        add(attachment)
         print("NATIVE_ARROW symmetryMeanRGBAError=\(error/Double(w*h*4)) redSealPixels=\(rw)x\(rh)")
     }
 

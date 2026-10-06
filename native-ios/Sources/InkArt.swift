@@ -18,7 +18,7 @@ enum InkArt {
         let source = UIImage(named: "ink-tide-sprites")!
         let red = UIImage(cgImage: source.cgImage!.cropping(to: CGRect(x: 183, y: 181, width: 38, height: 38))!)
         let format = UIGraphicsImageRendererFormat(); format.scale = 4; format.opaque = false
-        return UIGraphicsImageRenderer(size: CGSize(width: 90, height: 90), format: format).image { context in
+        let body = UIGraphicsImageRenderer(size: CGSize(width: 90, height: 90), format: format).image { context in
             let ctx = context.cgContext
             ctx.translateBy(x: 45, y: 45)
             for sign in [CGFloat(1), CGFloat(-1)] {
@@ -29,7 +29,39 @@ enum InkArt {
                 source.draw(in: CGRect(x: -31, y: -31, width: 248, height: 124))
                 ctx.restoreGState()
             }
-            let seal = CGRect(x: 4.1 - 6.15, y: -6.15, width: 12.3, height: 12.3)
+        }
+        // Match the approved browser preview: remove the old mirrored red pigment
+        // using adjacent original paper, then place the original-size circular seal.
+        let w = 360, h = 360
+        var pixels = [UInt8](repeating: 0, count: w*h*4)
+        var paper = [UInt8](repeating: 0, count: 32*32*4)
+        let flags = CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
+        paper.withUnsafeMutableBytes { buffer in
+            let ctx = CGContext(data: buffer.baseAddress, width: 32, height: 32, bitsPerComponent: 8,
+                bytesPerRow: 128, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: flags)!
+            ctx.draw(source.cgImage!.cropping(to: CGRect(x: 187, y: 246, width: 25, height: 25))!,
+                     in: CGRect(x: 0, y: 0, width: 32, height: 32))
+        }
+        let cleanBody: UIImage = pixels.withUnsafeMutableBytes { buffer in
+            let ctx = CGContext(data: buffer.baseAddress, width: w, height: h, bitsPerComponent: 8,
+                bytesPerRow: w*4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: flags)!
+            ctx.draw(body.cgImage!, in: CGRect(x: 0, y: 0, width: w, height: h))
+            let data = buffer.bindMemory(to: UInt8.self)
+            for y in 0..<h { for x in 0..<w {
+                let i = (y*w+x)*4
+                let r = Double(data[i]), g = Double(data[i+1]), b = Double(data[i+2])
+                if r > 100 && r > g*1.3 && r > b*1.3 {
+                    let p = ((y%32)*32+x%32)*4
+                    for k in 0..<3 { data[i+k] = paper[p+k] }
+                }
+            } }
+            return UIImage(cgImage: ctx.makeImage()!, scale: 4, orientation: .up)
+        }
+        return UIGraphicsImageRenderer(size: CGSize(width: 90, height: 90), format: format).image { context in
+            cleanBody.draw(at: .zero)
+            let ctx = context.cgContext; ctx.translateBy(x: 45, y: 45)
+            let radius: CGFloat = 38*62/443.5
+            let seal = CGRect(x: 4.1-radius, y: -radius, width: radius*2, height: radius*2)
             ctx.saveGState(); ctx.addEllipse(in: seal); ctx.clip(); red.draw(in: seal); ctx.restoreGState()
         }
     }()

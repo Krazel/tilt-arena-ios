@@ -70,7 +70,7 @@ export class Renderer {
     }
   }
   originalArrow(size=ART.arrow){if(this.theme==='inkTide')this.sprite(0,size,-2.46);else{const s=size/62;this.path([[20*s,0],[-16*s,-14*s],[-8*s,0],[-16*s,14*s]],'#243815',2,'#f7ffe5');}}
-  arrow(size=ART.arrow){if(this.theme==='inkTide'&&size===ART.arrow)symmetricArrow(this.ctx,this.atlas,size,()=>this.originalArrow(size));else this.originalArrow(size);}
+  arrow(size=ART.arrow){if(this.theme==='inkTide'&&size===ART.arrow)symmetricArrow(this.ctx,this.atlas,size,target=>{const old=this.ctx;this.ctx=target;this.originalArrow(size);this.ctx=old;});else this.originalArrow(size);}
   charge(progress,cell,color,x=0){const c=this.ctx,radius=cell===4?32:20;c.save();c.translate(x,0);this.ring(radius,color,3,progress,-Math.PI/2);c.save();if(cell===4)c.translate(34,0);c.globalAlpha=.45+progress*.55;if(this.theme==='inkTide')this.sprite(cell,35*(.35+progress*.65),cell===7&&!this.reduced?progress*Math.PI*2:0);else this.star(9+progress*8,5,6,color);c.restore();if(!this.reduced)for(let i=0;i<7;i++){const a=i*Math.PI*2/7+progress,t=(progress*1.7+i/7)%1,r=radius+18-t*30;c.globalAlpha=Math.sin(t*Math.PI);this.path([[Math.cos(a)*r,Math.sin(a)*r],[Math.cos(a)*(r+4),Math.sin(a)*(r+4)]],color,2);}c.restore();}
   render(f){
     const c=this.ctx,w=this.width,h=this.height,ink=this.theme==='inkTide',t=f.time,p=f.player;
