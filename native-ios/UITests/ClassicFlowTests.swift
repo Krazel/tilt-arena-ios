@@ -19,6 +19,19 @@ final class ClassicFlowTests: XCTestCase {
             app.terminate()
         }
     }
+    func testTapSkipsDeathWithoutRestartingOrPausing() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--theme-ink-qa", "--death-sequence-qa"]
+        app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+        app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+        let arena = app.otherElements["arena-dying"]
+        XCTAssertTrue(arena.waitForExistence(timeout: 3))
+        arena.tap()
+        XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 1))
+        XCTAssertFalse(app.otherElements["arena-running"].exists)
+        XCTAssertFalse(app.buttons["resume"].exists)
+        capture("death-skipped-results", app: app)
+    }
     func testFinalEffectsAndMenuInBothLanguages() {
         let app = XCUIApplication()
         for language in ["en", "es"] {

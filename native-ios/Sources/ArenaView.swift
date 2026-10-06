@@ -31,12 +31,18 @@ final class ArenaSKView: SKView, UIGestureRecognizerDelegate {
         addGestureRecognizer(tap)
     }
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        (scene as? ClassicScene)?.session?.phase == .running
+        let phase = (scene as? ClassicScene)?.session?.phase
+        return phase == .running || phase == .dying
     }
-    @objc private func pauseFromTap() { (scene as? ClassicScene)?.pauseRun() }
+    @objc private func pauseFromTap() {
+        guard let scene = scene as? ClassicScene else { return }
+        if scene.session?.phase == .dying { scene.completeDeathPresentation() }
+        else { scene.pauseRun() }
+    }
     override func accessibilityActivate() -> Bool {
-        guard let scene = scene as? ClassicScene, scene.session?.phase == .running else { return false }
-        scene.pauseRun()
+        guard let scene = scene as? ClassicScene,
+              scene.session?.phase == .running || scene.session?.phase == .dying else { return false }
+        pauseFromTap()
         return true
     }
     override func layoutSubviews() {

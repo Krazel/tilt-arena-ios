@@ -33,7 +33,7 @@ let deathElapsed=0;
 const deathDuration=2.4;
 view.laserStyle='plasma';
 view.theme='inkTide';
-function music(){sounds.setMode(phase==='running'||phase==='dying'?'game':phase==='paused'?'paused':'menu');}
+function music(){sounds.setMode(phase==='running'?'game':phase==='dying'?'dying':phase==='paused'?'paused':'menu');}
 function hud(){
   if(!frame)return;
   $('score').textContent=frame.score.toLocaleString();
@@ -106,6 +106,10 @@ function finish(){
   deathElapsed=0;view.deathAge=0;phase='dying';last=0;clearInput();best=Math.max(best,frame.score);
   save(bestKey(),best);music();overlay();hud();
 }
+function finishDeathPresentation(){
+  if(phase!=='dying')return;
+  phase='gameOver';last=0;music();overlay();$('play').focus();
+}
 function theme(value){view.theme=value;save('tilt.play.theme',value);view.reset();overlay();if(ready)view.render(frame);}
 for(const value of ['classic','hard'])bindClick('mode-'+value,()=>{if(phase!=='menu')return;mode=value;save('tilt.play.mode',mode);best=Number(read(bestKey(),0))||0;overlay();hud();});
 for(const value of ['custom','normal','inclined'])bindClick('posture-'+value,()=>{posture=value;save('tilt.play.posturePreview',value);$('error').textContent='';overlay();});
@@ -142,13 +146,14 @@ window.addEventListener('keydown',e=>{
   if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d',' ','escape'].includes(k)&&e.target.tagName!=='BUTTON')e.preventDefault();
   if((k===' '||k==='escape')&&!e.repeat){
     if(e.target.tagName==='BUTTON'&&k===' ')return;
-    if(phase==='running')pause();else if(phase==='paused')resume();return;
+    if(phase==='dying')finishDeathPresentation();else if(phase==='running')pause();else if(phase==='paused')resume();return;
   }
   if(phase==='running')keys.add(k);
 });
 window.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));
 function point(e){const r=canvas.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*VIEWPORT.width,y:(r.bottom-e.clientY)/r.height*VIEWPORT.height};}
 canvas.onpointerdown=e=>{
+  if(phase==='dying'){e.preventDefault();finishDeathPresentation();return;}
   if(phase!=='running')return;
   if(e.pointerType==='touch'){e.preventDefault();pause();return;}
   canvas.focus();canvas.setPointerCapture(e.pointerId);pointer=point(e);
@@ -157,6 +162,7 @@ canvas.onpointermove=e=>{if(pointer)pointer=point(e);};
 canvas.onpointerup=canvas.onpointercancel=canvas.onlostpointercapture=()=>{pointer=null;};
 window.addEventListener('blur',pause);document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();last=0;sounds.setSuspended(document.hidden);});window.addEventListener('resize',resize);
 function tick(time){
+  sounds.updateMusicFade();
   if(ready&&phase==='running'){
     const dt=last?(time-last)/1000:0;last=time;
     let x=(keys.has('d')||keys.has('arrowright')?1:0)-(keys.has('a')||keys.has('arrowleft')?1:0);
@@ -169,7 +175,7 @@ function tick(time){
   if(ready&&phase==='dying'&&!document.hidden){
     deathElapsed+=last?Math.max(0,Math.min(.1,(time-last)/1000)):0;last=time;
     view.deathAge=deathElapsed;view.render(frame);
-    if(deathElapsed>=deathDuration){phase='gameOver';last=0;music();overlay();$('play').focus();}
+    if(deathElapsed>=deathDuration)finishDeathPresentation();
   }
   requestAnimationFrame(tick);
 }

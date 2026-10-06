@@ -66,7 +66,7 @@ test('death fragments stay visible before results, freeze simulation and pause t
     assert.equal(h.frame.state,'gameOver');assert.equal(h.element('ui').dataset.phase,'dying');
     assert.equal(h.element('overlay').hidden,true);
     const time=h.frame.time,score=h.frame.score;
-    h.key('keydown','escape');h.element('play').onclick();h.step(60);
+    h.element('play').onclick();h.step(60);
     assert.equal(h.element('ui').dataset.phase,'dying');assert.equal(h.frame.time,time);
     assert.equal(h.frame.score,score);assert(h.view.deathAge>.9&&h.view.deathAge<1.1);
     const age=h.view.deathAge;
@@ -77,6 +77,17 @@ test('death fragments stay visible before results, freeze simulation and pause t
     h.step(35);assert.equal(h.element('ui').dataset.phase,'gameOver');assert.equal(h.element('overlay').hidden,false);
     h.element('play').onclick();h.step();assert.equal(h.frame.state,'running');assert.equal(h.frame.time,0);
   }
+});
+test('tap or space skips death to results without starting or pausing a run',async()=>{
+ for(const action of ['tap','space']){
+  const h=await harness();h.element('play').onclick();
+  for(let i=0;i<6000&&h.element('ui').dataset.phase==='running';i++)h.step();
+  const score=h.frame.score,time=h.frame.time;
+  if(action==='tap')h.element('arena').onpointerdown({pointerType:'touch',preventDefault(){}});else h.key('keydown',' ');
+  assert.equal(h.element('ui').dataset.phase,'gameOver');assert.equal(h.element('overlay').hidden,false);
+  h.step(200);assert.equal(h.frame.time,time);assert.equal(h.frame.score,score);
+  h.element('play').onclick();h.step();assert.equal(h.frame.state,'running');assert.equal(h.frame.time,0);
+ }
 });
 test('touch pauses anywhere without steering or resuming on release; no pause button is needed',async()=>{
   const h=await harness(['pause']);h.element('play').onclick();h.step();

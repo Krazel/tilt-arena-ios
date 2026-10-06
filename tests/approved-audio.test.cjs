@@ -3,10 +3,24 @@ const {ClassicGame}=require('../native-ios/Resources/classic-core.js');
 const resources=path.join(__dirname,'../native-ios/Resources');
 const catalog=JSON.parse(fs.readFileSync(path.join(resources,'audio-approved.json')));
 const modulePromise=import('../play/sound.js');
-function harness(GameSound,random=()=>0){let time=0;const players={};const sound=new GameSound(catalog,file=>{const p={currentTime:0,paused:true,plays:0,pause(){this.paused=true},play(){this.paused=false;this.plays++;return Promise.resolve()},addEventListener(name,fn){this[name]=fn}};players[file]=p;return p},()=>time,random);return{sound,players,advance:()=>{time+=1},p:name=>players[catalog.assets[name].file]};}
+function harness(GameSound,random=()=>0){let time=0;const players={};const sound=new GameSound(catalog,file=>{const p={currentTime:0,paused:true,plays:0,pause(){this.paused=true},play(){this.paused=false;this.plays++;return Promise.resolve()},addEventListener(name,fn){this[name]=fn}};players[file]=p;return p},()=>time,random);return{sound,players,advance:(dt=1)=>{time+=dt},p:name=>players[catalog.assets[name].file]};}
+test('player death sounds once, ducks music, stops weapons, and restores menu and run levels',async()=>{
+ const {GameSound}=await modulePromise,h=harness(GameSound),s=h.sound;
+ s.setMuted(false);s.startRun();const game=new ClassicGame(1,{spawning:false});game.activate('laser');s.consume(game.snapshot());
+ h.p('music-a').currentTime=12;game.die();s.consume(game.snapshot());s.setMode('dying');s.consume(game.snapshot());
+ assert.equal(h.p('death').plays,1);assert(h.p('laser').paused);assert.equal(s.spikesStart,null);
+ h.advance(.09);s.updateMusicFade();assert(h.p('music-a').volume<.3&&h.p('music-a').volume>.048);
+ h.advance(.1);s.updateMusicFade();assert(Math.abs(h.p('music-a').volume-.048)<1e-8);assert.equal(h.p('music-a').currentTime,12);
+ h.p('death').currentTime=.2;s.setSuspended(true);h.advance(30);s.updateMusicFade();s.setSuspended(false);s.setMode('dying');
+ assert.equal(h.p('death').plays,2);assert.equal(h.p('death').currentTime,.2);
+ s.setMode('menu');assert(h.p('music-a').paused);assert.equal(h.p('music-menu').volume,0);
+ for(let i=0;i<5;i++){h.advance(.1);s.updateMusicFade();}assert.equal(h.p('music-menu').volume,.3);
+ s.startRun();assert.equal(h.p('music-b').volume,.3);s.setMuted(true);s.setMode('dying');assert.equal(h.p('death').plays,2);
+ assert(Object.values(h.players).every(p=>p.paused));
+});
 test('only selected files ship, with verified hashes, credits and half-second charges',()=>{
  const proposals=new Set(Object.values(catalog.assets).map(a=>a.proposal));
- assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','click-A','boomerang-A','bounce-B','original-v058-laser',...['wave-B','burn-A','bubble-B','shatter-C'].map(n=>'2026-09-28/'+n),...['wave-B','missiles-B','vortex-A','boomerang-C'].map(n=>'2026-10-01/'+n),'2026-10-02/pickup-A','2026-10-04-hordes/hit-5','2026-10-04-spikes/spikes-B',...['nuke-B','frost-A','bubble-break-B','lightning-B'].map(n=>'2026-10-04-fresh/'+n)].sort());
+ assert.deepEqual([...proposals].sort(),['music-play-A','music-play-B','music-play-C','music-menu-A','2026-10-06/player-death-glass','click-A','boomerang-A','bounce-B','original-v058-laser',...['wave-B','burn-A','bubble-B','shatter-C'].map(n=>'2026-09-28/'+n),...['wave-B','missiles-B','vortex-A','boomerang-C'].map(n=>'2026-10-01/'+n),'2026-10-02/pickup-A','2026-10-04-hordes/hit-5','2026-10-04-spikes/spikes-B',...['nuke-B','frost-A','bubble-break-B','lightning-B'].map(n=>'2026-10-04-fresh/'+n)].sort());
  for(const [name,a] of Object.entries(catalog.assets)){
   const b=fs.readFileSync(path.join(resources,a.file));assert.equal(crypto.createHash('sha256').update(b).digest('hex'),a.sha256);
   if(name.endsWith('-charge')){assert.equal(b.readUInt32LE(40)/(b.readUInt32LE(24)*2),.5);}
@@ -77,3 +91,4 @@ test('orb collection and boomerang recovery have no generic sound, but charges s
  for(const power of ['nuke','frost','vortex','laser','lightning'])assert.deepEqual(soundCues([{kind:'pickup',power}]),[]);
  assert.deepEqual(soundCues([{kind:'boomerangCatch'}],false),[]);assert.deepEqual(soundCues([{kind:'boomerangCatch'}],true),['boomerang-charge']);
 });
+

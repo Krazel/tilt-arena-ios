@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "menu": "music-menu",
   "playlist": [
     "music-a",
@@ -506,10 +506,19 @@
           "sha256": "15aefad666264bf74025e36e06dce0280759f5ea1d37fbcab411df636f231dd2"
         }
       ]
+    },
+    "death": {
+      "file": "audio-player-death.wav",
+      "volume": 0.72,
+      "proposal": "2026-10-06/player-death-glass",
+      "author": "rubberduck",
+      "source": "https://opengameart.org/content/100-cc0-sfx-2",
+      "license": "CC0",
+      "changes": "Complete glass-breaking recording, mono PCM conversion and uniform level only. No synthesis, trimming or pitch change.",
+      "sha256": "f81af99a6d6614ecc66ffd656a527dca1a7f8243138ff26d7d5bc2bc6930bcee"
     }
   },
   "silent": [
-    "death",
     "warning",
     "combo",
     "pickup"

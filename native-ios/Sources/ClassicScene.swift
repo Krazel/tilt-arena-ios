@@ -253,10 +253,11 @@ final class ClassicScene: SKScene {
         do { try bridge?.pause() } catch { session?.fail(error); return }
         halt(); session?.message = message; session?.phase = .paused
     }
-    func halt() {
+    func halt(pauseAudio: Bool = true) {
         effects.removeAction(forKey: deathResultAction)
         lastTime = nil; touchVector = (0,0); touchOrigin = nil
-        world.isPaused = true; effects.isPaused = true; sound.pause()
+        world.isPaused = true; effects.isPaused = true
+        if pauseAudio { sound.pause() }
     }
     func suspend() {
         if session?.phase == .running { pauseRun() }
@@ -269,14 +270,18 @@ final class ClassicScene: SKScene {
     }
     func presentDeath(_ frame: ClassicFrame) {
         guard session?.phase == .running else { return }
-        halt(); effects.isPaused = false
+        halt(pauseAudio: false); effects.isPaused = false; sound.setMode(.dying)
         session?.finish(frame, animated: true)
         // The result menu follows the same SpriteKit clock as the fragments.
         // Pausing the effects in the background also pauses this completion.
         effects.run(.sequence([.wait(forDuration: ClassicDeathEffect.duration), .run { [weak self] in
-            guard let self, self.session?.phase == .dying else { return }
-            self.session?.phase = .gameOver
+            self?.completeDeathPresentation()
         }]), withKey: deathResultAction)
+    }
+    func completeDeathPresentation() {
+        guard session?.phase == .dying else { return }
+        effects.removeAction(forKey: deathResultAction)
+        session?.phase = .gameOver
     }
     func menu() { halt(); session?.phase = .menu; session?.message = ""; startMotion() }
     func finishPausedRun() {

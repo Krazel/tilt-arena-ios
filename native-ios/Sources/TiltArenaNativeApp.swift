@@ -81,7 +81,8 @@ final class GameSession: ObservableObject {
     }
     func updateAudioPhase() {
         switch phase {
-        case .running, .dying: scene.sound.setMode(.game)
+        case .running: scene.sound.setMode(.game)
+        case .dying: scene.sound.setMode(.dying)
         case .paused: scene.sound.setMode(.paused)
         case .menu, .gameOver, .calibrating: scene.sound.setMode(.menu)
         case .failed: scene.sound.setMode(.off)

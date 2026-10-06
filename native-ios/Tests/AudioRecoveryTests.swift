@@ -8,6 +8,8 @@ private final class FakePlayback: AudioPlayback {
     var currentTime: TimeInterval = 0 { didSet { seeks += 1 } }
     var volume: Float = 1 { didSet { volumeWrites += 1 } }
     var numberOfLoops = 0
+    var fades: [TimeInterval] = []
+    func setVolume(_ value: Float, fadeDuration: TimeInterval) { volume = value; fades.append(fadeDuration) }
     var isPlaying = false
     var plays = 0
     func play() -> Bool { isPlaying = true; plays += 1; return true }
@@ -16,6 +18,32 @@ private final class FakePlayback: AudioPlayback {
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testPlayerDeathDucksMusicOnceStopsWeaponsAndRestoresMenuAndNewRun() throws {
+        var players: [String: FakePlayback] = [:]
+        let sound = ClassicSound(makePlayer: { a in let p = FakePlayback(); players[a.file] = p; return p }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter())
+        sound.startRun()
+        let bridge = try ClassicBridge(), live = try bridge.create(spawning: false)
+        sound.consume(live)
+        let music = try XCTUnwrap(players["audio-music-a.mp3"]), death = try XCTUnwrap(players["audio-player-death.wav"])
+        music.currentTime = 12
+        sound.consume(try bridge.finish()); sound.setMode(.dying); sound.consume(try bridge.finish())
+        XCTAssertEqual(death.plays, 1); XCTAssertTrue(death.isPlaying)
+        XCTAssertEqual(music.volume, 0.3 * 0.16, accuracy: 0.0001)
+        XCTAssertEqual(music.currentTime, 12); XCTAssertEqual(music.fades.last, 0.18)
+        death.currentTime = 0.2; sound.setSuspended(true)
+        XCTAssertFalse(death.isPlaying); XCTAssertFalse(music.isPlaying)
+        sound.setSuspended(false); sound.setMode(.dying)
+        XCTAssertEqual(death.currentTime, 0.2); XCTAssertEqual(death.plays, 2)
+        XCTAssertEqual(music.volume, 0.3 * 0.16, accuracy: 0.0001)
+        sound.setMode(.menu)
+        let menu = try XCTUnwrap(players["audio-music-menu.mp3"])
+        XCTAssertTrue(menu.isPlaying); XCTAssertEqual(menu.fades.last, 0.45)
+        XCTAssertFalse(music.isPlaying); XCTAssertEqual(menu.volume, 0.3, accuracy: 0.0001)
+        sound.startRun(); XCTAssertEqual(players["audio-music-b.mp3"]?.volume, 0.3)
+        sound.setMuted(true); sound.setMode(.dying)
+        XCTAssertFalse(death.isPlaying); XCTAssertEqual(death.plays, 2)
+        XCTAssertTrue(players.values.allSatisfy { !$0.isPlaying })
+    }
     func testIdleLoopsDoNotSeekOrPauseEveryFrameAndStillRecoverWhenActive() throws {
         var players: [String: FakePlayback] = [:], clock = 0.0
         let sound = ClassicSound(makePlayer: { asset in
