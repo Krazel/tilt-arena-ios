@@ -436,7 +436,7 @@ final class ClassicScene: SKScene {
         // Also prepare the recolored frost atlas and procedural area textures
         // in the menu. First pickup must not generate/upload these in update().
         if theme == .inkTide {
-            SKTexture.preload(InkArt.cells + [InkArt.frozenDot, InkArt.arena], withCompletionHandler: {})
+            SKTexture.preload(InkArt.cells + [InkArt.frozenDot, InkArt.arena, InkArt.symmetricArrow], withCompletionHandler: {})
         }
         ClassicAreaEffect.preloadTextures()
         _ = prepareTexture(style: "missileShot")

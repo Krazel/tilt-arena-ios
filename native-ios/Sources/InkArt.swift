@@ -11,6 +11,29 @@ enum InkArt {
     static let red = UIColor(hex: "ed4128")
     static let atlas = SKTexture(imageNamed: "ink-tide-sprites")
     static let arena = SKTexture(imageNamed: "ink-tide-arena")
+    /// Same approved right half, mirrored in flight coordinates. Keep the red
+    /// seal independent so reflecting an off-center painted circle cannot
+    /// stretch it. Render once, not as three live crop nodes every frame.
+    static let symmetricArrowImage: UIImage = {
+        let source = UIImage(named: "ink-tide-sprites")!
+        let red = UIImage(cgImage: source.cgImage!.cropping(to: CGRect(x: 183, y: 181, width: 38, height: 38))!)
+        let format = UIGraphicsImageRendererFormat(); format.scale = 4; format.opaque = false
+        return UIGraphicsImageRenderer(size: CGSize(width: 90, height: 90), format: format).image { context in
+            let ctx = context.cgContext
+            ctx.translateBy(x: 45, y: 45)
+            for sign in [CGFloat(1), CGFloat(-1)] {
+                ctx.saveGState(); ctx.scaleBy(x: 1, y: sign)
+                ctx.clip(to: CGRect(x: -45, y: 0, width: 90, height: 45))
+                ctx.rotate(by: 2.46)
+                ctx.clip(to: CGRect(x: -31, y: -31, width: 62, height: 62))
+                source.draw(in: CGRect(x: -31, y: -31, width: 248, height: 124))
+                ctx.restoreGState()
+            }
+            let seal = CGRect(x: 4.1 - 6.15, y: -6.15, width: 12.3, height: 12.3)
+            ctx.saveGState(); ctx.addEllipse(in: seal); ctx.clip(); red.draw(in: seal); ctx.restoreGState()
+        }
+    }()
+    static let symmetricArrow = SKTexture(image: symmetricArrowImage)
     /// Match the browser's source-in fill. SpriteKit colorBlendFactor multiplies
     /// the red source by blue and makes frozen dots nearly black instead.
     static let frozenAtlasImage: UIImage = {
@@ -82,7 +105,10 @@ enum InkArt {
     static func node(style: String) -> SKNode {
         if let approved = ApprovedOrbArt.node(for: style) { return approved }
         switch style {
-        case "arrow", "missileShot":
+        case "arrow":
+            let arrow = SKSpriteNode(texture: symmetricArrow)
+            arrow.size = CGSize(width: 90, height: 90); return arrow
+        case "missileShot":
             let root = SKNode(), dart = sprite(0, size: style == "arrow" ? 62 : 29)
             // The authored paper tip points upper-left; align it to engine +X.
             dart.zRotation = -2.46; root.addChild(dart); return root
@@ -139,3 +165,4 @@ enum InkArt {
         n.strokeColor = color; n.lineWidth = width; n.lineCap = .round; return n
     }
 }
+

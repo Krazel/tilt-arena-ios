@@ -17,6 +17,37 @@ private final class ThreadCheckedPlayback: AudioPlayback {
 }
 
 @MainActor final class AudioDriverTests: XCTestCase {
+    func testRealMusicCompletionCrossesBackToAudioOwnerAndAdvancesPlaylist() async throws {
+        let advanced = expectation(description: "second native track started")
+        let stopped = expectation(description: "audio stopped")
+        var players: [String: AVAudioPlayer] = [:], reported = false
+        // Short real recordings exercise AVAudioPlayer's actual completion
+        // delegate when the player was constructed off the main thread.
+        let catalog = ApprovedAudio(menu: "music-menu", playlist: ["music-a", "music-b"], assets: [
+            "music-a": .init(file: "audio-ui.wav", volume: 0),
+            "music-b": .init(file: "audio-frost.wav", volume: 0)
+        ], silent: [])
+        let driver = ClassicAudioDriver { owner in
+            ClassicSound(catalog: catalog, makePlayer: { asset in
+                let file = asset.file as NSString
+                let url = Bundle.main.url(forResource: file.deletingPathExtension, withExtension: file.pathExtension)!
+                let player = try! AVAudioPlayer(contentsOf: url); players[asset.file] = player; return player
+            }, notifications: NotificationCenter(), dispatchCallback: { action in
+                owner {
+                    XCTAssertFalse(Thread.isMainThread)
+                    action()
+                    if players["audio-frost.wav"]?.isPlaying == true && !reported {
+                        reported = true; advanced.fulfill()
+                    }
+                }
+            })
+        }
+        driver.startRun()
+        await fulfillment(of: [advanced], timeout: 10)
+        driver.setSuspended(true)
+        driver.afterPending { stopped.fulfill() }; await fulfillment(of: [stopped], timeout: 10)
+    }
+
     func testAudioMailboxPreservesCuesAndControlBarriersWithoutMainThreadAudio() async throws {
         let queue = DispatchQueue(label: "audio-driver-test"), nc = NotificationCenter()
         var players: [String: ThreadCheckedPlayback] = [:]

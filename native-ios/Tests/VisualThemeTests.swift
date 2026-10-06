@@ -3,6 +3,48 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    @MainActor func testApprovedArrowIsSymmetricAndRedSealIsRoundWithoutChangingMissiles() throws {
+        let image = try XCTUnwrap(InkArt.symmetricArrowImage.cgImage)
+        let w = image.width, h = image.height
+        var pixels = [UInt8](repeating: 0, count: w*h*4)
+        let ctx = try XCTUnwrap(CGContext(data: &pixels, width: w, height: h, bitsPerComponent: 8,
+            bytesPerRow: w*4, space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue))
+        ctx.draw(image, in: CGRect(x: 0, y: 0, width: w, height: h))
+        var error = 0.0, redX: [Int] = [], redY: [Int] = []
+        for y in 0..<h { for x in 0..<w {
+            let i = (y*w+x)*4, opposite = ((h-1-y)*w+x)*4
+            for channel in 0..<4 { error += abs(Double(pixels[i+channel])-Double(pixels[opposite+channel])) }
+            if pixels[i]>150 && pixels[i+1]<105 && pixels[i+2]<80 && pixels[i+3]>200 {
+                redX.append(x); redY.append(y)
+            }
+        } }
+        XCTAssertLessThan(error/Double(w*h*4), 0.8, "Mirrored approved artwork; allow edge antialiasing")
+        let rw = try XCTUnwrap(redX.max()) - XCTUnwrap(redX.min()) + 1
+        let rh = try XCTUnwrap(redY.max()) - XCTUnwrap(redY.min()) + 1
+        XCTAssertEqual(Double(rw), Double(rh), accuracy: 2)
+        XCTAssertEqual(Double(try XCTUnwrap(redY.max()) + XCTUnwrap(redY.min()))/2, Double(h-1)/2, accuracy: 1)
+        XCTAssertTrue(InkArt.node(style: "arrow") is SKSpriteNode)
+        XCTAssertEqual(InkArt.node(style: "missileShot").children.count, 1)
+        print("NATIVE_ARROW symmetryMeanRGBAError=\(error/Double(w*h*4)) redSealPixels=\(rw)x\(rh)")
+    }
+
+    @MainActor func testSpikesCacheKeepsWarningRotationAndExpiry() throws {
+        let view = SKView(frame: CGRect(x: 0, y: 0, width: 874, height: 402))
+        for theme in VisualTheme.allCases {
+            let spikes = ClassicSpikes(theme: theme); spikes.prepare(in: view)
+            let sprite = try XCTUnwrap(spikes.childNode(withName: "cached-teeth") as? SKSpriteNode)
+            let active = try XCTUnwrap(sprite.texture)
+            XCTAssertEqual(spikes.children.filter { $0 is SKShapeNode && $0.isHidden }.count, 12)
+            spikes.update(time: 1, until: 5, heading: 0.4, reduced: false)
+            XCTAssertFalse(spikes.isHidden); XCTAssertEqual(spikes.zRotation, 3.8, accuracy: 0.0001)
+            spikes.update(time: 4, until: 5, heading: 0.4, reduced: false)
+            XCTAssertFalse(sprite.texture === active)
+            XCTAssertFalse(try XCTUnwrap(spikes.childNode(withName: "expiry-ring")).isHidden)
+            XCTAssertGreaterThan(sprite.alpha, 0.39)
+            spikes.update(time: 5, until: 5, heading: 0.4, reduced: false); XCTAssertTrue(spikes.isHidden)
+            spikes.update(time: 6, until: 10, heading: 0.4, reduced: false); XCTAssertTrue(sprite.texture === active)
+        }
+    }
     @MainActor func testPlasmaGeometryRemainsCorrectAcrossLengthChangesAndStyleSwitches() throws {
         let laser = ClassicLaser(), parent = SKNode(); parent.addChild(laser)
         for length in [450.0, 450, 300, 300, 600] {

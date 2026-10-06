@@ -1,0 +1,1 @@
+Approved symmetrical player arrow with a round, centered red seal. Native audio runs off the rendering thread, with a bounded queue and preloaded blade wheel and orb textures. Music, sounds and gameplay are unchanged. Please test spinning blades, multiple kills, pause/resume and returning from the background.

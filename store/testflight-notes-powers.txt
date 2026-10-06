@@ -1,0 +1,1 @@
+Flecha simétrica aprobada con el sello rojo redondo y centrado. Optimización de sonidos y poderes: reproducción nativa fuera del hilo de dibujo, cola de audio limitada y precarga de sierras y orbes. Conserva música, sonidos y jugabilidad. Prueba sierras, eliminaciones múltiples, pausa/reanudación y retorno desde segundo plano.
