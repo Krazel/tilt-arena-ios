@@ -1,0 +1,7 @@
+Candidata de rendimiento 1.0 (2).
+
+Reduce trabajo de audio repetido durante la partida, prepara las texturas de poderes en el menú y reutiliza la geometría estable del láser.
+
+Conserva la burbuja actual con variación de tono, música, efectos visuales, controles y dificultad.
+
+Comprueba la fluidez desde el comienzo, también con pocos enemigos, y al usar hielo, explosión, misiles, láser y agujero negro. Prueba además pausar/reanudar y volver desde segundo plano. La fluidez en tu iPhone está pendiente de confirmar; esta candidata no se ha enviado a revisión de App Store.

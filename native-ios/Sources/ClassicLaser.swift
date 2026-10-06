@@ -5,6 +5,9 @@ final class ClassicLaser: SKNode {
     private let outer = SKShapeNode(), core = SKShapeNode(), muzzle = SKShapeNode(circleOfRadius: 9)
     private let inkColor = UIColor(hex: "c97478"), classicColor = UIColor(hex: "ed8f91")
     private var lastLength: CGFloat?, lastTheme: VisualTheme?, lastReduced: Bool?
+    private var trialStyle: LaserStyle?, trialReduced: Bool?, plasmaLength: CGFloat?
+    private let plasmaColors = ["993bf5", "d88fff", "fff4ff"].map { UIColor(hex: $0) }
+    private let inkBandColors = [UIColor(hex: "a987c9"), UIColor(hex: "fff3e5"), UIColor(hex: "a987c9")]
     private let trial = SKNode()
     private let bands = (0..<3).map { _ in SKShapeNode() }
     private let ends = (0..<2).map { _ in SKShapeNode(circleOfRadius: 9) }
@@ -52,26 +55,37 @@ final class ClassicLaser: SKNode {
     }
     private func updateTrial(length: CGFloat, time: Double, remaining: Double, style: LaserStyle, reduced: Bool) {
         alpha = min(1, max(0, remaining) / 0.12) * (reduced ? 0.65 : 1)
+        let styleChanged = trialStyle != style
+        if styleChanged || trialReduced != reduced {
+            for (j, node) in bands.enumerated() {
+                node.strokeColor = style == .plasma ? plasmaColors[j] : inkBandColors[j]
+                node.lineWidth = style == .plasma ? [28.0, 12, 4][j] : (j == 1 ? 4 : 8)
+                node.alpha = style == .plasma ? (j == 0 ? 0.35 : 1) : (j == 1 ? 1 : 0.55)
+            }
+            for end in ends { end.glowWidth = reduced ? 0 : 14 }
+            trialStyle = style; trialReduced = reduced
+        }
+        // The approved A is three identical straight paths. Share one geometry
+        // and retain it until the segment changes; animation is in the sparks.
+        if style == .plasma && (styleChanged || plasmaLength != length) {
+            let path = CGMutablePath(); path.move(to: .zero); path.addLine(to: CGPoint(x: length, y: 0))
+            for node in bands { node.path = path }
+            plasmaLength = length
+        }
         for (j, node) in bands.enumerated() {
-            let path = CGMutablePath()
-            if style == .plasma {
-                path.move(to: .zero); path.addLine(to: CGPoint(x: length, y: 0))
-                node.strokeColor = UIColor(hex: ["993bf5", "d88fff", "fff4ff"][j])
-                node.lineWidth = [28.0, 12, 4][j]; node.alpha = j == 0 ? 0.35 : 1
-            } else {
+            if style != .plasma {
+                let path = CGMutablePath()
                 for i in 0..<48 {
                     let y = reduced ? Double(j * 6 - 6) : sin(Double(i) * 0.8 + time * 16 + Double(j)) * 4 + Double(j * 6 - 6)
                     let point = CGPoint(x: length * CGFloat(i) / 47, y: -y)
                     if i == 0 { path.move(to: point) } else { path.addLine(to: point) }
                 }
-                node.strokeColor = UIColor(hex: j == 1 ? "fff3e5" : "a987c9")
-                node.lineWidth = j == 1 ? 4 : 8; node.alpha = j == 1 ? 1 : 0.55
+                node.path = path
             }
-            node.path = path
         }
         ends[0].position = .zero; ends[1].position = CGPoint(x: length, y: 0)
         for (i, end) in ends.enumerated() {
-            end.glowWidth = reduced ? 0 : 14; end.alpha = i == 0 ? 0.5 : 0.65
+            end.alpha = i == 0 ? 0.5 : 0.65
             end.setScale(reduced ? 1 : 1 + (i == 0 ? 0 : 0.18 * sin(time * 32)))
         }
         for (i, spark) in sparks.enumerated() {

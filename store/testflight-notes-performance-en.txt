@@ -1,0 +1,7 @@
+Performance candidate 1.0 (2).
+
+Removes repeated idle audio work during gameplay, prepares power textures in the menu and reuses stable laser geometry.
+
+Keeps the current bubble sound with pitch variation, music, visuals, controls and difficulty.
+
+Check smoothness from the start, including with few enemies, and when using ice, explosions, missiles, laser and black hole. Also check pause/resume and returning from the background. Smoothness on your iPhone still needs confirmation; this candidate has not been submitted to App Review.

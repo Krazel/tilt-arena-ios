@@ -438,8 +438,9 @@ final class ClassicScene: SKScene {
             SKTexture.preload(InkArt.cells + [InkArt.frozenDot, InkArt.arena], withCompletionHandler: {})
         }
         ClassicAreaEffect.preloadTextures()
+        _ = prepareTexture(style: "missileShot")
         if theme == .classic {
-            for style in ["missileShot", "waveShot", "fire", "vortexField", "boomerangShot"] {
+            for style in ["waveShot", "fire", "vortexField", "boomerangShot"] {
                 _ = prepareTexture(style: style)
             }
         }

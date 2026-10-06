@@ -3,6 +3,25 @@ import SpriteKit
 @testable import TiltArena
 
 final class VisualThemeTests: XCTestCase {
+    @MainActor func testPlasmaGeometryRemainsCorrectAcrossLengthChangesAndStyleSwitches() throws {
+        let laser = ClassicLaser(), parent = SKNode(); parent.addChild(laser)
+        for length in [450.0, 450, 300, 300, 600] {
+            let beam = ClassicFrame.Beam(x: 70, y: 90, toX: 70, toY: 90 + length, width: 28)
+            for style in [LaserStyle.plasma, .inkBeam, .plasma] {
+                laser.update(beam: beam, remaining: 0.7, time: 1.2, theme: .inkTide, reduced: false, style: style)
+                if style == .plasma {
+                    let bands = Array(laser.children[3].children.prefix(3))
+                    for (i, band) in bands.enumerated() {
+                        let shape = try XCTUnwrap(band as? SKShapeNode)
+                        let end = laser.convert(try XCTUnwrap(shape.path).currentPoint, to: parent)
+                        XCTAssertEqual(end.x, beam.toX, accuracy: 0.0001)
+                        XCTAssertEqual(end.y, beam.toY, accuracy: 0.0001)
+                        XCTAssertEqual(shape.lineWidth, [28.0, 12, 4][i])
+                    }
+                }
+            }
+        }
+    }
     @MainActor func testApprovedLightningIsBoundedDeterministicAndExpires() throws {
         let frame = try ClassicBridge().newPowersFrame(left: 50, right: 1250, electricity: true)
         let event = try XCTUnwrap(frame.events.first { $0.kind == "lightning" })
