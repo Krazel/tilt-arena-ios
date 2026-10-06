@@ -21,6 +21,7 @@ final class ClassicAreaEffect: SKNode {
         })
     }
     private static let glow = texture(smoke: false), smoke = texture(smoke: true)
+    static func preloadTextures() { SKTexture.preload([glow, smoke], withCompletionHandler: {}) }
     static func contour(radius: CGFloat, lobes: CGFloat = 0, roughness: CGFloat = 0) -> CGPath {
         let p = CGMutablePath()
         for i in 0..<120 {

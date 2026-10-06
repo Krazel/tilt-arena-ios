@@ -99,6 +99,9 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     private var spikesStart: Double?
     private var nextSpike = 0
     private var nextVoice: [String: Int] = [:]
+    private enum LoopState { case idle, playing, paused }
+    private var loopStates: [String: LoopState] = [:]
+    private var laserVolume: Float?
     private var audible: Bool { !muted && !suspended && !interrupted && !waitingForUser && servicesAvailable }
 
     init(catalog: ApprovedAudio? = try? ApprovedAudio.load(),
@@ -145,13 +148,14 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
             self.waitingForUser = true; self.pausedEffects.removeAll(); self.rebuildPlayers()
         }
         observe(AVAudioSession.routeChangeNotification) { [weak self] _ in
-            self?.sessionActive = false; self?.refreshMusic(); self?.refreshVortex()
+            self?.sessionActive = false; self?.refreshMusic(); self?.refreshVortex(checkPlayback: true)
         }
     }
     private func observe(_ name: Notification.Name, handler: @escaping (Notification) -> Void) {
         observers.append(notifications.addObserver(forName: name, object: nil, queue: .main, using: handler))
     }
     private func rebuildPlayers() {
+        loopStates.removeAll(); laserVolume = nil
         let position = players[currentMusic ?? ""]?.currentTime ?? 0
         players.values.forEach { $0.stop() }; players.removeAll(); pitchKeys.removeAll()
         nextVoice.removeAll()
@@ -183,7 +187,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     private func recoverFromUserAction() {
         guard !muted, !suspended, servicesAvailable else { return }
         interrupted = false; waitingForUser = false
-        refreshMusic(); refreshVortex()
+        refreshMusic(); refreshVortex(checkPlayback: true)
     }
     private func playPlayer(_ name: String) {
         guard ensureSession(), let player = players[name] else { return }
@@ -200,7 +204,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     }
     func setSuspended(_ value: Bool) {
         suspended = value
-        if value { players.values.forEach { $0.pause() }; sessionActive = false; deactivateSession() }
+        if value { players.values.forEach { $0.pause() }; pauseLoopStates(); sessionActive = false; deactivateSession() }
         else { recoverFromUserAction() }
     }
     func startRun() {
@@ -215,16 +219,18 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
                 for (name, player) in players where !name.hasPrefix("music") && name != "ui" && player.isPlaying {
                     pausedEffects.insert(name); player.pause()
                 }
+                pauseLoopStates()
             } else { clearEffects(); vortexWanted = false; laserRemaining = 0 }
         } else if previous == .paused && audible {
             for name in pausedEffects { playPlayer(name) }; pausedEffects.removeAll()
         }
-        refreshMusic(); refreshVortex()
+        refreshMusic(); refreshVortex(checkPlayback: true)
     }
     func pause() { setMode(.paused) }
     func playMusic() { setMode(.game) }
     func uiClick() { recoverFromUserAction(); play("ui") }
     private func clearEffects() {
+        loopStates.removeAll()
         nextVoice.removeAll()
         spikesStart = nil; nextSpike = 0
         for (name, player) in players where !name.hasPrefix("music") && name != "ui" { player.stop(); player.currentTime = 0 }
@@ -238,16 +244,37 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         let wanted = mode == .menu ? catalog?.menu : mode == .game ? currentMusic : nil
         let ready = audible && wanted != nil && ensureSession()
         for (name, player) in players where name.hasPrefix("music") {
-            if ready && name == wanted { if !player.isPlaying { playPlayer(name) } } else { player.pause() }
+            if ready && name == wanted { if !player.isPlaying { playPlayer(name) } } else if player.isPlaying { player.pause() }
         }
     }
-    private func refreshVortex() {
-        if audible && mode == .game && vortexWanted { if players["vortex"]?.isPlaying != true { playPlayer("vortex") } }
-        else { players["vortex"]?.pause(); if !vortexWanted { players["vortex"]?.currentTime = 0 } }
-        if audible && mode == .game && laserRemaining > 0 {
-            players["laser"]?.volume = (catalog?.assets["laser"]?.volume ?? 0.48) * Float(min(1, laserRemaining / 0.12))
-            if players["laser"]?.isPlaying != true { playPlayer("laser") }
-        } else { players["laser"]?.pause(); if laserRemaining <= 0 { players["laser"]?.currentTime = 0 } }
+    private func pauseLoopStates() {
+        for name in ["vortex", "laser"] where loopStates[name] == .playing { loopStates[name] = .paused }
+    }
+    private func synchronizeLoop(_ name: String, wanted: Bool, checkPlayback: Bool) {
+        let state = loopStates[name] ?? .idle
+        if !wanted {
+            // AVAudioPlayer seeking is native audio work, even for a silent
+            // player. Reset once at expiry, never 60 times/second while idle.
+            if state != .idle {
+                players[name]?.pause(); players[name]?.currentTime = 0
+                pausedEffects.remove(name); loopStates[name] = .idle
+            }
+        } else if audible && mode == .game {
+            if state != .playing || (checkPlayback && players[name]?.isPlaying != true) {
+                if players[name]?.isPlaying != true { playPlayer(name) }
+                loopStates[name] = players[name]?.isPlaying == true ? .playing : .paused
+            }
+        } else if state == .playing {
+            players[name]?.pause(); loopStates[name] = .paused
+        }
+    }
+    private func refreshVortex(checkPlayback: Bool = false) {
+        synchronizeLoop("vortex", wanted: vortexWanted, checkPlayback: checkPlayback)
+        if laserRemaining > 0 {
+            let volume = (catalog?.assets["laser"]?.volume ?? 0.48) * Float(min(1, laserRemaining / 0.12))
+            if laserVolume != volume { players["laser"]?.volume = volume; laserVolume = volume }
+        }
+        synchronizeLoop("laser", wanted: laserRemaining > 0, checkPlayback: checkPlayback)
     }
     func consume(_ frame: ClassicFrame) {
         guard mode == .game, ["running", "gameOver"].contains(frame.state), lastFrameTime != frame.time else { return }
@@ -255,8 +282,9 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         laserRemaining = frame.state == "running" ? frame.player.laserRemaining : 0
         vortexWanted = frame.fields.contains { $0.kind == "vortex" && $0.remaining > 0 }
         let now = self.now()
-        if now - lastHealthCheck >= 1 { lastHealthCheck = now; refreshMusic() }
-        refreshVortex()
+        let healthCheck = now - lastHealthCheck >= 1
+        if healthCheck { lastHealthCheck = now; refreshMusic() }
+        refreshVortex(checkPlayback: healthCheck)
         for cue in AudioCuePolicy.cues(events: frame.events, boomerangCharging: frame.player.boomerangCharging) {
             if cue != "spikes" || frame.state == "running" { play(cue) }
         }

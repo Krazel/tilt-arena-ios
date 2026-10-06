@@ -432,6 +432,12 @@ final class ClassicScene: SKScene {
         // Prepare cropped/masked orb art while the menu is displayed, rather
         // than paying its first offscreen render during a running frame.
         for power in ClassicArt.colors.keys { _ = prepareTexture(style: power) }
+        // Also prepare the recolored frost atlas and procedural area textures
+        // in the menu. First pickup must not generate/upload these in update().
+        if theme == .inkTide {
+            SKTexture.preload(InkArt.cells + [InkArt.frozenDot, InkArt.arena], withCompletionHandler: {})
+        }
+        ClassicAreaEffect.preloadTextures()
         if theme == .classic {
             for style in ["missileShot", "waveShot", "fire", "vortexField", "boomerangShot"] {
                 _ = prepareTexture(style: style)

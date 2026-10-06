@@ -4,17 +4,82 @@ import JavaScriptCore
 @testable import TiltArena
 
 private final class FakePlayback: AudioPlayback {
-    var currentTime: TimeInterval = 0
-    var volume: Float = 1
+    var seeks = 0, pauses = 0, volumeWrites = 0
+    var currentTime: TimeInterval = 0 { didSet { seeks += 1 } }
+    var volume: Float = 1 { didSet { volumeWrites += 1 } }
     var numberOfLoops = 0
     var isPlaying = false
     var plays = 0
     func play() -> Bool { isPlaying = true; plays += 1; return true }
-    func pause() { isPlaying = false }
+    func pause() { isPlaying = false; pauses += 1 }
     func stop() { isPlaying = false; currentTime = 0 }
     func prepareToPlay() -> Bool { true }
 }
 @MainActor final class AudioRecoveryTests: XCTestCase {
+    func testIdleLoopsDoNotSeekOrPauseEveryFrameAndStillRecoverWhenActive() throws {
+        var players: [String: FakePlayback] = [:], clock = 0.0
+        let sound = ClassicSound(makePlayer: { asset in
+            let player = FakePlayback(); players[asset.file] = player; return player
+        }, activateSession: {}, deactivateSession: {}, notifications: NotificationCenter(), now: { clock })
+        let bridge = try ClassicBridge()
+        _ = try bridge.create(seed: 17, spawning: false)
+        sound.startRun()
+        let laser = try XCTUnwrap(players["audio-laser.wav"])
+        let catalog = try ApprovedAudio.load()
+        let vortex = try XCTUnwrap(players[try XCTUnwrap(catalog.assets["vortex"]).file])
+        let before = [laser.seeks, laser.pauses, vortex.seeks, vortex.pauses]
+        for _ in 0..<600 {
+            clock += 1.0 / 60
+            sound.consume(try bridge.tick(dt: 1.0 / 60, x: 0, y: 0))
+        }
+        XCTAssertEqual([laser.seeks, laser.pauses, vortex.seeks, vortex.pauses], before)
+        print("NATIVE_IDLE_AUDIO frames=600 inactiveLoopNativeWrites=0 legacyWrites=2400")
+        sound.consume(try bridge.laserFrame(left: 100, right: 1300))
+        XCTAssertTrue(laser.isPlaying)
+        laser.currentTime = 0.3
+        sound.pause(); XCTAssertFalse(laser.isPlaying)
+        sound.playMusic(); XCTAssertTrue(laser.isPlaying); XCTAssertEqual(laser.currentTime, 0.3)
+        // Health recovery remains active, but runs once a second, not every frame.
+        laser.isPlaying = false; clock += 2
+        var frame = try bridge.laserFrame(left: 100, right: 1300)
+        frame = ClassicFrame(state: frame.state, mode: frame.mode, time: clock, score: frame.score,
+            combo: frame.combo, comboBase: frame.comboBase, pendingBonus: frame.pendingBonus,
+            bestCombo: frame.bestCombo, kills: frame.kills, comboRemaining: frame.comboRemaining,
+            player: frame.player, beam: frame.beam, enemies: frame.enemies, pickups: frame.pickups,
+            projectiles: frame.projectiles, fields: frame.fields, events: [])
+        sound.consume(frame); XCTAssertTrue(laser.isPlaying)
+        sound.consume(try bridge.create(seed: 17, spawning: false))
+        XCTAssertFalse(laser.isPlaying); XCTAssertEqual(laser.currentTime, 0)
+        let end = [laser.seeks, laser.pauses, vortex.seeks, vortex.pauses]
+        for _ in 0..<120 { clock += 1.0 / 60; sound.consume(try bridge.tick(dt: 1.0 / 60, x: 0, y: 0)) }
+        XCTAssertEqual([laser.seeks, laser.pauses, vortex.seeks, vortex.pauses], end)
+    }
+
+    func testRealAudioIdleFrameCostComparedWithLegacyLoopResets() throws {
+        let catalog = try ApprovedAudio.load()
+        func player(_ name: String) throws -> AVAudioPlayer {
+            let asset = try XCTUnwrap(catalog.assets[name]), file = asset.file as NSString
+            let url = try XCTUnwrap(Bundle.main.url(forResource: file.deletingPathExtension, withExtension: file.pathExtension))
+            let p = try AVAudioPlayer(contentsOf: url); p.prepareToPlay(); return p
+        }
+        let oldLaser = try player("laser"), oldVortex = try player("vortex")
+        // Actual production controller, native players, no fake audio timing.
+        let sound = ClassicSound(activateSession: {}, deactivateSession: {})
+        sound.startRun(); defer { sound.setMode(.off) }
+        let bridge = try ClassicBridge(); _ = try bridge.create(seed: 17, spawning: false)
+        let frames = try (0..<180).map { _ in try bridge.tick(dt: 1.0 / 60, x: 0, y: 0) }
+        var old: [Double] = [], new: [Double] = []
+        for frame in frames {
+            var start = ProcessInfo.processInfo.systemUptime
+            oldVortex.pause(); oldVortex.currentTime = 0; oldLaser.pause(); oldLaser.currentTime = 0
+            old.append((ProcessInfo.processInfo.systemUptime - start) * 1000)
+            start = ProcessInfo.processInfo.systemUptime
+            sound.consume(frame)
+            new.append((ProcessInfo.processInfo.systemUptime - start) * 1000)
+        }
+        old.sort(); new.sort()
+        print("NATIVE_AUDIO_IDLE legacyLoopResetP95ms=\(old[171]) legacyMaxMs=\(old.last!) currentFullConsumeP95ms=\(new[171]) currentMaxMs=\(new.last!) simulatorOnly=true physicalFPS=false")
+    }
     func testBubbleDeathsVaryPitchAcrossOverlappingVoicesAndRetainMutePauseAndFrozenRouting() throws {
         let catalog = try ApprovedAudio.load(), asset = try XCTUnwrap(catalog.assets["hit"])
         let keys = ["hit"] + (asset.alternates ?? [])
