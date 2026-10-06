@@ -79,6 +79,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     private let activateSession: () throws -> Void
     private let deactivateSession: () -> Void
     private let notifications: NotificationCenter
+    private let dispatchCallback: (@escaping () -> Void) -> Void
     private var observers: [NSObjectProtocol] = []
     private var sessionActive = false
     private var servicesAvailable = true
@@ -118,11 +119,13 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
          }, deactivateSession: @escaping () -> Void = {
              try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
          }, notifications: NotificationCenter = .default,
+         dispatchCallback: @escaping (@escaping () -> Void) -> Void = { $0() },
          random: @escaping () -> Double = { Double.random(in: 0..<1) },
          now: @escaping () -> Double = { ProcessInfo.processInfo.systemUptime }) {
         self.catalog = catalog; self.makePlayer = makePlayer
         self.activateSession = activateSession; self.deactivateSession = deactivateSession
         self.notifications = notifications
+        self.dispatchCallback = dispatchCallback
         self.random = random; self.now = now
         super.init()
         rebuildPlayers()
@@ -152,7 +155,9 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         }
     }
     private func observe(_ name: Notification.Name, handler: @escaping (Notification) -> Void) {
-        observers.append(notifications.addObserver(forName: name, object: nil, queue: .main, using: handler))
+        observers.append(notifications.addObserver(forName: name, object: nil, queue: nil) { [weak self] note in
+            self?.dispatchCallback { handler(note) }
+        })
     }
     private func rebuildPlayers() {
         loopStates.removeAll(); laserVolume = nil
@@ -338,7 +343,9 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         players[name]?.currentTime = 0; playPlayer(name)
     }
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        guard mode == .game, let name = currentMusic, players[name] === player else { return }
-        advanceTrack(); players[currentMusic ?? ""]?.currentTime = 0; refreshMusic()
+        dispatchCallback { [weak self] in
+            guard let self, self.mode == .game, let name = self.currentMusic, self.players[name] === player else { return }
+            self.advanceTrack(); self.players[self.currentMusic ?? ""]?.currentTime = 0; self.refreshMusic()
+        }
     }
 }

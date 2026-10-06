@@ -4,7 +4,7 @@ import UIKit
 
 final class ClassicScene: SKScene {
     weak var session: GameSession?
-    let sound = ClassicSound()
+    let sound = ClassicAudioDriver()
     var reduceEffects = false
     private(set) var theme: VisualTheme = .inkTide
     private let motion = CMMotionManager()
@@ -429,6 +429,7 @@ final class ClassicScene: SKScene {
         return SKSpriteNode(texture: rendered)
     }
     private func preparePowerTextures() {
+        if let view { spikes.prepare(in: view) }
         // Prepare cropped/masked orb art while the menu is displayed, rather
         // than paying its first offscreen render during a running frame.
         for power in ClassicArt.colors.keys { _ = prepareTexture(style: power) }
@@ -439,6 +440,7 @@ final class ClassicScene: SKScene {
         }
         ClassicAreaEffect.preloadTextures()
         _ = prepareTexture(style: "missileShot")
+        SKTexture.preload(Array(textures.values), withCompletionHandler: {})
         if theme == .classic {
             for style in ["waveShot", "fire", "vortexField", "boomerangShot"] {
                 _ = prepareTexture(style: style)

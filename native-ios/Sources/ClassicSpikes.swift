@@ -7,6 +7,8 @@ final class ClassicSpikes: SKNode {
     private let theme: VisualTheme
     private let activeFill: UIColor, activeStroke: UIColor, warningFill: UIColor, warningStroke: UIColor
     private var lastWarning: Bool?
+    private var cachedTeeth: SKSpriteNode?
+    private var activeTexture: SKTexture?, warningTexture: SKTexture?
     init(theme: VisualTheme = .classic) {
         self.theme = theme
         activeFill = theme == .inkTide ? InkArt.paper : UIColor(hex: "ceeaff")
@@ -36,6 +38,26 @@ final class ClassicSpikes: SKNode {
     }
     required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
 
+    /// Rasterize the exact twelve authored teeth in the menu. Showing the
+    /// power then needs one textured quad instead of first-use shape rendering.
+    func prepare(in view: SKView) {
+        guard cachedTeeth == nil else { return }
+        let root = SKNode()
+        for tooth in teeth { root.addChild(tooth.copy() as! SKShapeNode) }
+        let bounds = root.calculateAccumulatedFrame()
+        guard let active = view.texture(from: root, crop: bounds) else { return }
+        for case let tooth as SKShapeNode in root.children {
+            tooth.fillColor = warningFill; tooth.strokeColor = warningStroke
+        }
+        guard let warning = view.texture(from: root, crop: bounds) else { return }
+        activeTexture = active; warningTexture = warning
+        let sprite = SKSpriteNode(texture: active)
+        sprite.size = bounds.size; sprite.position = CGPoint(x: bounds.midX, y: bounds.midY)
+        sprite.name = "cached-teeth"; addChild(sprite); cachedTeeth = sprite
+        teeth.forEach { $0.isHidden = true }
+        SKTexture.preload([active, warning], withCompletionHandler: {})
+    }
+
     func update(time: Double, until: Double, heading: Double, reduced: Bool) {
         let remaining = until - time
         guard remaining > 0 else { isHidden = true; return }
@@ -47,13 +69,16 @@ final class ClassicSpikes: SKNode {
         // Whole power stays readable: only the teeth pulse. Color and a shrinking
         // fixed-world countdown arc warn even with Reduce Motion enabled.
         alpha = 1; countdown.isHidden = !warning
-        for tooth in teeth {
+        if let cachedTeeth {
+            if lastWarning != warning { cachedTeeth.texture = warning ? warningTexture : activeTexture }
+            cachedTeeth.alpha = warning && !reduced ? CGFloat(0.7 + 0.3 * cos(remaining * .pi * 4)) : 1
+        } else { for tooth in teeth {
             if lastWarning != warning {
                 tooth.fillColor = warning ? warningFill : activeFill
                 tooth.strokeColor = warning ? warningStroke : activeStroke
             }
             tooth.alpha = warning && !reduced ? CGFloat(0.7 + 0.3 * cos(remaining * .pi * 4)) : 1
-        }
+        } }
         lastWarning = warning
         if warning {
             let path = CGMutablePath()
