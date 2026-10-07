@@ -41,6 +41,8 @@ final class GameSession: ObservableObject {
     @Published var resultScore = 0
     @Published var resultCombo = 0
     @Published var resultTime = 0
+    @Published var resultKills = 0
+    var resultDuration: String { String(format: "%d:%02d", resultTime / 60, resultTime % 60) }
     @Published var mode = GameMode.read()
     @Published var best = ClassicScoreRecord.read(mode: GameMode.read())
     @Published var muted = UserDefaults.standard.bool(forKey: "classic.muted")
@@ -119,7 +121,7 @@ final class GameSession: ObservableObject {
         #endif
     }
     func finish(_ frame: ClassicFrame, animated: Bool = false) {
-        resultScore = frame.score; resultCombo = frame.bestCombo; resultTime = Int(frame.time)
+        resultScore = frame.score; resultCombo = frame.bestCombo; resultTime = Int(frame.time); resultKills = frame.kills
         best = ClassicScoreRecord.save(frame.score, mode: GameMode(rawValue: frame.mode) ?? .classic)
         phase = animated ? .dying : .gameOver
     }
@@ -163,11 +165,19 @@ struct GameView: View {
                     }.frame(width: geometry.size.width, height: geometry.size.height)
                 }
             }
-        }.overlay(alignment: .bottomLeading) {
-            if showSettings {
-                Button(GameLanguage.current == .spanish ? "Créditos" : "Credits") { game.uiClick(); showCredits = true }
-                    .font(.system(size: 10)).padding(8).accessibilityIdentifier("audio-credits")
-            }
+        }.overlay {
+            GeometryReader { geometry in
+                if showSettings {
+                    Button { game.uiClick(); showCredits = true } label: {
+                        Text(GameLanguage.current == .spanish ? "Créditos" : "Credits")
+                            .font(.system(size: 10))
+                            .frame(width: 64, height: 44, alignment: .bottomLeading)
+                            .contentShape(Rectangle())
+                    }
+                    .position(x: 40, y: geometry.size.height - 25)
+                    .accessibilityIdentifier("audio-credits")
+                }
+            }.ignoresSafeArea()
         }.overlay(alignment: .bottomTrailing) {
             if showSettings && SpeedTrial.enabled {
                 Button("\(GameLanguage.current == .spanish ? "Pruebas" : "Trials") · \(game.trialSpeed)") {
@@ -217,7 +227,6 @@ struct GameView: View {
     }
     private var mainContent: some View {
         VStack(spacing: 12) {
-            Text("KRAZEL GAMES").font(.system(size: 10, weight: .bold, design: .rounded)).tracking(4).foregroundColor(accent)
             switch game.phase {
             case .menu:
                 Text(ink ? "TILT ARENA" : GameText.menuTitle).font(.system(size: 38, weight: .black, design: ink ? .serif : .rounded))
@@ -245,8 +254,9 @@ struct GameView: View {
                 }.font(.footnote)
             case .gameOver:
                 Text(GameText.resultTitle).font(.title.bold())
+                Text("COMBO ×\(game.resultCombo)").font(.system(size: 12, design: .monospaced))
                 Text(game.resultScore.formatted()).font(.system(size: 38, weight: .black, design: ink ? .serif : .rounded)).foregroundColor(accent)
-                Text("COMBO ×\(game.resultCombo)   ·   \(game.resultTime) s").font(.system(.callout, design: .monospaced))
+                ResultStatisticsView(game: game)
                 primary(GameText.restartRun, id: "replay") { game.performConfirmed(.restart) }
                 secondary(GameText.mainMenu) { pendingAction = .mainMenu }.accessibilityIdentifier("main-menu")
             case .failed:

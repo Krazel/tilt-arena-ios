@@ -15,18 +15,19 @@ final class SpeedTrialTests: XCTestCase {
             XCTAssertEqual(frame.player.vx, 600, accuracy: 0.01)
         }
     }
-    @MainActor func testTrialPreferenceDefaultsTo600PersistsAndCannotChangeDuringPlay() throws {
+    @MainActor func testFinalSpeedIgnoresSavedTrialValuesAndCannotBeChanged() throws {
         let name = "SpeedTrialTests.\(UUID().uuidString)"
         let defaults = try XCTUnwrap(UserDefaults(suiteName: name))
         defer { defaults.removePersistentDomain(forName: name) }
-        let session = GameSession(defaults: defaults)
-        XCTAssertEqual(session.trialSpeed, 600)
-        session.selectTrialSpeed(720)
-        XCTAssertEqual(GameSession(defaults: defaults).trialSpeed, 720)
-        session.selectTrialSpeed(999); XCTAssertEqual(session.trialSpeed, 720)
-        session.phase = .running; session.selectTrialSpeed(840); XCTAssertEqual(session.trialSpeed, 720)
-        session.phase = .paused; session.selectTrialSpeed(780); XCTAssertEqual(session.trialSpeed, 780)
-        session.phase = .gameOver; session.selectTrialSpeed(660); XCTAssertEqual(session.trialSpeed, 660)
-        defaults.set(999, forKey: SpeedTrial.key); XCTAssertEqual(SpeedTrial.read(defaults), 600)
+        XCTAssertFalse(SpeedTrial.enabled)
+        for previous in [600, 660, 720, 780, 840, 999] {
+            defaults.set(previous, forKey: SpeedTrial.key)
+            let session = GameSession(defaults: defaults)
+            XCTAssertEqual(session.trialSpeed, 600)
+            for phase in [GameSession.Phase.menu, .paused, .gameOver, .running] {
+                session.phase = phase; session.selectTrialSpeed(840)
+                XCTAssertEqual(session.trialSpeed, 600)
+            }
+        }
     }
 }

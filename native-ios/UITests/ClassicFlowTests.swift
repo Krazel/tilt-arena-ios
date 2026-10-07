@@ -85,6 +85,16 @@ final class ClassicFlowTests: XCTestCase {
             app.launchArguments = ["--ui-testing", "--theme-ink-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
             app.launch()
             XCTAssertTrue(app.buttons["audio-credits"].waitForExistence(timeout: 10))
+            for orientation in [UIDeviceOrientation.landscapeLeft, .landscapeRight] {
+                XCUIDevice.shared.orientation = orientation
+                let credits = app.buttons["audio-credits"]
+                XCTAssertTrue(credits.isHittable)
+                let screen = app.windows.firstMatch.frame
+                XCTAssertLessThan(credits.frame.minX - screen.minX, 15)
+                XCTAssertLessThan(abs(screen.maxY - credits.frame.maxY), 8)
+                XCTAssertGreaterThanOrEqual(credits.frame.height, 44)
+                capture("credits-corner-\(language)-\(orientation.rawValue)", app: app)
+            }
             app.buttons["audio-credits"].tap()
             let close = app.buttons[language == "es" ? "Cerrar" : "Close"]
             XCTAssertTrue(close.waitForExistence(timeout: 3))
@@ -130,6 +140,9 @@ final class ClassicFlowTests: XCTestCase {
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
             XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 5))
+            XCTAssertTrue(app.otherElements["result-time"].exists)
+            XCTAssertTrue(app.otherElements["result-kills"].exists)
+            capture("final-results-\(theme)", app: app)
             app.buttons["replay"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
             XCTAssertFalse(app.buttons["confirm-cancel"].exists)
@@ -351,33 +364,16 @@ final class ClassicFlowTests: XCTestCase {
             app.terminate()
         }
     }
-    func testSpeedTrialsInMenuPauseAndResultsPersistInBothLanguages() {
+    func testFinalSpeedHasNoTrialControlInMenuPauseOrResults() {
         let app = XCUIApplication()
-        for language in ["en", "es"] {
-            app.launchArguments = ["--ui-testing", "--death-sequence-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
-            app.launch(); XCTAssertTrue(app.buttons["speed-trials"].waitForExistence(timeout: 10))
-            app.buttons["speed-trials"].tap()
-            for speed in [600, 660, 720, 780, 840] {
-                let option = app.buttons["trial-speed-\(speed)"]
-                XCTAssertTrue(option.isHittable); option.tap(); XCTAssertTrue(option.isSelected)
-            }
-            capture("speed-trials-\(language)", app: app)
-            app.buttons["speed-trials-close"].tap()
-            XCTAssertTrue(app.buttons["speed-trials"].label.contains("840"))
-            app.terminate(); app.launch()
-            XCTAssertTrue(app.buttons["speed-trials"].waitForExistence(timeout: 10))
-            XCTAssertTrue(app.buttons["speed-trials"].label.contains("840"))
-            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
-            XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 8))
-            app.buttons["speed-trials"].tap(); app.buttons["trial-speed-720"].tap(); app.buttons["speed-trials-close"].tap()
-            app.buttons["replay"].tap(); XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
-            XCTAssertFalse(app.buttons["speed-trials"].exists)
-            pauseByTouch(app); app.buttons["speed-trials"].tap()
-            XCTAssertTrue(app.buttons["trial-speed-720"].isSelected)
-            app.buttons["trial-speed-600"].tap(); app.buttons["speed-trials-close"].tap(); app.buttons["resume"].tap()
-            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
-            app.terminate()
-        }
+        app.launchArguments = ["--ui-testing", "--death-sequence-qa"]
+        app.launch(); XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.buttons["speed-trials"].exists)
+        app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+        XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 8))
+        XCTAssertFalse(app.buttons["speed-trials"].exists)
+        app.buttons["replay"].tap(); XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+        pauseByTouch(app); XCTAssertFalse(app.buttons["speed-trials"].exists)
     }
     private func pauseByTouch(_ app: XCUIApplication) {
         app.otherElements["arena-running"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()

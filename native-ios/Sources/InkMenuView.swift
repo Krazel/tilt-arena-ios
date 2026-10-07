@@ -64,19 +64,24 @@ struct InkMenuView: View {
 
     private var main: some View {
         ZStack(alignment: .topLeading) {
-            Text("KRAZEL GAMES").font(.system(size: 10.5, weight: .bold)).tracking(4.7)
-                .foregroundColor(Color(InkArt.gold))
-                .at(CGRect(x: 0, y: 0, width: 317, height: 13))
-            title.at(CGRect(x: 0, y: 20, width: 317, height: 51))
-            Text(ended ? "COMBO ×\(game.resultCombo)  ·  \(game.resultTime) s" : paused ? (game.message.isEmpty ? GameText.arenaWaits : game.message) : GameText.tagline)
-                .font(.system(size: paused ? 12 : 15)).foregroundColor(muted)
-                .multilineTextAlignment(.center).lineLimit(2).minimumScaleFactor(0.85)
-                .at(CGRect(x: 0, y: 79, width: 317, height: 30))
+            title.at(CGRect(x: 0, y: 0, width: 317, height: 51))
+            if ended {
+                Text("COMBO ×\(game.resultCombo)").font(.system(size: 12, design: .monospaced))
+                    .at(CGRect(x: 0, y: 58, width: 317, height: 15))
+                ResultStatisticsView(game: game)
+                    .at(CGRect(x: 0, y: 129, width: 317, height: 43))
+            } else {
+                Text(paused ? (game.message.isEmpty ? GameText.arenaWaits : game.message) : GameText.tagline)
+                    .font(.system(size: paused ? 12 : 15)).foregroundColor(muted)
+                    .multilineTextAlignment(.center).lineLimit(2).minimumScaleFactor(0.85)
+                    .at(CGRect(x: 0, y: 79, width: 317, height: 30))
+            }
             Text(ended ? game.resultScore.formatted() : "\(GameText.best)  \(game.best.formatted())")
                 .font(ended ? .custom("Knewave-Regular", size: 26) : .system(size: 16, design: .monospaced))
-                .tracking(ended ? 0 : 3).at(CGRect(x: 0, y: 112, width: 317, height: 22))
-            primary.at(CGRect(x: 0, y: 139, width: 317, height: 47))
-            actions.at(CGRect(x: 0, y: 197, width: 317, height: 43))
+                .tracking(ended ? 0 : 3).lineLimit(1).minimumScaleFactor(0.6)
+                .at(CGRect(x: 0, y: ended ? 82 : 112, width: 317, height: ended ? 36 : 22))
+            primary.at(CGRect(x: 0, y: ended ? 180 : 139, width: 317, height: 47))
+            actions.at(CGRect(x: 0, y: ended ? 239 : 197, width: 317, height: 43))
         }.frame(width: 317, height: 290, alignment: .topLeading)
     }
 
@@ -226,5 +231,23 @@ struct AutoCalibrationButton: View {
 private extension View {
     func at(_ rect: CGRect) -> some View {
         frame(width: rect.width, height: rect.height).position(x: rect.midX, y: rect.midY)
+    }
+}
+
+/// Shared by the two visual themes; numbers come from the frozen final frame.
+struct ResultStatisticsView: View {
+    @ObservedObject var game: GameSession
+    var body: some View {
+        HStack(spacing: 12) {
+            statistic(GameText.survivalTime, value: game.resultDuration, id: "result-time")
+            statistic(GameText.enemiesDefeated, value: game.resultKills.formatted(), id: "result-kills")
+        }
+    }
+    private func statistic(_ label: String, value: String, id: String) -> some View {
+        VStack(spacing: 4) {
+            Text(label).font(.system(size: 11)).opacity(0.8)
+            Text(value).font(.system(size: 22, weight: .bold, design: .monospaced))
+        }.lineLimit(1).minimumScaleFactor(0.6).frame(maxWidth: .infinity)
+            .accessibilityElement(children: .combine).accessibilityIdentifier(id)
     }
 }

@@ -1,0 +1,1 @@
+Final results now show time survived and Blots defeated, with combo above the score and a clear Game over heading. Normal top speed is fixed at 600; the temporary speed selector is removed. Credits moved to the bottom-left screen corner, away from the chain indicator. Approved paper-cut death sound, music fade and tap-to-skip remain.

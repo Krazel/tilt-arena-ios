@@ -44,7 +44,9 @@ enum GameText {
     static var restartQuestion: String { text("Restart this run?", "¿Reiniciar la partida?") }
     static var menuQuestion: String { text("Return to the main menu?", "¿Volver al menú principal?") }
     static var leaveRunMessage: String { text("This run will end. Your best score will be saved.", "La partida actual terminará. Tu récord se guardará.") }
-    static var resultTitle: String { text("By one point…", "Por un punto…") }
+    static var resultTitle: String { text("Game over", "Fin de la partida") }
+    static var survivalTime: String { text("Time survived", "Tiempo sobrevivido") }
+    static var enemiesDefeated: String { text("Blots defeated", "Manchas eliminadas") }
     static var replay: String { text("Play again", "Otra partida") }
     static var menu: String { text("Menu", "Menú") }
     static var moment: String { text("One moment…", "Un momento…") }

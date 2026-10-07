@@ -1,9 +1,9 @@
 import SwiftUI
 
-// Temporary internal TestFlight control; disable before the public release
-// once the user has chosen a speed.
+// 07/10: the user chose 600 as final. Retain the isolated comparison code,
+// but hide it and ignore every saved trial preference in the game.
 enum SpeedTrial {
-    static let enabled = true
+    static let enabled = false
     static let values = [600, 660, 720, 780, 840]
     static let key = "classic.speedTrial.v1"
     static func read(_ defaults: UserDefaults) -> Int {
