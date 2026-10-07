@@ -1,0 +1,5 @@
+Pruebas de velocidad en iPhone: abre «Pruebas · 600», abajo a la derecha del menú, pausa o resultados. Elige 600, 660, 720, 780 o 840 y juega/reanuda para probar con la inclinación. Se recuerda la selección; 600 es la velocidad actual. El control es temporal para estas pruebas.
+
+Tras morir, la música del menú entra progresivamente durante 2,5 segundos. Se conserva el corte de papel C, la bajada de música al morir y el toque para saltar la animación.
+
+Comprobar cambios de velocidad, reinicio, reanudación, mute y vuelta de segundo plano. La velocidad definitiva aún está por elegir.

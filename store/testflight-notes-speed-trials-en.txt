@@ -1,0 +1,5 @@
+iPhone speed trials: open “Trials · 600” at the bottom right of the main menu, pause or results screen. Choose 600, 660, 720, 780 or 840, then play/resume to try it with tilt controls. Your choice is saved; 600 is the current speed. This is a temporary testing control.
+
+After death, menu music fades in gradually over 2.5 seconds. The approved paper-cut C sound, music ducking and tap to skip the death animation are preserved.
+
+Please check speed changes, restart, resume, mute and return from the background. The final speed has not been chosen yet.

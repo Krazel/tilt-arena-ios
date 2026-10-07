@@ -82,9 +82,10 @@ final class ClassicBridge {
         }
         api = value
     }
-    func create(seed: UInt32 = UInt32.random(in: 1...UInt32.max), spawning: Bool = true, mode: GameMode = .classic) throws -> ClassicFrame {
-        try decode(call("create", [seed, spawning, mode.rawValue]))
+    func create(seed: UInt32 = UInt32.random(in: 1...UInt32.max), spawning: Bool = true, mode: GameMode = .classic, playerSpeed: Int = 600) throws -> ClassicFrame {
+        try decode(call("create", [seed, spawning, mode.rawValue, playerSpeed]))
     }
+    func setPlayerSpeed(_ value: Int) throws { _ = try call("setPlayerSpeed", [value]) }
     func tick(dt: Double, x: Double, y: Double) throws -> ClassicFrame {
         try decode(call("tick", [dt, x, y]))
     }

@@ -351,6 +351,34 @@ final class ClassicFlowTests: XCTestCase {
             app.terminate()
         }
     }
+    func testSpeedTrialsInMenuPauseAndResultsPersistInBothLanguages() {
+        let app = XCUIApplication()
+        for language in ["en", "es"] {
+            app.launchArguments = ["--ui-testing", "--death-sequence-qa", "-AppleLanguages", "(\(language))", "-AppleLocale", language == "es" ? "es_ES" : "en_US"]
+            app.launch(); XCTAssertTrue(app.buttons["speed-trials"].waitForExistence(timeout: 10))
+            app.buttons["speed-trials"].tap()
+            for speed in [600, 660, 720, 780, 840] {
+                let option = app.buttons["trial-speed-\(speed)"]
+                XCTAssertTrue(option.isHittable); option.tap(); XCTAssertTrue(option.isSelected)
+            }
+            capture("speed-trials-\(language)", app: app)
+            app.buttons["speed-trials-close"].tap()
+            XCTAssertTrue(app.buttons["speed-trials"].label.contains("840"))
+            app.terminate(); app.launch()
+            XCTAssertTrue(app.buttons["speed-trials"].waitForExistence(timeout: 10))
+            XCTAssertTrue(app.buttons["speed-trials"].label.contains("840"))
+            app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
+            XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 8))
+            app.buttons["speed-trials"].tap(); app.buttons["trial-speed-720"].tap(); app.buttons["speed-trials-close"].tap()
+            app.buttons["replay"].tap(); XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            XCTAssertFalse(app.buttons["speed-trials"].exists)
+            pauseByTouch(app); app.buttons["speed-trials"].tap()
+            XCTAssertTrue(app.buttons["trial-speed-720"].isSelected)
+            app.buttons["trial-speed-600"].tap(); app.buttons["speed-trials-close"].tap(); app.buttons["resume"].tap()
+            XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
+            app.terminate()
+        }
+    }
     private func pauseByTouch(_ app: XCUIApplication) {
         app.otherElements["arena-running"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.buttons["resume"].waitForExistence(timeout: 5))

@@ -50,12 +50,18 @@ final class GameSession: ObservableObject {
         didSet { preferences.set(autoCalibrate, forKey: "classic.autoCalibrate") }
     }
     private let preferences: UserDefaults
+    @Published private(set) var trialSpeed = 600
+    func selectTrialSpeed(_ value: Int) {
+        guard SpeedTrial.enabled, SpeedTrial.values.contains(value), [.menu, .paused, .gameOver].contains(phase) else { return }
+        trialSpeed = value; preferences.set(value, forKey: SpeedTrial.key)
+    }
     @Published var hasCustom = UserDefaults.standard.object(forKey: "classic.neutralY") != nil
     private var custom = TiltProfile.saved(defaults: .standard)
     var activeProfile: TiltProfile { posture == .custom ? custom : .preset(posture) }
     let scene = ClassicScene()
     init(defaults: UserDefaults = .standard) {
         preferences = defaults
+        trialSpeed = SpeedTrial.read(defaults)
         autoCalibrate = defaults.object(forKey: "classic.autoCalibrate") == nil
             ? true : defaults.bool(forKey: "classic.autoCalibrate")
         #if DEBUG
@@ -123,6 +129,7 @@ struct GameView: View {
     @StateObject private var game = GameSession()
     @State private var pendingAction: RunAction?
     @State private var showCredits = false
+    @State private var showSpeedTrials = false
     @Environment(\.scenePhase) private var appPhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private var ink: Bool { game.theme == .inkTide }
@@ -161,6 +168,12 @@ struct GameView: View {
                 Button(GameLanguage.current == .spanish ? "Créditos" : "Credits") { game.uiClick(); showCredits = true }
                     .font(.system(size: 10)).padding(8).accessibilityIdentifier("audio-credits")
             }
+        }.overlay(alignment: .bottomTrailing) {
+            if showSettings && SpeedTrial.enabled {
+                Button("\(GameLanguage.current == .spanish ? "Pruebas" : "Trials") · \(game.trialSpeed)") {
+                    game.uiClick(); showSpeedTrials = true
+                }.font(.system(size: 10)).padding(12).accessibilityIdentifier("speed-trials")
+            }
         }.sheet(isPresented: $showCredits) {
             NavigationStack {
                 ScrollView {
@@ -178,8 +191,11 @@ struct GameView: View {
     var body: some View {
         ZStack {
             gameContent
-                .allowsHitTesting(pendingAction == nil)
-                .accessibilityHidden(pendingAction != nil)
+                .allowsHitTesting(pendingAction == nil && !showSpeedTrials)
+                .accessibilityHidden(pendingAction != nil || showSpeedTrials)
+            if showSpeedTrials {
+                SpeedTrialView(game: game) { game.uiClick(); showSpeedTrials = false }
+            }
             if let action = pendingAction {
                 RunConfirmationView(action: action, ink: ink, isFinished: game.phase == .gameOver) { accepted in
                     game.uiClick(); pendingAction = nil

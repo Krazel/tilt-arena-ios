@@ -108,6 +108,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
     private var loopStates: [String: LoopState] = [:]
     private var laserVolume: Float?
     private var musicVolumes: [String: Float] = [:]
+    private var gentleMenuEntry = false
     private var audible: Bool { !muted && !suspended && !interrupted && !waitingForUser && servicesAvailable }
 
     init(catalog: ApprovedAudio? = try? ApprovedAudio.load(),
@@ -223,6 +224,7 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         }
     }
     func startRun() {
+        gentleMenuEntry = false
         clearEffects(); lastCue.removeAll(); lastFrameTime = nil; vortexWanted = false; laserRemaining = 0
         advanceTrack(); players[currentMusic ?? ""]?.currentTime = 0
         mode = .game; recoverFromUserAction()
@@ -240,7 +242,8 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         } else if previous == .paused && audible {
             for name in pausedEffects { playPlayer(name) }; pausedEffects.removeAll()
         }
-        let fade: TimeInterval = next == .dying ? 0.18 : previous == .dying && next == .menu ? 0.45 : 0
+        gentleMenuEntry = previous == .dying && next == .menu
+        let fade: TimeInterval = next == .dying ? 0.18 : gentleMenuEntry ? 2.5 : 0
         if previous == .dying && next == .menu, let menu = catalog?.menu {
             players[menu]?.volume = 0; musicVolumes.removeValue(forKey: menu)
         }
@@ -267,10 +270,17 @@ final class ClassicSound: NSObject, AVAudioPlayerDelegate {
         for (name, player) in players where name.hasPrefix("music") {
             if ready && name == wanted {
                 let volume = (catalog?.assets[name]?.volume ?? 0.3) * (mode == .dying ? 0.16 : 1)
-                if musicVolumes[name] != volume {
-                    player.setVolume(volume, fadeDuration: fadeDuration); musicVolumes[name] = volume
+                let restarting = !player.isPlaying
+                let fade = mode == .menu && gentleMenuEntry && restarting ? 2.5 : fadeDuration
+                if restarting {
+                    // Start playback before scheduling AVAudioPlayer's fade.
+                    // Also handles results entered while muted/backgrounded.
+                    player.volume = fade > 0 ? 0 : volume
+                    playPlayer(name)
                 }
-                if !player.isPlaying { playPlayer(name) }
+                if musicVolumes[name] != volume || restarting {
+                    player.setVolume(volume, fadeDuration: fade); musicVolumes[name] = volume
+                }
             } else if player.isPlaying { player.pause() }
         }
     }

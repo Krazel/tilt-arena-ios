@@ -14,7 +14,8 @@ test('player death sounds once, ducks music, stops weapons, and restores menu an
  h.p('death').currentTime=.2;s.setSuspended(true);h.advance(30);s.updateMusicFade();s.setSuspended(false);s.setMode('dying');
  assert.equal(h.p('death').plays,2);assert.equal(h.p('death').currentTime,.2);
  s.setMode('menu');assert(h.p('music-a').paused);assert.equal(h.p('music-menu').volume,0);
- for(let i=0;i<5;i++){h.advance(.1);s.updateMusicFade();}assert.equal(h.p('music-menu').volume,.3);
+ for(let i=0;i<10;i++){h.advance(.1);s.updateMusicFade();}assert(h.p('music-menu').volume>0&&h.p('music-menu').volume<.15);
+ for(let i=0;i<16;i++){h.advance(.1);s.updateMusicFade();}assert.equal(h.p('music-menu').volume,.3);
  s.startRun();assert.equal(h.p('music-b').volume,.3);s.setMuted(true);s.setMode('dying');assert.equal(h.p('death').plays,2);
  assert(Object.values(h.players).every(p=>p.paused));
 });

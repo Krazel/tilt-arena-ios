@@ -36,6 +36,7 @@ if [ "${QA_AUDIO_ONLY:-false}" = "true" ]; then
 fi
 if [ "${QA_DEATH_ONLY:-false}" = "true" ]; then
   test_selection=(-only-testing:TiltArenaTests
+    -only-testing:TiltArenaUITests/ClassicFlowTests/testSpeedTrialsInMenuPauseAndResultsPersistInBothLanguages
     -only-testing:TiltArenaUITests/ClassicFlowTests/testDeathFragmentsAppearBeforeResultsAndRestartNeedsNoConfirmation
     -only-testing:TiltArenaUITests/ClassicFlowTests/testTapSkipsDeathWithoutRestartingOrPausing
     -only-testing:TiltArenaUITests/ClassicFlowTests/testRestartAfterDeathIsImmediateInBothThemes)

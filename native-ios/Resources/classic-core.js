@@ -67,6 +67,7 @@
       this.rng = new RNG(seed);
       this.pickupRng = new RNG(seed ^ 0x51f15e);
       this.options = options || {};
+      this.setPlayerSpeed(this.options.playerSpeed);
       this.mode = this.options.mode === 'hard' ? 'hard' : 'classic';
       this.bounds = Object.assign({}, BOUNDS);
       this.powers = this.options.powers || POWERS;
@@ -144,7 +145,7 @@
           p.vx=Math.cos(p.angle)*TUNING.fireSpeed;p.vy=Math.sin(p.angle)*TUNING.fireSpeed;
         } else {
           if(p.burnUntil>0){p.burnUntil=0;p.vx=0;p.vy=0;}
-          p.vx+=(ix*TUNING.speed-p.vx)*response;p.vy+=(iy*TUNING.speed-p.vy)*response;
+          p.vx+=(ix*this.playerSpeed-p.vx)*response;p.vy+=(iy*this.playerSpeed-p.vy)*response;
           if(length(p.vx,p.vy)>8)p.angle=Math.atan2(p.vy,p.vx);
         }
         const pull=dashing?{x:0,y:0}:this.playerVortexPull();
@@ -602,8 +603,11 @@
         events:this.events.slice()};
     }
   }
+  // Temporary TestFlight comparisons; keep the shipping default at 600.
+  ClassicGame.prototype.setPlayerSpeed=function(value){this.playerSpeed=[600,660,720,780,840].includes(value)?value:TUNING.speed;};
   let game=null;
-  const API={create(seed,spawning=true,mode='classic'){game=new ClassicGame(seed,{spawning,mode});return JSON.stringify(game.snapshot());},
+  const API={create(seed,spawning=true,mode='classic',playerSpeed=600){game=new ClassicGame(seed,{spawning,mode,playerSpeed});return JSON.stringify(game.snapshot());},
+    setPlayerSpeed(value){game.setPlayerSpeed(value);},
     tick(dt,x,y){return JSON.stringify(game.advance(dt,{x,y}));},
     pause(){game.pause();},resume(){game.resume();},
     resize(l,r,b,t){return JSON.stringify(game.resize(l,r,b,t));},

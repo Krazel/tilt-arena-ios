@@ -186,9 +186,9 @@ final class ClassicScene: SKScene {
                 for node in objects.values { node.removeFromParent() }; objects.removeAll(); renderedDotFrozen.removeAll()
                 effects.removeAllChildren()
                 #if DEBUG
-                gameFrame = try bridge?.create(spawning: !uiTesting || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa"), mode: session.mode)
+                gameFrame = try bridge?.create(spawning: !uiTesting || ProcessInfo.processInfo.arguments.contains("--hard-opening-qa"), mode: session.mode, playerSpeed: session.trialSpeed)
                 #else
-                gameFrame = try bridge?.create(mode: session.mode)
+                gameFrame = try bridge?.create(mode: session.mode, playerSpeed: session.trialSpeed)
                 #endif
                 gameFrame = try resizeEngine()
                 #if DEBUG
@@ -203,7 +203,10 @@ final class ClassicScene: SKScene {
                 if explosionPreview { gameFrame = try bridge?.explosionFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
                 if selectedVFXPreview { gameFrame = try bridge?.selectedVFXFrame(left: arenaBounds.minX, right: arenaBounds.maxX, charging: chargeVFXPreview, wave: waveVFXPreview, turning: turnFirePreview) }
                 #endif
-            } else { try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0) }
+            } else {
+                try bridge?.setPlayerSpeed(session.trialSpeed)
+                try bridge?.resume(); gameFrame = try bridge?.tick(dt: 0, x: 0, y: 0)
+            }
             #if DEBUG
                 if ProcessInfo.processInfo.arguments.contains("--laser-qa") { gameFrame = try bridge?.laserFrame(left: arenaBounds.minX, right: arenaBounds.maxX) }
             #endif
