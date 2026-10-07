@@ -88,6 +88,13 @@ final class ClassicFlowTests: XCTestCase {
             for orientation in [UIDeviceOrientation.landscapeLeft, .landscapeRight] {
                 XCUIDevice.shared.orientation = orientation
                 let credits = app.buttons["audio-credits"]
+                let settled = NSPredicate { _, _ in
+                    let screen = app.windows.firstMatch.frame
+                    let frame = credits.frame
+                    return screen.width > screen.height && frame.minX >= screen.minX &&
+                        frame.minX - screen.minX < 15 && abs(screen.maxY - frame.maxY) < 8
+                }
+                XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: settled, object: nil)], timeout: 8), .completed)
                 XCTAssertTrue(credits.isHittable)
                 let screen = app.windows.firstMatch.frame
                 XCTAssertLessThan(credits.frame.minX - screen.minX, 15)
@@ -140,8 +147,8 @@ final class ClassicFlowTests: XCTestCase {
             XCTAssertTrue(app.buttons["play"].waitForExistence(timeout: 10))
             app.buttons["posture-normal"].tap(); app.buttons["play"].tap()
             XCTAssertTrue(app.buttons["replay"].waitForExistence(timeout: 5))
-            XCTAssertTrue(app.otherElements["result-time"].exists)
-            XCTAssertTrue(app.otherElements["result-kills"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)["result-time"].exists)
+            XCTAssertTrue(app.descendants(matching: .any)["result-kills"].exists)
             capture("final-results-\(theme)", app: app)
             app.buttons["replay"].tap()
             XCTAssertTrue(app.otherElements["arena-running"].waitForExistence(timeout: 5))
